@@ -1,0 +1,16 @@
+it:
+  advisor: Relatore
+  coadvisor: Correlatore
+  tutor: Tutor
+  toc: Indice
+  list_of_figures: Lista delle Figure
+  list_of_tables: Lista delle Tabelle
+en:
+  advisor: Advisor
+  coadvisor: Coadvisor
+  tutor: Tutor
+  toc: Contents
+  list_of_figures: List of Figures
+  list_of_tables: List of Tables
+  theorem: "Theorem"
+  proof: "Proof"
