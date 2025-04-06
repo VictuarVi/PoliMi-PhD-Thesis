@@ -16,9 +16,11 @@
 
 #let localization = yaml("locale.yaml")
 
+#let bluepoli = rgb("#5f859f")
+
 #let polimi_thesis(
   title: "Thesis Title",
-  author: "Name",
+  author: "Name Surname",
   advisor: "Advisor",
   coadvisor: "Coadvisor",
   tutor: "Tutor",
@@ -26,6 +28,8 @@
   cycle: none,
   chair: none,
   language: "en",
+  colored-heading: true,
+  main_logo: "../img/logo_ingegneria.svg",
   body,
 ) = {
   set document(
@@ -52,7 +56,7 @@
       inside: 3.0cm,
       outside: 2.0cm,
     ),
-    numbering: none,
+    numbering: "i",
     header: context {
       if (
         document-state.get() == "TITLE_PAGE"
@@ -78,8 +82,10 @@
 
         let output = if not (chapter-heading-state.get()) {
           set text(weight: "bold")
-          counter(heading.where(level: 1)).display()
-          "| "
+          text(
+            fill: if (colored-heading) { bluepoli },
+            counter(heading.where(level: 1)).display() + "| ",
+          )
           before.last().body
         }
 
@@ -92,7 +98,7 @@
           h(1fr)
           counter(page).display()
         }
-      } else if (document-state.get() == "APPENDIX") { }
+      }
     },
     footer: { },
   )
@@ -102,19 +108,23 @@
   // Didascalia delle figure
   let figure_number = counter("figure_counter")
   figure_number.step()
-  show figure.caption: it => {
-    let heading_num = context counter(heading).get().first()
+  show figure.caption: it => context {
+    let heading_num = counter(heading).get().first()
     figure_number.step()
-    strong({
-      it.supplement
-      if it.numbering != none {
-        [ ]
-        heading_num
-        [.]
-        // it.counter.display(it.numbering)
-        figure_number.display()
-      }
-    })
+    text(
+      weight: "bold",
+      fill: if (colored-heading) { bluepoli },
+      {
+        it.supplement
+        if it.numbering != none {
+          [ ]
+          str(heading_num)
+          [.]
+          // it.counter.display(it.numbering)
+          figure_number.display()
+        }
+      },
+    )
     [: ]
     it.body
   }
@@ -150,13 +160,18 @@
   place(
     dx: 1.5%,
     dy: -1%,
-    image("../img/logo_ingegneria.svg", width: 73%),
+    image(main_logo, width: 73%),
   )
 
   v(4.20fr)
 
   // Titolazione
-  text(size: sizes.huge, weight: 700, title)
+  text(
+    size: sizes.huge,
+    weight: 700,
+    fill: if (colored-heading) { bluepoli },
+    title,
+  )
   // v(1.2em, weak: true)
   // text(1.1em, style: "italic", subtitle)
 
@@ -182,28 +197,43 @@
     Year #phdcycle Cycle
   ]
 
+  // Document
+
+  show heading: it => {
+    if (colored-heading) {
+      text(fill: bluepoli, it)
+    }
+  }
   // --------------------- [ STILE DEI CAPITOLI ] ---------------------
+
+  let raggera = {
+    v(1fr)
+    place(
+      dx: -7cm,
+      dy: -16.25cm,
+      image(
+        "../img/raggiera_chiara.svg",
+        width: 0.85 * 24cm,
+      ),
+    )
+  }
+
   show heading.where(level: 1): it => context {
-    // checks if the page is empty == the cursor is at the same length from the top
-    // as the top margin
-    if (here().position().y.cm() == page.margin.top.length.cm()) {
+    // checks if the page is empty: the cursor is at the same length from the top as the top margin
+    if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
       set page(header: { })
-      // align(center + horizon, text(fill: red, size: 20pt, "RAGGIERA"))
       text(fill: white, "Phantom text")
-      v(1fr)
-      place(
-        dx: -7cm,
-        dy: -16.25cm,
-        image(
-          "../img/raggiera_chiara.svg",
-          width: 0.85 * 24cm,
-        ),
-      )
+      raggera
+    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
+      text(fill: white, "Phantom text")
+    } else if (calc.odd(here().page())) {
+      set page(header: { })
+      text(fill: white, "Phantom text")
+      pagebreak()
+      raggera
     } else {
-      // align(center + horizon, text(fill: green, size: 20pt, "VUOTO"))
       text(fill: white, "Phantom text")
     }
-    pagebreak()
     chapter-heading-state.update(true)
     pagebreak(weak: true, to: "odd")
     // v(120pt)
@@ -212,10 +242,16 @@
       text(
         size: sizes.Huge,
         weight: "bold",
+        fill: if (colored-heading) { bluepoli },
         counter(selector(heading)).display() + "| ",
       )
     }
-    text(size: sizes.Large, weight: "bold", it.body)
+    text(
+      size: sizes.Large,
+      weight: "bold",
+      fill: if (colored-heading) { bluepoli },
+      it.body,
+    )
     v(10pt)
     chapter-heading-state.update(false)
 
@@ -251,17 +287,20 @@
   // I Capitoli sono in grassetto e non hanno le righe
   show outline.entry.where(level: 1): it => {
     v(19pt, weak: true)
-    strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page()))
+    link(
+      it.element.location(),
+      strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())),
+    )
   }
 
-  pagebreak()
+  // pagebreak()
   body
 }
 
 // Document sections
 #let frontmatter(body) = {
   document-state.update("FRONTMATTER")
-  counter(page).update(0)
+  // counter(page).update(0)
   set page(numbering: "i")
   set heading(numbering: none)
 
@@ -306,7 +345,6 @@
     title: localization.at(text.lang).toc,
     indent: 1.2em,
   )
-  pagebreak(to: "even")
 }
 
 // Table of contents
@@ -315,7 +353,6 @@
     title: localization.at(text.lang).list_of_figures,
     target: figure.where(kind: image),
   )
-  pagebreak(to: "even")
 }
 
 #let list_of_tables = context {
@@ -323,7 +360,6 @@
     title: localization.at(text.lang).list_of_tables,
     target: figure.where(kind: table),
   )
-  pagebreak(to: "even")
 }
 
 // TODO
