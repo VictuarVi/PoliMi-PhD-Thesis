@@ -9,5 +9,5 @@ They are rather similar. The main difference is the PoliBlu colour spread across
 
 # TODO
 
-- [ ] Fix heading 1 not linking to the correct location
-- [ ] Thorough testing of the pagebreak function
+- [x] Fix heading 1 not linking to the correct location
+- [x] Thorough testing of the pagebreak function

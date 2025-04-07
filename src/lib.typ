@@ -12,7 +12,6 @@
 )
 
 #let document-state = state("TITLE_PAGE", true)
-#let chapter-heading-state = state("NOT PRESENT", false)
 
 #let localization = yaml("locale.yaml")
 
@@ -78,9 +77,10 @@
       } else if (
         document-state.get() == "MAINMATTER"
       ) {
+        let isThereH1 = query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page())
         let before = query(selector(heading.where(level: 1)).before(here()))
 
-        let output = if not (chapter-heading-state.get()) {
+        let output = if not (isThereH1.len() != 0) {
           set text(weight: "bold")
           text(
             fill: if (colored-heading) { bluepoli },
@@ -222,28 +222,21 @@
     // checks if the page is empty: the cursor is at the same length from the top as the top margin
     if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
       set page(header: { })
-      text(fill: white, "Phantom text")
-      raggera
+      phantom-content
     } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
-      text(fill: white, "Phantom text")
     } else if (calc.odd(here().page())) {
-      set page(header: { })
-      text(fill: white, "Phantom text")
-      pagebreak()
-      raggera
-    } else {
-      text(fill: white, "Phantom text")
+      set page(header: { }, background: raggera)
+      pagebreak(to: "odd")
     }
-    chapter-heading-state.update(true)
-    pagebreak(weak: true, to: "odd")
     // v(120pt)
     v(4cm)
+    let heading-num = counter(selector(heading)).display()
     if (document-state.get() == "MAINMATTER") {
       text(
         size: sizes.Huge,
         weight: "bold",
         fill: if (colored-heading) { bluepoli },
-        counter(selector(heading)).display() + "| ",
+        heading-num + "| ",
       )
     }
     text(
@@ -253,7 +246,6 @@
       it.body,
     )
     v(10pt)
-    chapter-heading-state.update(false)
 
     // reset contatori
     // counter(figure.where(kind: "image")).update(0)
@@ -262,7 +254,7 @@
     counter(figure.where(kind: "theorem")).update(0)
   }
 
-  show heading: it => {
+  show heading: it => context {
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
@@ -273,6 +265,19 @@
   }
 
   // ----------- [ TABLE OF CONTENTS ] -----------
+  // I Capitoli sono in grassetto e non hanno le righe
+  show outline.entry.where(level: 1): it => context {
+    v(19pt, weak: true)
+    // TODO "Construct" a location and link the heading to that
+    // let page = it.element.location().page()
+    // let x = it.element.location().position().x
+    // let y = it.element.location().position().y
+    link(
+      it.element.location(),
+      strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())),
+    )
+  }
+
   show outline.entry: it => {
     if it.level > 1 {
       v(1em, weak: true)
@@ -282,15 +287,6 @@
     } else {
       link(it.element.location(), it)
     }
-  }
-
-  // I Capitoli sono in grassetto e non hanno le righe
-  show outline.entry.where(level: 1): it => {
-    v(19pt, weak: true)
-    link(
-      it.element.location(),
-      strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())),
-    )
   }
 
   // pagebreak()
@@ -319,6 +315,7 @@
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   set page(numbering: "1")
+  counter(page).update(0)
 
   body
 }
