@@ -223,8 +223,9 @@
     if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
       set page(header: { })
       phantom-content
-    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
-    } else if (calc.odd(here().page())) {
+    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) { } else if (
+      calc.odd(here().page())
+    ) {
       set page(header: { }, background: raggera)
       pagebreak(to: "odd")
     }
@@ -268,10 +269,6 @@
   // I Capitoli sono in grassetto e non hanno le righe
   show outline.entry.where(level: 1): it => context {
     v(19pt, weak: true)
-    // TODO "Construct" a location and link the heading to that
-    // let page = it.element.location().page()
-    // let x = it.element.location().position().x
-    // let y = it.element.location().position().y
     link(
       it.element.location(),
       strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())),
@@ -287,6 +284,10 @@
     } else {
       link(it.element.location(), it)
     }
+  }
+
+  show figure.where(kind: "lists"): it => {
+    align(start, it.body)
   }
 
   // pagebreak()
@@ -310,8 +311,6 @@
 }
 
 #let mainmatter(body) = {
-  outline(indent: 1em)
-
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   set page(numbering: "1")
@@ -337,24 +336,42 @@
 
 // Table of contents
 
+#let target = (
+  figure
+    .where(
+      kind: "lists",
+      outlined: true,
+    )
+    .or(heading.where(outlined: true))
+)
+
+#let lists = figure.with(
+  kind: "lists",
+  numbering: none,
+  supplement: none,
+  outlined: true,
+  caption: []
+)
+
 #let toc = context {
   outline(
-    title: localization.at(text.lang).toc,
+    title: lists(localization.at(text.lang).toc),
     indent: 1.2em,
+    target: target,
   )
 }
 
 // Table of contents
 #let list_of_figures = context {
   outline(
-    title: localization.at(text.lang).list_of_figures,
+    title: lists(localization.at(text.lang).list_of_figures),
     target: figure.where(kind: image),
   )
 }
 
 #let list_of_tables = context {
   outline(
-    title: localization.at(text.lang).list_of_tables,
+    title: lists(localization.at(text.lang).list_of_tables),
     target: figure.where(kind: table),
   )
 }

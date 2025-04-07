@@ -11,3 +11,4 @@ They are rather similar. The main difference is the PoliBlu colour spread across
 
 - [x] Fix heading 1 not linking to the correct location
 - [x] Thorough testing of the pagebreak function
+- [x] Add to table of contents table of contents, list of figures and list of tables
