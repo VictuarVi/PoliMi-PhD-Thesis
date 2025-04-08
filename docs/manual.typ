@@ -1,4 +1,4 @@
-#import "src/lib.typ": *
+#import "@local/polimi-phd-thesis:1.0.0": *
 
 #show: polimi_thesis.with()
 
@@ -21,7 +21,7 @@
 #show: backmatter.with()
 
 #bibliography(
-  "Thesis_bibliography.bib",
+  "../template/Thesis_bibliography.bib",
   full: true,
 )
 

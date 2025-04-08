@@ -11,7 +11,7 @@
   Huge: 2.488em,
 )
 
-#let document-state = state("TITLE_PAGE", true)
+#let document-state = state("init", "TITLE_PAGE")
 
 #let localization = yaml("locale.yaml")
 
@@ -28,7 +28,7 @@
   chair: none,
   language: "en",
   colored-heading: true,
-  main_logo: "../img/logo_ingegneria.svg",
+  main_logo: "img/logo_ingegneria.svg",
   body,
 ) = {
   set document(
@@ -155,7 +155,7 @@
   place(
     dx: 44%,
     dy: -28%,
-    image("../img/raggiera_chiara.svg", width: 90%),
+    image("img/raggiera_chiara.svg", width: 90%),
   )
   place(
     dx: 1.5%,
@@ -212,7 +212,7 @@
       dx: -7cm,
       dy: -16.25cm,
       image(
-        "../img/raggiera_chiara.svg",
+        "img/raggiera_chiara.svg",
         width: 0.85 * 24cm,
       ),
     )
