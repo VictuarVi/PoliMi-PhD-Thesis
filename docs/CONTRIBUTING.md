@@ -19,10 +19,10 @@ See the [official documentation](https://github.com/typst/packages?tab=readme-ov
 > [!TIP]
 > Create a symlink to the location Typst needs to the location where the repository is. For instance in a Linux environment it would be:
 >
-> ```shellSper
-> mkdir ~/.local/share/typst/packages/local/{package.name}
+> ```shell
+> mkdir ~/.local/share/typst/packages/local/PACKAGE.NAME
 > ln -s REPO_FOLDER \
-> ~/.local/share/typst/packages/local/{package.name}/{package.version}
+> ~/.local/share/typst/packages/local/PACKAGE.NAME/PACKAGE.VERSION
 > ```
 >
 > You could do the same for the `preview` namespace, will be the one used for the template on Typst Universe.

@@ -1,18 +1,22 @@
 = Chapter one
 
-In this section there will be useful information about how to style chapters, sections and so on.
-
-== Sections and subsection
-
 #import "@preview/metalogo:1.2.0": TeX, LaTeX
+
+#show "LaTeX": LaTeX
 
 #let typst = {
   text(
     fill: eastern,
     font: "Libertinus Serif",
+    weight: "semibold",
     "typst",
   )
 }
+#show "typst": typst
+
+In this section there will be useful information about how to style chapters, sections and so on. Be sure to read the typst guide for LaTeX users @typst-latex.
+
+== Sections and subsection
 
 In #LaTeX, the canonical sections division is as follows:
 ```tex
@@ -21,7 +25,7 @@ In #LaTeX, the canonical sections division is as follows:
 \subsection{}
 \subsubsection{}
 ```
-in #typst, there are just headings (similarly to Markdown) -- so the #LaTeX system maps to:
+in typst, there are just headings @typst-headings (similarly to Markdown) -- so the LaTeX system maps to:
 ```typst
 = Chapter           // Heading level 1
 == Section          // Heading level 2
@@ -36,8 +40,9 @@ If you need to turn off the numbering you will call the ```typst heading``` func
 
 == Equations
 
-In #LaTeX, there are many envinroments (```tex equation, equation*, aligned```) -- in #typst there is just the equation envinroment called with dollars:
-- Inline math, same as #LaTeX:
+In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in typst there is just the equation environment called with dollars @typst-equation:
+
+- Inline math, same as LaTeX:
 #columns[
   #set align(center)
   ```typst
@@ -47,7 +52,7 @@ In #LaTeX, there are many envinroments (```tex equation, equation*, aligned```) 
   $a^2 + b^2 = c^2$
 ]
 
-- Block math, by adding separating with spaces:
+- Block math, by adding spaces before and after the content:
 #columns[
   #set align(center)
   ```typst
@@ -57,28 +62,43 @@ In #LaTeX, there are many envinroments (```tex equation, equation*, aligned```) 
   $ a^2 + b^2 = c^2 $
 ]
 
-For a more complex equation:
+For a more complex equation the LaTeX code is:
 ```tex
-  \begin{subequations}
-    \label{eq:maxwell}
-    \begin{align}[left=\empheqlbrace]
-    \nabla\cdot \bm{D} & = \rho, \label{eq:maxwell1} \\
-    \nabla \times \bm{E} +  \frac{\partial \bm{B}}{\partial t} & = \bm{0}, \label{eq:maxwell2} \\
-    \nabla\cdot \bm{B} & = 0, \label{eq:maxwell3} \\
-    \nabla \times \bm{H} - \frac{\partial \bm{D}}{\partial t} &= \bm{J}. \label{eq:maxwell4}
-    \end{align}
+\begin{subequations}
+  \label{eq:maxwell}
+  \begin{align}[left=\empheqlbrace]
+  \nabla\cdot \bm{D} & = \rho, \label{eq:maxwell1} \\
+  \nabla \times \bm{E} + \frac{\partial \bm{B}}{\partial t} & = \bm{0}, \label{eq:maxwell2} \\
+  \nabla\cdot \bm{B} & = 0, \label{eq:maxwell3} \\
+  \nabla \times \bm{H} - \frac{\partial \bm{D}}{\partial t} &= \bm{J}. \label{eq:maxwell4}
+  \end{align}
 \end{subequations}
 ```
-```typst
+while the typst version:
 $
-  cases(
-    Delta dot bold(D) &= rho\, \
-    Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
-    Delta dot bold(B) &= 0\, \
-    Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
+  lr(\{
+    #block[$
+      Delta dot bold(D) &= rho\, \
+      Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
+      Delta dot bold(B) &= 0\, \
+      Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
+    $]
   )
 $
-```
+
+This is quite an _advanced way_ to get things done. To put it simply, this is the typst equivalent of LaTeX's ```tex \left{ equation \right.``` --- though if you don't understand how/why it works, that's ok -- I'll break it down, but first have a read at the `lr()` function documentation @typst-lr.
+
+- The equations must be aligned to the center and I achieve that with `&`, the same as LaTeX
+
+- Then, the left part must have a `{` to wrap around it: in order to do, typst needs to have an element to compute the size for, which will be the `block[]` part
+
+- In the block, I'll insert all the equations by linebreaking with `\` (in LaTeX this is done via ```latex \\```, a double backslash)
+
+- Finally, I'll wrap both the parenthesis AND the block in the same `lr()` call, effectively sizing everything
+
+I highly encourage you to mess with the above code to see how it changes. It will dramatically help you to understand thow typst works.
+
+The "normal" representation would have been just to use the ```typst cases()``` function:
 $
   cases(
     Delta dot bold(D) &= rho\, \
@@ -93,12 +113,14 @@ By default, the equations are *not* numbered -- however if you need to:
   numbering: "(1.1)",
   block: true,
   $
-    cases(
+    lr(\{
+    #block[$
       Delta dot bold(D) &= rho\, \
       Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
       Delta dot bold(B) &= 0\, \
       Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
-    )
+    $]
+  )
   $,
 )<maxwell-equation>
 
@@ -108,10 +130,13 @@ And to reference it just type @maxwell-equation.
 
 === Figures
 
+Via the ```typst figure``` environment @typst-figure, as you would done in LaTeX:
 #figure(
   image("../../src/img/logo_ingegneria.svg"),
   caption: [Caption in the List of Figures.],
 )
+
+However, since typst does not _natively_ support subfigures, one could make use of the `subpar` package @typst-subpar:
 
 #import "@preview/subpar:0.2.2": *
 
@@ -137,8 +162,6 @@ And to reference it just type @maxwell-equation.
 )
 
 === Tables
-
-The default table has been implemented:
 
 #let frame(color) = (
   (x, y) => (
@@ -190,29 +213,13 @@ The default table has been implemented:
   caption: [Caption of the Table to appear in the List of Tables],
 )
 
-As you can see, it could be useful to implement a default style for every table.
+As you can see, it could be useful to implement a default style for every table @typst-tables.
 
 === Algorithms
 
-For algorithms, there are some packages recommened:
-- algo
-#import "@preview/algo:0.3.6": *
+For algorithms, there are a lot of packages on typst universe. The following are my recommendations.
 
-#algo(header: [Name of Algorithm])[
-  Initial instructions \
-  *for* _for − condition_ *do* #i\
-  Some instructions \
-  *if* _if − condition_ *then* #i\
-  Some other instructions #d\
-  *end if* #d\
-  *end for* \
-  *while* _while − condition_ *do* #i\
-  Some further instructions #d\
-  *end while* \
-  Final instructions
-]
-
-- lovelace
+- `lovelace` @typst-lovelace
 #import "@preview/lovelace:0.3.0": *
 
 #figure(
@@ -236,28 +243,33 @@ For algorithms, there are some packages recommened:
 
 See @first-algorithm.
 
+#pagebreak()
+
+- `algo` @typst-algo
+#import "@preview/algo:0.3.6": *
+
+#algo(header: [Name of Algorithm])[
+  Initial instructions \
+  *for* _for − condition_ *do* #i\
+  Some instructions \
+  *if* _if − condition_ *then* #i\
+  Some other instructions #d\
+  *end if* #d\
+  *end for* \
+  *while* _while − condition_ *do* #i\
+  Some further instructions #d\
+  *end while* \
+  Final instructions
+]
+
 == Theorems, propositions and lists
 
 #import "@local/polimi-phd-thesis:1.0.0": *
-// #import "@preview/ctheorems:1.1.3": *
-// #let theorem = thmbox("theorem", "Theorem")
-// #let corollary = thmplain(
-//   "corollary",
-//   "Corollary",
-//   base: "theorem",
-//   titlefmt: strong,
-// )
-// #let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
 
-// #let example = thmplain("example", "Example").with(numbering: none)
-// #let proof = thmproof("proof", "Proof")
+I have implemented my own version of the classic LaTeX environments:
 
 #theorem[
   Write here you theorem.
-]
-
-#proof[
-  If useful you can report here the proof.
 ]
 
 #proposition[
@@ -267,6 +279,8 @@ See @first-algorithm.
 #proof[
   If useful you can report here the proof.
 ]
+
+However the `ctheorems` package @typst-ctheorems probably handles them in a better way.
 
 Normal list:
 - First item
@@ -281,21 +295,23 @@ Numbered list:
 You have to be sure to respect the rules on Copyright and avoid an involuntary plagia-
 rism. It is allowed to take other persons’ ideas only if the author and his original work are clearly mentioned. As stated in the Code of Ethics and Conduct, Politecnico di Milano promotes the integrity of research, condemns manipulation and the infringement of intellectual property, and gives opportunity to all those who carry out research activities to have an adequate training on ethical conduct and integrity while doing research. To be sure to respect the copyright rules, read the guides on Copyright legislation and citation styles available at:
 
-#link("https://www.biblio.polimi.it/en/tools/courses-and-tutorials")
+#align(
+  center,
+  link("https://www.biblio.polimi.it/en/tools/courses-and-tutorials"),
+)
 
 You can also attend the courses which are periodically organized on "Bibliographic cita-
 tions and bibliography management".
 
 == Bibliography and citations
-Your thesis must contain a suitable Bibliography which lists all the sources consulted on developing the work. The list of references is placed at the end of the manuscript after the chapter containing the conclusions. We suggest to use the BibTeX package and save the
-bibliographic references in the file Thesis_bibliography.bib. This is indeed a database
-containing all the information about the references.
 
-To cite in your manuscript, use the `cite` command as follows:
+Your thesis must contain a suitable Bibliography which lists all the sources consulted on developing the work. The list of references is placed at the end of the manuscript after the chapter containing the conclusions. We suggest to use the BibTeX package @bibtex-cheat-sheet and save the bibliographic references in the file `Thesis_bibliography.bib`. This is indeed a database containing all the information about the references.
+
+To cite in your manuscript, use the `cite` @typst-cite command as follows:
 
 #align(
   center,
   emph([Here is how you cite bibliography entries: @knuth74 or chained @knuth92@lamport94.]),
 )
 
-As it would have been in #LaTeX, the bibliography is automatically generated.
+As it would have been in LaTeX, the bibliography @typst-bibliography is automatically generated.

@@ -382,6 +382,10 @@
     it,
   )
 
+  set list(indent: 1.2em)
+
+  set enum(indent: 1.2em)
+
   body
 }
 
@@ -574,12 +578,9 @@
 )
 
 // And a function for a proof.
-#let proof(body) = block(
-  spacing: 11.5pt,
-  context {
-    emph(localization.at(text.lang).proof + ".")
-    [ ] + body
-    h(1fr)
-    box(scale(160%, origin: bottom + right, sym.square.stroked))
-  },
-)
+#let proof(body) = context {
+  emph(localization.at(text.lang).proof + ".")
+  [ ] + body
+  h(1fr)
+  box(scale(160%, origin: bottom + right, sym.square.stroked))
+}
