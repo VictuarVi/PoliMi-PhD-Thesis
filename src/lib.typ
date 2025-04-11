@@ -45,6 +45,7 @@
   set par(
     justify: true,
     linebreaks: "optimized",
+    spacing: 1.7em,
   )
 
   set page(
@@ -85,7 +86,7 @@
             str(counter(heading).display()).split(".").at(0) + "| "
           }
           text(
-            fill: if (colored-heading) { bluepoli },
+            fill: if (colored-heading) { bluepoli } else { black },
             heading-num,
           )
           before.last().body
@@ -107,29 +108,35 @@
 
   // FIGURE
 
+  set figure(gap: 1.5em)
+
   // Didascalia delle figure
-  // let figure_number = counter("figure_counter")
-  // figure_number.step()
-  // show figure.caption: it => context {
-  //   let heading_num = counter(heading).get().first()
-  //   figure_number.step()
-  //   text(
-  //     weight: "bold",
-  //     fill: if (colored-heading) { bluepoli },
-  //     {
-  //       it.supplement
-  //       if it.numbering != none {
-  //         [ ]
-  //         str(heading_num)
-  //         [.]
-  //         // it.counter.display(it.numbering)
-  //         figure_number.display()
-  //       }
-  //     },
-  //   )
-  //   [: ]
-  //   it.body
-  // }
+  show figure.caption: it => context {
+    if (it.kind != "lists" and it.kind != "blank_toc") {
+      let heading_num = counter(heading).get().first()
+      text(
+        weight: "bold",
+        fill: if (colored-heading) { bluepoli } else { black },
+        {
+          it.supplement
+          if it.numbering != none {
+            [ ]
+            str(heading_num)
+            [.]
+            if (it.kind == image) {
+              counter(figure.where(kind: image)).display()
+            } else if (it.kind == table) {
+              counter(figure.where(kind: table)).display()
+            }
+          }
+          it.separator
+        },
+      )
+      it.body
+    } else {
+      it
+    }
+  }
 
   // Theorems.
   show figure.where(kind: "theorem"): it => {
@@ -160,6 +167,7 @@
     })
     emph(it.body)
   }
+
   // show figure.where(kind: "theorem"): it => block(
   //   above: 11.5pt,
   //   below: 11.5pt,
@@ -260,26 +268,34 @@
     }
     // v(120pt)
     v(4cm)
+    set text(
+      weight: "bold",
+      fill: if (colored-heading) { bluepoli } else { black },
+    )
+
     let heading-num = counter(selector(heading)).display()
-    if (it.numbering != none and (document-state.get() == "MAINMATTER" or document-state.get() == "APPENDIX")) {
+    if (
+      it.numbering != none and (document-state.get() == "MAINMATTER" or document-state.get() == "APPENDIX")
+    ) {
       text(
-        size: sizes.Huge,
-        weight: "bold",
-        fill: if (colored-heading) { bluepoli } else { black },
-        heading-num + "| ",
+        size: 50pt,
+        weight: "regular",
+        text(
+          weight: "bold",
+          heading-num,
+        )
+          + h(2mm)
+          + "| ",
       )
     }
     text(
-      size: sizes.Large,
-      weight: "bold",
-      fill: if (colored-heading) { bluepoli } else { black },
+      size: 1.5em,
       it.body,
     )
     v(10pt)
 
     // reset contatori
     counter(figure.where(kind: image)).update(0)
-    // figure_number.update(0)
     counter(figure.where(kind: "table")).update(0)
     counter(figure.where(kind: "theorem")).update(0)
   }
@@ -288,10 +304,11 @@
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
-      text(size: 1.25em, it)
+      text(size: sizes.large, it)
     } else if (it.level >= 3) {
-      it
+      text(size: sizes.large, it)
     }
+    v(0.5em)
   }
 
   // ----------- [ TABLE OF CONTENTS ] -----------
@@ -358,6 +375,11 @@
   }
 
   show outline: set heading(bookmarked: true)
+
+  show ref: it => text(
+    fill: if (colored-heading) { bluepoli } else { black },
+    it,
+  )
 
   body
 }
@@ -508,9 +530,9 @@
 
 // Nomenclature
 #let nomenclature(dict, indented: true) = context {
-  outline(
-    title: lists(localization.at(text.lang).nomenclature),
-    target: figure.where(kind: table),
+  heading(
+    lists(localization.at(text.lang).nomenclature),
+    outlined: false,
   )
   if (indented) {
     show grid.cell: it => {

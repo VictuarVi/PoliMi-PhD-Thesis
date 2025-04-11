@@ -113,7 +113,28 @@ And to reference it just type @maxwell-equation.
   caption: [Caption in the List of Figures.],
 )
 
-As of April 11th, 2025 there is no support for subfigures.
+#import "@preview/subpar:0.2.2": *
+
+#grid(
+  figure(
+    image("../../src/img/logo_ingegneria.svg", width: 50%),
+    caption: [
+      Left Polimi logo.
+    ],
+  ),
+  <a>,
+  figure(
+    image("../../src/img/logo_ingegneria.svg", width: 50%),
+    caption: [
+      Right Polimi logo.
+    ],
+  ),
+  <b>,
+  columns: (1fr, 1fr),
+  align: horizon,
+  caption: [A figure composed of two sub figures.],
+  label: <full>,
+)
 
 === Tables
 
@@ -213,6 +234,8 @@ For algorithms, there are some packages recommened:
   ],
 ) <first-algorithm>
 
+See @first-algorithm.
+
 == Theorems, propositions and lists
 
 #import "@local/polimi-phd-thesis:1.0.0": *
@@ -272,9 +295,7 @@ To cite in your manuscript, use the `cite` command as follows:
 
 #align(
   center,
-  emph(
-    [Here is how you cite bibliography entries: @knuth74 or #cite(<knuth92>).]
-  )
+  emph([Here is how you cite bibliography entries: @knuth74 or chained @knuth92@lamport94.]),
 )
 
-As of now, there is no support to multiple citations. As it would have been in #LaTeX, the bibliography is automatically generated.
+As it would have been in #LaTeX, the bibliography is automatically generated.

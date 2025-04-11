@@ -9,15 +9,17 @@
 #toc
 #list_of_figures
 #list_of_tables
+
 #let nomenclature_ = (
   "Polimi": "Politecnico di Milano",
   "CdL": "Corso di Laurea",
   "CCS": "Consigli di Corsi di Studio",
-  "CFU": "Crediti Formativi Universitari"
+  "CFU": "Crediti Formativi Universitari",
 )
+
 #nomenclature(
   nomenclature_,
-  indented: false
+  indented: false,
 )
 
 #show: mainmatter.with()
