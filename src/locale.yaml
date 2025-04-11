@@ -8,6 +8,7 @@ it:
   nomenclature: Nomenclatura
   theorem: Teorema
   proof: Dimostrazione
+  proposition: Proposizione
 en:
   advisor: Advisor
   coadvisor: Coadvisor
@@ -16,5 +17,6 @@ en:
   list_of_figures: List of Figures
   list_of_tables: List of Tables
   nomenclature: Nomenclature
-  theorem: Teorema
-  proof: Dimostrazione
+  theorem: Theorem
+  proof: Proof
+  proposition: Proposition

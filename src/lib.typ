@@ -62,10 +62,7 @@
       ) {
         none
       } else if (
-        document-state.get() == "FRONTMATTER"
-          or document-state.get() == "ACKNOWLEDGEMENTS"
-          or document-state.get() == "BACKMATTER"
-          or document-state.get() == "APPENDIX"
+        document-state.get() == "FRONTMATTER" or document-state.get() == "BACKMATTER"
       ) {
         if (calc.even(here().page())) {
           counter(page).display()
@@ -76,15 +73,20 @@
         }
       } else if (
         document-state.get() == "MAINMATTER"
+          or document-state.get() == "APPENDIX"
+          or document-state.get() == "ACKNOWLEDGEMENTS"
       ) {
         let isThereH1 = query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page())
         let before = query(selector(heading.where(level: 1)).before(here()))
 
         let output = if not (isThereH1.len() != 0) {
           set text(weight: "bold")
+          let heading-num = if (heading.numbering != none) {
+            str(counter(heading).display()).split(".").at(0) + "| "
+          }
           text(
             fill: if (colored-heading) { bluepoli },
-            counter(heading.where(level: 1)).display() + "| ",
+            heading-num,
           )
           before.last().body
         }
@@ -106,48 +108,76 @@
   // FIGURE
 
   // Didascalia delle figure
-  let figure_number = counter("figure_counter")
-  figure_number.step()
-  show figure.caption: it => context {
-    let heading_num = counter(heading).get().first()
-    figure_number.step()
-    text(
-      weight: "bold",
-      fill: if (colored-heading) { bluepoli },
-      {
-        it.supplement
-        if it.numbering != none {
-          [ ]
-          str(heading_num)
-          [.]
-          // it.counter.display(it.numbering)
-          figure_number.display()
-        }
-      },
-    )
-    [: ]
-    it.body
-  }
+  // let figure_number = counter("figure_counter")
+  // figure_number.step()
+  // show figure.caption: it => context {
+  //   let heading_num = counter(heading).get().first()
+  //   figure_number.step()
+  //   text(
+  //     weight: "bold",
+  //     fill: if (colored-heading) { bluepoli },
+  //     {
+  //       it.supplement
+  //       if it.numbering != none {
+  //         [ ]
+  //         str(heading_num)
+  //         [.]
+  //         // it.counter.display(it.numbering)
+  //         figure_number.display()
+  //       }
+  //     },
+  //   )
+  //   [: ]
+  //   it.body
+  // }
 
   // Theorems.
-  let theorem_number = counter("theorem_counter")
-  show figure.where(kind: "theorem"): it => block(
-    above: 11.5pt,
-    below: 11.5pt,
-    {
-      strong({
-        it.supplement
-        if it.numbering != none {
-          [ ]
-          counter(heading).display()
-          [.]
-          it.counter.display(it.numbering)
-        }
-      })
-      [ --]
-      emph(it.body)
-    },
-  )
+  show figure.where(kind: "theorem"): it => {
+    strong({
+      it.supplement
+      if it.numbering != none {
+        [ ]
+        str(counter(heading.where(level: 1)).at(it.location()).at(0))
+        [.]
+        str(counter(figure.where(kind: "theorem")).at(it.location()).at(0))
+      }
+      [. ]
+    })
+    emph(it.body)
+  }
+
+  // Propositions
+  show figure.where(kind: "proposition"): it => {
+    strong({
+      it.supplement
+      if it.numbering != none {
+        [ ]
+        str(counter(heading.where(level: 1)).at(it.location()).at(0))
+        [.]
+        str(counter(figure.where(kind: "proposition")).at(it.location()).at(0))
+      }
+      [. ]
+    })
+    emph(it.body)
+  }
+  // show figure.where(kind: "theorem"): it => block(
+  //   above: 11.5pt,
+  //   below: 11.5pt,
+  //   {
+  //     strong({
+  //       it.supplement
+  //       if it.numbering != none {
+  //         [ ]
+  //         str(counter(heading.where(level: 1)).at(it.location()).at(0))
+  //         [.]
+  //         str(counter(figure.where(kind: "theorem")).at(it.location()).at(0))
+  //       }
+  //       [. ]
+  //     })
+
+  //     emph(it.body)
+  //   },
+  // )
 
   // --------------------- [ TITOLAZIONE ] ---------------------
   // Logo
@@ -231,7 +261,7 @@
     // v(120pt)
     v(4cm)
     let heading-num = counter(selector(heading)).display()
-    if (it.numbering != none and document-state.get() == "MAINMATTER") {
+    if (it.numbering != none and (document-state.get() == "MAINMATTER" or document-state.get() == "APPENDIX")) {
       text(
         size: sizes.Huge,
         weight: "bold",
@@ -248,8 +278,8 @@
     v(10pt)
 
     // reset contatori
-    // counter(figure.where(kind: "image")).update(0)
-    figure_number.update(0)
+    counter(figure.where(kind: image)).update(0)
+    // figure_number.update(0)
     counter(figure.where(kind: "table")).update(0)
     counter(figure.where(kind: "theorem")).update(0)
   }
@@ -274,13 +304,20 @@
     )
   }
 
-  show outline.entry: it => {
+  show outline.entry: it => context {
     v(1em)
     if it.level > 1 {
       v(1em, weak: true)
       let spacing = it.level - 1
       h(2em) * spacing
-      link(it.element.location(), it)
+      // link(it.element.location(), it)
+      link(
+        it.element.location(),
+        it.indented(
+          it.prefix(),
+          it.element.body + box(width: 1fr, repeat([\u{0009} . \u{0009} \u{0009}])) + it.page(),
+        ),
+      )
     } else if (
       it.element.func() == figure and it.element.at("kind") == "blank_toc"
     ) {
@@ -290,8 +327,34 @@
     }
   }
 
-  show figure.where(kind: "lists").or(figure.where(kind: "blank_toc")): it => {
-    align(start, it.body)
+  // NUMERO -> Body ... pagenum
+
+  // (
+  //   body: image(source: "../../src/img/logo_ingegneria.svg"),
+  //   placement: none,
+  //   scope: "column",
+  //   caption: caption(
+  //     separator: [: ],
+  //     body: [That will appear in the List of Figures.],
+  //     kind: image,
+  //     supplement: [Figure],
+  //     numbering: "1",
+  //     counter: counter(figure.where(kind: image)),
+  //   ),
+  //   kind: image,
+  //   supplement: [Figure],
+  //   numbering: "1",
+  //   gap: 0.65em,
+  //   outlined: true,
+  //   counter: counter(figure.where(kind: image)),
+  // )
+
+  show figure
+    .where(kind: "lists")
+    .or(figure.where(kind: "blank_toc"))
+    .or(figure.where(kind: "theorem"))
+    .or(figure.where(kind: "proposition")): it => {
+    align(start, it)
   }
 
   show outline: set heading(bookmarked: true)
@@ -394,6 +457,24 @@
 
 // Table of contents
 #let list_of_figures = context {
+  show outline.entry: it => {
+    let count = (
+      str(counter(heading.where(level: 1)).at(it.element.location()).at(0))
+        + "."
+        + str(counter(figure.where(kind: image)).at(it.element.location()).at(0))
+    )
+    link(
+      it.element.location(),
+      {
+        count
+        h(1em)
+        it.element.at("caption").body
+        box(width: 1fr, repeat([. \u{0009} \u{0009}])) // \u{0009} = Tab
+        str(counter(page).at(it.element.location()).at(0))
+      },
+    )
+    linebreak()
+  }
   outline(
     title: lists(localization.at(text.lang).list_of_figures),
     target: figure.where(kind: image),
@@ -401,6 +482,24 @@
 }
 
 #let list_of_tables = context {
+  show outline.entry: it => {
+    let count = (
+      str(counter(heading.where(level: 1)).at(it.element.location()).at(0))
+        + "."
+        + str(counter(figure.where(kind: table)).at(it.element.location()).at(0))
+    )
+    link(
+      it.element.location(),
+      {
+        count
+        h(1em)
+        it.element.at("caption").body
+        box(width: 1fr, repeat([. \u{0009} \u{0009}])) // \u{0009} = Tab
+        str(counter(page).at(it.element.location()).at(0))
+      },
+    )
+    linebreak()
+  }
   outline(
     title: lists(localization.at(text.lang).list_of_tables),
     target: figure.where(kind: table),
@@ -437,19 +536,24 @@
   }
 }
 
-// =========================================================
-// The ASM template also provides a theorem function.
 #let theorem(body, numbered: true) = figure(
   body,
   kind: "theorem",
-  supplement: localization.at(text.lang).theorem,
+  supplement: context localization.at(text.lang).theorem,
+  numbering: if numbered { "1" },
+)
+
+#let proposition(body, numbered: true) = figure(
+  body,
+  kind: "proposition",
+  supplement: context localization.at(text.lang).proposition,
   numbering: if numbered { "1" },
 )
 
 // And a function for a proof.
 #let proof(body) = block(
   spacing: 11.5pt,
-  {
+  context {
     emph(localization.at(text.lang).proof + ".")
     [ ] + body
     h(1fr)
