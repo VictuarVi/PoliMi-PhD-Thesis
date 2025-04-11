@@ -29,13 +29,6 @@
 #include "sections/chapter_1.typ"
 #include "sections/chapter_2.typ"
 
-#show: backmatter.with()
-
-#bibliography(
-  "../template/Thesis_bibliography.bib",
-  full: true,
-)
-
 #show: appendix.with()
 
 #include "sections/appendix_1.typ"
@@ -44,3 +37,10 @@
 #show: acknowledgements.with()
 
 #include "sections/acknowledgements.typ"
+
+#show: backmatter.with()
+
+#bibliography(
+  "../template/Thesis_bibliography.bib",
+  full: true,
+)
