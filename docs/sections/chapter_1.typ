@@ -132,7 +132,7 @@ And to reference it just type @maxwell-equation.
   <b>,
   columns: (1fr, 1fr),
   align: horizon,
-  caption: [A figure composed of two sub figures.],
+  caption: [A figure composed of two sub figures, similar to ```latex \subfloat```.],
   label: <full>,
 )
 
@@ -187,7 +187,7 @@ The default table has been implemented:
     [row 2], $alpha$, $beta$, $gamma$,
     [row 3], [alpha], [beta], [gamma],
   ),
-  caption: [Caption of the Table ot appear in the List of Tables],
+  caption: [Caption of the Table to appear in the List of Tables],
 )
 
 As you can see, it could be useful to implement a default style for every table.

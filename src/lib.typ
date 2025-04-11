@@ -296,8 +296,9 @@
 
     // reset contatori
     counter(figure.where(kind: image)).update(0)
-    counter(figure.where(kind: "table")).update(0)
+    counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: "theorem")).update(0)
+    counter(figure.where(kind: "proposition")).update(0)
   }
 
   show heading: it => context {
