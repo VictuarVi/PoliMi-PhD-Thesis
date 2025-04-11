@@ -22,7 +22,7 @@
 
 #show: mainmatter.with()
 
-#heading("Introduction", level: 1)
+#heading("Introduction", level: 1, numbering: none)
 
 #include "sections/chapter_1.typ"
 #include "sections/chapter_2.typ"
