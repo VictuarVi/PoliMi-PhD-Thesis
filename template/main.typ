@@ -15,9 +15,20 @@
 #toc
 #list_of_figures
 #list_of_tables
-#nomenclature // glossary package
+#let nomenclature_ = (
+  "Polimi": "Politecnico di Milano",
+  "CdL": "Corso di Laurea",
+  "CCS": "Consigli di Corsi di Studio",
+  "CFU": "Crediti Formativi Universitari"
+)
+#nomenclature(
+  nomenclature_,
+  indented: false
+)
 
 #show: mainmatter.with()
+
+#heading("Introduction", numbering: none)
 
 = First chapter
 

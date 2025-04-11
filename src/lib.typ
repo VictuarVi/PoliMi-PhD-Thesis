@@ -169,7 +169,7 @@
   text(
     size: sizes.huge,
     weight: 700,
-    fill: if (colored-heading) { bluepoli },
+    fill: if (colored-heading) { bluepoli } else { black },
     title,
   )
   // v(1.2em, weak: true)
@@ -222,7 +222,6 @@
     // checks if the page is empty: the cursor is at the same length from the top as the top margin
     if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
       set page(header: { })
-      phantom-content
     } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) { } else if (
       calc.odd(here().page())
     ) {
@@ -232,18 +231,18 @@
     // v(120pt)
     v(4cm)
     let heading-num = counter(selector(heading)).display()
-    if (document-state.get() == "MAINMATTER") {
+    if (it.numbering != none and document-state.get() == "MAINMATTER") {
       text(
         size: sizes.Huge,
         weight: "bold",
-        fill: if (colored-heading) { bluepoli },
+        fill: if (colored-heading) { bluepoli } else { black },
         heading-num + "| ",
       )
     }
     text(
       size: sizes.Large,
       weight: "bold",
-      fill: if (colored-heading) { bluepoli },
+      fill: if (colored-heading) { bluepoli } else { black },
       it.body,
     )
     v(10pt)
@@ -276,23 +275,37 @@
   }
 
   show outline.entry: it => {
+    v(1em)
     if it.level > 1 {
       v(1em, weak: true)
       let spacing = it.level - 1
       h(2em) * spacing
       link(it.element.location(), it)
+    } else if (
+      it.element.func() == figure and it.element.at("kind") == "blank_toc"
+    ) {
+      v(1em) // \addtocontents{toc}{\vspace{2em}}
     } else {
-      link(it.element.location(), it)
+      it
     }
   }
 
-  show figure.where(kind: "lists"): it => {
+  show figure.where(kind: "lists").or(figure.where(kind: "blank_toc")): it => {
     align(start, it.body)
   }
 
-  // pagebreak()
+  show outline: set heading(bookmarked: true)
+
   body
 }
+
+#let blank_toc = figure.with(
+  kind: "blank_toc",
+  numbering: none,
+  supplement: none,
+  outlined: true,
+  caption: [],
+)
 
 // Document sections
 #let frontmatter(body) = {
@@ -305,12 +318,21 @@
 }
 
 #let acknowledgements(body) = {
+  {
+    show heading: none
+    blank_toc("")
+  }
   document-state.update("ACKNOWLEDGEMENTS")
+  set heading(numbering: none)
 
   body
 }
 
 #let mainmatter(body) = {
+  {
+    show heading: none
+    blank_toc("")
+  }
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   set page(numbering: "1")
@@ -320,6 +342,10 @@
 }
 
 #let appendix(body) = context {
+  {
+    show heading: none
+    blank_toc("")
+  }
   document-state.update("APPENDIX")
   counter(heading).update(0)
   set heading(numbering: "A.1")
@@ -328,6 +354,10 @@
 }
 
 #let backmatter(body) = context {
+  {
+    show heading: none
+    blank_toc("")
+  }
   document-state.update("BACKMATTER")
   set heading(numbering: none)
 
@@ -342,6 +372,7 @@
       kind: "lists",
       outlined: true,
     )
+    .or(figure.where(kind: "blank_toc", outlined: true))
     .or(heading.where(outlined: true))
 )
 
@@ -350,7 +381,7 @@
   numbering: none,
   supplement: none,
   outlined: true,
-  caption: []
+  caption: [],
 )
 
 #let toc = context {
@@ -376,8 +407,35 @@
   )
 }
 
-// TODO
-#let nomenclature = { }
+// Nomenclature
+#let nomenclature(dict, indented: true) = context {
+  outline(
+    title: lists(localization.at(text.lang).nomenclature),
+    target: figure.where(kind: table),
+  )
+  if (indented) {
+    show grid.cell: it => {
+      if (it.x == 0) {
+        text(style: "oblique", upper(it))
+      } else {
+        it
+      }
+    }
+    grid(
+      columns: 2,
+      column-gutter: 1em,
+      row-gutter: 1em,
+      ..dict.pairs().flatten()
+    )
+  } else {
+    for (key, value) in dict {
+      text(style: "oblique", upper(key))
+      h(1.5em)
+      value
+      parbreak()
+    }
+  }
+}
 
 // =========================================================
 // The ASM template also provides a theorem function.
