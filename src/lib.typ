@@ -27,8 +27,8 @@
   cycle: none,
   chair: none,
   language: "en",
-  colored-heading: true,
-  main_logo: "img/logo_ingegneria.svg",
+  colored-headings: true,
+  main-logo: "img/logo_ingegneria.svg",
   body,
 ) = {
   set document(
@@ -87,7 +87,7 @@
             str(counter(heading).display()).split(".").at(0) + "| "
           }
           text(
-            fill: if (colored-heading) { bluepoli } else { black },
+            fill: if (colored-headings) { bluepoli } else { black },
             heading-num,
           )
           before.last().body
@@ -117,7 +117,7 @@
       let heading_num = counter(heading).get().first()
       text(
         weight: "bold",
-        fill: if (colored-heading) { bluepoli } else { black },
+        fill: if (colored-headings) { bluepoli } else { black },
         {
           it.supplement
           if it.numbering != none {
@@ -199,7 +199,7 @@
   place(
     dx: 1.5%,
     dy: -1%,
-    image(main_logo, width: 73%),
+    image(main-logo, width: 73%),
   )
 
   v(4.20fr)
@@ -208,7 +208,7 @@
   text(
     size: sizes.huge,
     weight: 700,
-    fill: if (colored-heading) { bluepoli } else { black },
+    fill: if (colored-headings) { bluepoli } else { black },
     title,
   )
   // v(1.2em, weak: true)
@@ -251,7 +251,7 @@
   // Document
 
   show heading: it => {
-    if (colored-heading) {
+    if (colored-headings) {
       text(fill: bluepoli, it)
     }
   }
@@ -283,7 +283,7 @@
     v(4cm)
     set text(
       weight: "bold",
-      fill: if (colored-heading) { bluepoli } else { black },
+      fill: if (colored-headings) { bluepoli } else { black },
     )
 
     let heading-num = counter(selector(heading)).display()
@@ -391,7 +391,7 @@
   show outline: set heading(bookmarked: true)
 
   show ref: it => text(
-    fill: if (colored-heading) { bluepoli } else { black },
+    fill: if (colored-headings) { bluepoli } else { black },
     it,
   )
 
