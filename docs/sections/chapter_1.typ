@@ -311,16 +311,16 @@ See @first-algorithm.
 
 == Theorems, propositions and lists
 
-#import "@local/polimi-phd-thesis:0.1.1": *
+#import "@preview/polimi-phd-thesis:0.1.1": *
 
 I have implemented my own version of the classic LaTeX environments:
 
 #theorem[
-  Write here you theorem.
+  Write here your theorem.
 ]
 
 #proposition[
-  Write here you theorem.
+  Write here your theorem.
 ]
 
 #proof[
