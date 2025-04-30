@@ -1,6 +1,10 @@
-#import "@local/polimi-phd-thesis:1.0.0": *
+#import "@local/polimi-phd-thesis:0.1.1": *
 
-#show: polimi_thesis.with(language: "en")
+#show: polimi_thesis.with(
+  title: [`polimi-phd-thesis` manual],
+  author: "Vittorio Robecchi",
+  language: "en"
+)
 
 #show: frontmatter.with()
 

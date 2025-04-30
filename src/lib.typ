@@ -20,9 +20,9 @@
 #let polimi_thesis(
   title: "Thesis Title",
   author: "Name Surname",
-  advisor: "Advisor",
-  coadvisor: "Coadvisor",
-  tutor: "Tutor",
+  advisor: "",
+  coadvisor: "",
+  tutor: "",
   phdcycle: "", // {Year ... - ... Cycle}
   cycle: none,
   chair: none,
@@ -42,6 +42,7 @@
     font: "New Computer Modern",
   )
   show math.equation: set text(font: "New Computer Modern Math")
+  
   set par(
     justify: true,
     linebreaks: "optimized",
@@ -227,13 +228,25 @@
     phdcycle = str(datetime.today().year()) + " - " + str(datetime.today().year() + 1)
   }
 
-  align(start)[
-    #set text(size: sizes.large)
-    Advisor: Prof. #advisor \
-    Coadvisor: Prof. #coadvisor \
-    Tutor: Prof. #tutor \
-    Year #phdcycle Cycle
-  ]
+  let isPresent(before, string, after: none) = {
+    if (string != none and string != "") {
+      return before + string + after + linebreak()
+    } else {
+      return none
+    }
+  }
+
+  align(
+    start,
+    {
+      set text(size: sizes.large)
+      isPresent("Advisor: Prof. ", advisor)
+      isPresent("Coadvisor: Prof. ", coadvisor)
+      isPresent("Tutor: Prof. ", tutor)
+      isPresent("Advisor: Prof. ", advisor)
+      isPresent("Year ", phdcycle, after: " Cycle")
+    }
+  )
 
   // Document
 

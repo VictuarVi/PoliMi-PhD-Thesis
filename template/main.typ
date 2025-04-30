@@ -1,4 +1,4 @@
-#import "@local/polimi-phd-thesis:1.0.0": *
+#import "@local/polimi-phd-thesis:0.1.1": *
 
 #show: polimi_thesis.with()
 

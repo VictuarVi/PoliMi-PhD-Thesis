@@ -1,10 +1,14 @@
 [package]
 name = "polimi-phd-thesis"
-version = "1.0.0"
+version = "0.1.1"
 entrypoint = "src/lib.typ"
-authors = ["Typst GmbH <https://typst.app>"]
-license = "MIT-0"
-description = "An IEEE-style paper template to publish at conferences and journals for Electrical Engineering, Computer Science, and Computer Engineering"
+authors = ["Vittorio Robecchi <https://github.com/VictuarVi>"]
+license = "GPL 3.0"
+description = "An unofficial thesis template for the Polytechnic University of Milan"
+keywords = ["thesis", "polimi", "politecnico di milano"]
+categories = ["thesis", "paper"]
+disciples = ["engineering", "mathematics", "physics"]
+compiler = "0.13.0
 
 [template]
 path = "template"

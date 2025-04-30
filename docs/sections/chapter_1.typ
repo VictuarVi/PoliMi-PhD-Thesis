@@ -32,6 +32,22 @@ in typst, there are just headings @typst-headings (similarly to Markdown) -- so 
 === Subsection      // Heading level 3
 ==== Subsubsection  // Heading level 4
 ```
+// #grid(
+//   columns: (auto, 1cm, auto),
+//   align: (x,y) => {
+//     if y > 0 {
+//       left + horizon
+//     } else {
+//       center
+//     }
+//   },
+//   gutter: 0.5cm,
+//   grid.header(LaTeX, "", typst),
+//   raw("\chapter{}", lang: "tex"), $|->$, raw("= Chapter", lang: "typc"),
+//   raw("\section{}", lang: "tex"), $|->$, raw("== Section", lang: "typc"),
+//   raw("\subsection{}", lang: "tex"), $|->$, raw("=== Subsection", lang: "typc"),
+//   raw("\subsubsection{}", lang: "tex"), $|->$, raw("==== Subsubsection", lang: "typc"),
+// )
 
 If you need to turn off the numbering you will call the ```typst heading``` function:
 ```typst
@@ -75,8 +91,28 @@ For a more complex equation the LaTeX code is:
 \end{subequations}
 ```
 while the typst version:
-$
-  lr(\{
+#grid(
+  columns: (65%, 35%),
+  align: left + horizon,
+  ```typm
+    $
+    lr(\{
+      #block[$
+        Delta dot bold(D) &= rho\, \
+        Delta times bold(E)
+          + display((partial bold(B))/(partial t))
+          &= 0\, \
+        Delta dot bold(B) &= 0\, \
+        Delta times bold(H)
+          - display((partial bold(D))/(partial t))
+          &= bold(J).
+      $]
+    )
+  $
+  ```
+  ,
+  $
+    lr(\{
     #block[$
       Delta dot bold(D) &= rho\, \
       Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
@@ -84,7 +120,8 @@ $
       Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
     $]
   )
-$
+  $
+)
 
 This is quite an _advanced way_ to get things done. To put it simply, this is the typst equivalent of LaTeX's ```tex \left{ equation \right.``` --- though if you don't understand how/why it works, that's ok -- I'll break it down, but first have a read at the `lr()` function documentation @typst-lr.
 
@@ -96,9 +133,19 @@ This is quite an _advanced way_ to get things done. To put it simply, this is th
 
 - Finally, I'll wrap both the parenthesis AND the block in the same `lr()` call, effectively sizing everything
 
-I highly encourage you to mess with the above code to see how it changes. It will dramatically help you to understand thow typst works.
+I highly encourage you to mess with the above code to see how it changes. It will dramatically help you to understand how typst works.
 
 The "normal" representation would have been just to use the ```typst cases()``` function:
+```typm
+$
+  cases(
+    Delta dot bold(D) &= rho\, \
+    Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
+    Delta dot bold(B) &= 0\, \
+    Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
+  )
+$
+```
 $
   cases(
     Delta dot bold(D) &= rho\, \
@@ -157,7 +204,7 @@ However, since typst does not _natively_ support subfigures, one could make use 
   <b>,
   columns: (1fr, 1fr),
   align: horizon,
-  caption: [A figure composed of two sub figures, similar to ```latex \subfloat```.],
+  caption: [A figure composed of two sub figures, similar to ```latex \subfloat{}```.],
   label: <full>,
 )
 
@@ -264,7 +311,7 @@ See @first-algorithm.
 
 == Theorems, propositions and lists
 
-#import "@local/polimi-phd-thesis:1.0.0": *
+#import "@local/polimi-phd-thesis:0.1.1": *
 
 I have implemented my own version of the classic LaTeX environments:
 
