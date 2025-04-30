@@ -5,6 +5,10 @@ it:
   toc: Indice
   list_of_figures: Lista delle Figure
   list_of_tables: Lista delle Tabelle
+  nomenclature: Nomenclatura
+  theorem: Teorema
+  proof: Dimostrazione
+  proposition: Proposizione
 en:
   advisor: Advisor
   coadvisor: Coadvisor
@@ -12,5 +16,7 @@ en:
   toc: Contents
   list_of_figures: List of Figures
   list_of_tables: List of Tables
-  theorem: "Theorem"
-  proof: "Proof"
+  nomenclature: Nomenclature
+  theorem: Theorem
+  proof: Proof
+  proposition: Proposition

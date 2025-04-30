@@ -1,4 +1,4 @@
-# PoliMi 3i Thesis
+# polimi-phd-thesis 🎓
 
 This template is the result of two templates:
 
@@ -7,8 +7,16 @@ This template is the result of two templates:
 
 They are rather similar. The main difference is the PoliBlu colour spread across the document.
 
-# TODO
+## Preview ✨
 
-- [x] Fix heading 1 not linking to the correct location
-- [x] Thorough testing of the pagebreak function
-- [x] Add to table of contents table of contents, list of figures and list of tables
+<p align="center">
+  <img alt="Frontspiece" src="thumbnail.png" width="45%">
+</p>
+
+## Usage 🖋
+
+Compile with:
+
+```shell
+typst c main.typ --pdf-standard a-3b
+```
