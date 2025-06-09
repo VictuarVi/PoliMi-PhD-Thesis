@@ -1,8 +1,8 @@
-#import "@preview/polimi-phd-thesis:0.1.1": *
+#import "@preview/elegant-polimi-thesis:0.1.0": *
 
-#show: polimi_thesis.with()
+#show: polimi-thesis
 
-#show: frontmatter.with()
+#show: frontmatter
 
 = Abstract
 
@@ -13,17 +13,18 @@
 #lorem(100)
 
 #toc
-#list_of_figures
-#list_of_tables
+#list-of-figures
+#list-of-tables
+
 #let nomenclature_ = (
   "Polimi": "Politecnico di Milano",
   "CdL": "Corso di Laurea",
   "CCS": "Consigli di Corsi di Studio",
-  "CFU": "Crediti Formativi Universitari"
+  "CFU": "Crediti Formativi Universitari",
 )
 #nomenclature(
   nomenclature_,
-  indented: false
+  indented: false,
 )
 
 #show: mainmatter.with()
@@ -36,10 +37,7 @@
 
 #show: backmatter.with()
 
-#bibliography(
-  "Thesis_bibliography.bib",
-  full: true,
-)
+// bibliography
 
 #show: appendix.with()
 

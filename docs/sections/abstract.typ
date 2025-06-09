@@ -1,11 +1,7 @@
 = Abstract
 
-#for i in range(0, 2) {
-  lorem(100) + parbreak()
-}
+Abstract in English.
 
 = Sommario
 
-#for i in range(0, 2) {
-  lorem(100) + parbreak()
-}
+Abstract in Italian.
