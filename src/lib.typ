@@ -42,7 +42,7 @@
     font: "New Computer Modern",
   )
   show math.equation: set text(font: "New Computer Modern Math")
-  
+
   set par(
     justify: true,
     linebreaks: "optimized",
@@ -188,13 +188,30 @@
   //   },
   // )
 
+  // raggiera transparentized
+  let raggiera-image(width) = (
+    image(
+      "img/raggiera.svg",
+      width: width,
+    )
+      + place(
+        top,
+        rect(
+          width: 100%,
+          height: 100%,
+          fill: white.transparentize(22%), // similar to the correct #DFE6EA
+        ),
+      )
+  )
+
+
   // --------------------- [ TITOLAZIONE ] ---------------------
   // Logo
   v(0.6fr)
   place(
     dx: 44%,
     dy: -28%,
-    image("img/raggiera_chiara.svg", width: 90%),
+    raggiera-image(90%),
   )
   place(
     dx: 1.5%,
@@ -245,7 +262,7 @@
       isPresent("Tutor: Prof. ", tutor)
       isPresent("Advisor: Prof. ", advisor)
       isPresent("Year ", phdcycle, after: " Cycle")
-    }
+    },
   )
 
   // Document
@@ -262,10 +279,7 @@
     place(
       dx: -7cm,
       dy: -16.25cm,
-      image(
-        "img/raggiera_chiara.svg",
-        width: 0.85 * 24cm,
-      ),
+      raggiera-image(0.85 * 24cm),
     )
   }
 

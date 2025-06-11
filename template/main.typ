@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.0": *
+#import "@local/elegant-polimi-thesis:0.1.0": *
 
 #show: polimi-thesis
 
