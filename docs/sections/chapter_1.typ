@@ -1,6 +1,8 @@
+#import "@preview/elegant-polimi-thesis:0.1.0": *
+
 = Chapter one
 
-#import "@preview/metalogo:1.2.0": TeX, LaTeX
+#import "@preview/metalogo:1.2.0": LaTeX, TeX
 
 #show "LaTeX": LaTeX
 
@@ -109,18 +111,16 @@ while the typst version:
       $]
     )
   $
-  ```
-  ,
+  ```,
   $
-    lr(\{
-    #block[$
-      Delta dot bold(D) &= rho\, \
-      Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
-      Delta dot bold(B) &= 0\, \
-      Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
-    $]
-  )
-  $
+    lr(
+      \{
+      #block[$                                            Delta dot bold(D) & = rho\,    \
+        Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
+                                                   Delta dot bold(B) & = 0\,      \
+        Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
+    )
+  $,
 )
 
 This is quite an _advanced way_ to get things done. To put it simply, this is the typst equivalent of LaTeX's ```tex \left{ equation \right.``` --- though if you don't understand how/why it works, that's ok -- I'll break it down, but first have a read at the `lr()` function documentation @typst-lr.
@@ -148,10 +148,10 @@ $
 ```
 $
   cases(
-    Delta dot bold(D) &= rho\, \
-    Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
-    Delta dot bold(B) &= 0\, \
-    Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
+                                               Delta dot bold(D) & = rho\,    \
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
+                                               Delta dot bold(B) & = 0\,      \
+    Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J).
   )
 $
 
@@ -160,14 +160,13 @@ By default, the equations are *not* numbered -- however if you need to:
   numbering: "(1.1)",
   block: true,
   $
-    lr(\{
-    #block[$
-      Delta dot bold(D) &= rho\, \
-      Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
-      Delta dot bold(B) &= 0\, \
-      Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
-    $]
-  )
+    lr(
+      \{
+      #block[$                                            Delta dot bold(D) & = rho\,    \
+        Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
+                                                   Delta dot bold(B) & = 0\,      \
+        Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
+    )
   $,
 )<maxwell-equation>
 
@@ -178,30 +177,23 @@ And to reference it just type @maxwell-equation.
 === Figures
 
 Via the ```typst figure``` environment @typst-figure, as you would done in LaTeX:
-#figure(
-  image("../../src/img/logo_ingegneria.svg"),
-  caption: [Caption in the List of Figures.],
-)
+#figure(image("../../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
 
 However, since typst does not _natively_ support subfigures, one could make use of the `subpar` package @typst-subpar:
 
 #import "@preview/subpar:0.2.2": *
 
 #grid(
-  figure(
-    image("../../src/img/logo_ingegneria.svg", width: 50%),
-    caption: [
-      Left Polimi logo.
-    ],
-  ),
+  figure(image("../../src/img/logo_ingegneria.svg", width: 50%), caption: [
+    Left Polimi logo.
+  ]),
   <a>,
-  figure(
-    image("../../src/img/logo_ingegneria.svg", width: 50%),
-    caption: [
-      Right Polimi logo.
-    ],
-  ),
+
+  figure(image("../../src/img/logo_ingegneria.svg", width: 50%), caption: [
+    Right Polimi logo.
+  ]),
   <b>,
+
   columns: (1fr, 1fr),
   align: horizon,
   caption: [A figure composed of two sub figures, similar to ```latex \subfloat{}```.],
@@ -264,7 +256,7 @@ As you can see, it could be useful to implement a default style for every table 
 
 === Algorithms
 
-For algorithms, there are a lot of packages on typst universe. The following are my recommendations.
+For algorithms, there are a lot of packages on typst universe @typst-universe. The following are my recommendations.
 
 - `lovelace` @typst-lovelace
 #import "@preview/lovelace:0.3.0": *
@@ -311,23 +303,19 @@ See @first-algorithm.
 
 == Theorems, propositions and lists
 
-#import "@preview/elegant-polimi-thesis:0.1.0": *
-
-I have implemented my own version of the classic LaTeX environments:
-
 #theorem[
   Write here your theorem.
 ]
 
 #proposition[
-  Write here your theorem.
+  Write here your proposition.
 ]
 
 #proof[
   If useful you can report here the proof.
 ]
 
-However the `ctheorems` package @typst-ctheorems probably handles them in a better way.
+Powered by @typst-great-theorems.
 
 Normal list:
 - First item
@@ -342,10 +330,7 @@ Numbered list:
 You have to be sure to respect the rules on Copyright and avoid an involuntary plagia-
 rism. It is allowed to take other persons’ ideas only if the author and his original work are clearly mentioned. As stated in the Code of Ethics and Conduct, Politecnico di Milano promotes the integrity of research, condemns manipulation and the infringement of intellectual property, and gives opportunity to all those who carry out research activities to have an adequate training on ethical conduct and integrity while doing research. To be sure to respect the copyright rules, read the guides on Copyright legislation and citation styles available at:
 
-#align(
-  center,
-  link("https://www.biblio.polimi.it/en/tools/courses-and-tutorials"),
-)
+#align(center, link("https://www.biblio.polimi.it/en/tools/courses-and-tutorials"))
 
 You can also attend the courses which are periodically organized on "Bibliographic cita-
 tions and bibliography management".
@@ -356,9 +341,6 @@ Your thesis must contain a suitable Bibliography which lists all the sources con
 
 To cite in your manuscript, use the `cite` @typst-cite command as follows:
 
-#align(
-  center,
-  emph([Here is how you cite bibliography entries: @knuth74 or chained @knuth92@lamport94.]),
-)
+#align(center, emph([Here is how you cite bibliography entries: @knuth74 or chained @knuth92@lamport94.]))
 
 As it would have been in LaTeX, the bibliography @typst-bibliography is automatically generated.

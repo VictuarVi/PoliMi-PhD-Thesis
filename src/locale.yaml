@@ -9,6 +9,8 @@ it:
   theorem: Teorema
   proof: Dimostrazione
   proposition: Proposizione
+  lemma: Lemma
+  remark: Osservazione
 en:
   advisor: Advisor
   coadvisor: Coadvisor
@@ -20,3 +22,5 @@ en:
   theorem: Theorem
   proof: Proof
   proposition: Proposition
+  lemma: Lemma
+  remark: Remark

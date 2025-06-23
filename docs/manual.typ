@@ -1,10 +1,12 @@
-#import "@local/elegant-polimi-thesis:0.1.0": *
+#import "@preview/elegant-polimi-thesis:0.1.0": *
 
 #show: polimi-thesis.with(
   title: [`elegant-polimi-thesis` manual],
   author: "Vittorio Robecchi",
   language: "en",
 )
+
+#show: theorems-init
 
 #show: frontmatter
 

@@ -8,6 +8,7 @@ destinations=("$HOME/.cache/typst/packages/preview/$pkg_name/" "$HOME/.local/sha
 
 for destination in ${destinations[@]}
 do
+    rm -r $destination
     mkdir -p $destination
     ln -s $source $destination/$version
 done

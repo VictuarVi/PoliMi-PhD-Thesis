@@ -1,3 +1,4 @@
+// LaTeX sizes to match original template
 #let sizes = (
   tiny: 0.5em,
   scriptsize: 0.7em,
@@ -11,12 +12,29 @@
   Huge: 2.488em,
 )
 
+// the current state (title page, front-,main-,backmatter...)
 #let document-state = state("init", "TITLE_PAGE")
 
 #let localization = yaml("locale.yaml")
 
+// custom polimi colour
 #let bluepoli = rgb("#5f859f")
 
+/// Main styling function of the template.
+///
+/// - title (str): Title of the thesis
+/// - author (str): Author of the name (Name Surname).
+/// - advisor (str): Advisor of the thesis.
+/// - coadvisor (str): Coadvisor of the thesis.
+/// - tutor (str): Tutor of the thesis.
+/// - phdcycle (str): Academic year (default to current one).
+/// - cycle (str): Cycle of the thesis (not used).
+/// - chair (str): Chair of the thesis (not used).
+/// - language (str): Language of the thesis (default: "en", can be "it").
+/// - colored-headings (bool): Whether to activate the colored headings or not.
+/// - main-logo (path): Path of the main logo of the thesis (default: engineering).
+/// - body (body): body
+/// -> content
 #let polimi-thesis(
   title: "Thesis Title",
   author: "Name Surname",
@@ -104,14 +122,16 @@
         }
       }
     },
-    footer: { },
+    footer: {},
   )
 
   // FIGURE
 
   set figure(gap: 1.5em)
+  show figure: set block(breakable: true)
 
-  // Didascalia delle figure
+  // figures caption
+  // bold[Figure Chapter.Num]: ""
   show figure.caption: it => context {
     if (it.kind != "lists" and it.kind != "blank-toc") {
       let heading_num = counter(heading).get().first()
@@ -139,85 +159,25 @@
     }
   }
 
-  // Theorems.
-  show figure.where(kind: "theorem"): it => {
-    strong({
-      it.supplement
-      if it.numbering != none {
-        [ ]
-        str(counter(heading.where(level: 1)).at(it.location()).at(0))
-        [.]
-        str(counter(figure.where(kind: "theorem")).at(it.location()).at(0))
-      }
-      [. ]
-    })
-    emph(it.body)
-  }
-
-  // Propositions
-  show figure.where(kind: "proposition"): it => {
-    strong({
-      it.supplement
-      if it.numbering != none {
-        [ ]
-        str(counter(heading.where(level: 1)).at(it.location()).at(0))
-        [.]
-        str(counter(figure.where(kind: "proposition")).at(it.location()).at(0))
-      }
-      [. ]
-    })
-    emph(it.body)
-  }
-
-  // show figure.where(kind: "theorem"): it => block(
-  //   above: 11.5pt,
-  //   below: 11.5pt,
-  //   {
-  //     strong({
-  //       it.supplement
-  //       if it.numbering != none {
-  //         [ ]
-  //         str(counter(heading.where(level: 1)).at(it.location()).at(0))
-  //         [.]
-  //         str(counter(figure.where(kind: "theorem")).at(it.location()).at(0))
-  //       }
-  //       [. ]
-  //     })
-
-  //     emph(it.body)
-  //   },
-  // )
-
-  // raggiera transparentized
   let raggiera-image(width) = (
     image(
       "img/raggiera.svg",
       width: width,
     )
-      + place(
-        top,
-        rect(
-          width: 100%,
-          height: 100%,
-          fill: white.transparentize(22%), // similar to the correct #DFE6EA
-        ),
-      )
+      + place(top, rect(
+        width: 100%,
+        height: 100%,
+        fill: white.transparentize(22%), // similar to the correct #DFE6EA
+      ))
   )
 
+  // --------------------- [ TITLE PAGE ] ---------------------
 
-  // --------------------- [ TITOLAZIONE ] ---------------------
   // Logo
   v(0.6fr)
-  place(
-    dx: 44%,
-    dy: -28%,
-    raggiera-image(90%),
-  )
-  place(
-    dx: 1.5%,
-    dy: -1%,
-    image(main-logo, width: 73%),
-  )
+
+  place(dx: 44%, dy: -28%, raggiera-image(90%))
+  place(dx: 1.5%, dy: -1%, image(main-logo, width: 73%))
 
   v(4.20fr)
 
@@ -242,9 +202,10 @@
   v(1fr)
 
   if (phdcycle == "") {
-    phdcycle = str(datetime.today().year()) + " - " + str(datetime.today().year() + 1)
+    phdcycle = str(datetime.today().year() - 1) + " - " + str(datetime.today().year())
   }
 
+  // helper function to detect if a field is presenr or none
   let isPresent(before, string, after: none) = {
     if (string != none and string != "") {
       return before + string + after + linebreak()
@@ -253,17 +214,14 @@
     }
   }
 
-  align(
-    start,
-    {
-      set text(size: sizes.large)
-      isPresent("Advisor: Prof. ", advisor)
-      isPresent("Coadvisor: Prof. ", coadvisor)
-      isPresent("Tutor: Prof. ", tutor)
-      isPresent("Advisor: Prof. ", advisor)
-      isPresent("Year ", phdcycle, after: " Cycle")
-    },
-  )
+  align(start, {
+    set text(size: sizes.large)
+    isPresent("Advisor: Prof. ", advisor)
+    isPresent("Coadvisor: Prof. ", coadvisor)
+    isPresent("Tutor: Prof. ", tutor)
+    isPresent("Advisor: Prof. ", advisor)
+    isPresent("Year ", phdcycle, after: " Cycle")
+  })
 
   // Document
 
@@ -272,33 +230,33 @@
       text(fill: bluepoli, it)
     }
   }
-  // --------------------- [ STILE DEI CAPITOLI ] ---------------------
 
-  let raggera = {
-    v(1fr)
-    place(
-      dx: -7cm,
-      dy: -16.25cm,
-      raggiera-image(0.85 * 24cm),
-    )
-  }
+  // --------------------- [ CHAPTER STYLE ] ---------------------
+
+  // let raggera = {
+  //   v(1fr)
+  //   place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
+  // }
 
   show heading.where(level: 1): it => context {
-    // checks if the page is empty: the cursor is at the same length from the top as the top margin
+    // checks if the page is empty: the cursor is at the same height from the top as the top margin
     if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
-      set page(header: { })
-    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) { } else if (
+      set page(header: {})
+    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {} else if (
       calc.odd(here().page())
     ) {
-      set page(header: { }, background: raggera)
+      set page(
+        header: {},
+        background: {
+          v(1fr)
+          place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
+        },
+      )
       pagebreak(to: "odd")
     }
     // v(120pt)
     v(4cm)
-    set text(
-      weight: "bold",
-      fill: if (colored-headings) { bluepoli } else { black },
-    )
+    set text(weight: "bold", fill: if (colored-headings) { bluepoli } else { black })
 
     let heading-num = counter(selector(heading)).display()
     if (
@@ -321,11 +279,11 @@
     )
     v(10pt)
 
-    // reset contatori
+    // counters reset
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
-    counter(figure.where(kind: "theorem")).update(0)
-    counter(figure.where(kind: "proposition")).update(0)
+    // counter(figure.where(kind: "theorem")).update(1)
+    // counter(figure.where(kind: "proposition")).update(1)
   }
 
   show heading: it => context {
@@ -340,13 +298,11 @@
   }
 
   // ----------- [ TABLE OF CONTENTS ] -----------
-  // I Capitoli sono in grassetto e non hanno le righe
+
+  // chapter are bold and don't have "..."
   show outline.entry.where(level: 1): it => context {
     v(19pt, weak: true)
-    link(
-      it.element.location(),
-      strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())),
-    )
+    link(it.element.location(), strong(it.indented(it.prefix(), it.element.body + h(1fr) + it.page())))
   }
 
   show outline.entry: it => context {
@@ -356,44 +312,22 @@
       let spacing = it.level - 1
       h(2em) * spacing
       // link(it.element.location(), it)
-      link(
-        it.element.location(),
-        it.indented(
-          it.prefix(),
-          it.element.body + box(width: 1fr, repeat([\u{0009} . \u{0009} \u{0009}])) + it.page(),
-        ),
-      )
+      link(it.element.location(), it.indented(
+        it.prefix(),
+        it.element.body + box(width: 1fr, repeat([\u{0009} . \u{0009} \u{0009}])) + it.page(),
+      ))
     } else if (
       it.element.func() == figure and it.element.at("kind") == "blank-toc"
     ) {
-      v(1em) // \addtocontents{toc}{\vspace{2em}}
+      // v(1em) //
+      v(it.element.at("gap")) // \addtocontents{toc}{\vspace{1em}}
+      return
     } else {
       it
     }
   }
 
-  // NUMERO -> Body ... pagenum
-
-  // (
-  //   body: image(source: "../../src/img/logo_ingegneria.svg"),
-  //   placement: none,
-  //   scope: "column",
-  //   caption: caption(
-  //     separator: [: ],
-  //     body: [That will appear in the List of Figures.],
-  //     kind: image,
-  //     supplement: [Figure],
-  //     numbering: "1",
-  //     counter: counter(figure.where(kind: image)),
-  //   ),
-  //   kind: image,
-  //   supplement: [Figure],
-  //   numbering: "1",
-  //   gap: 0.65em,
-  //   outlined: true,
-  //   counter: counter(figure.where(kind: image)),
-  // )
-
+  // custom figure alignment
   show figure
     .where(kind: "lists")
     .or(figure.where(kind: "blank-toc"))
@@ -404,10 +338,10 @@
 
   show outline: set heading(bookmarked: true)
 
-  show ref: it => text(
-    fill: if (colored-headings) { bluepoli } else { black },
-    it,
-  )
+  // show ref: it => text(
+  //   fill: if (colored-headings) { bluepoli } else { black },
+  //   it,
+  // )
 
   set list(indent: 1.2em)
 
@@ -416,15 +350,29 @@
   body
 }
 
-#let blank-toc = figure.with(
-  kind: "blank-toc",
-  numbering: none,
-  supplement: none,
-  outlined: true,
-  caption: [],
-)
+/// Helper function to manually add blank space above an outline entry (similar to LaTeX's `\addtocontents{toc}{\vspace{1em}}`).
+///
+/// - space (length): Vertical space to add before the following outline entry.
+/// -> content
+#let blank-toc(space: 1em) = {
+  let blank-toc-figure = figure.with(
+    kind: "blank-toc",
+    numbering: none,
+    supplement: none,
+    outlined: true,
+    gap: space,
+    caption: [],
+  )
+
+  {
+    show heading: none
+    show figure: none
+    blank-toc-figure("")
+  }
+}
 
 // Document sections
+
 #let frontmatter(body) = {
   document-state.update("FRONTMATTER")
   // counter(page).update(0)
@@ -435,10 +383,7 @@
 }
 
 #let acknowledgements(body) = {
-  {
-    show heading: none
-    blank-toc("")
-  }
+  blank-toc()
   document-state.update("ACKNOWLEDGEMENTS")
   set heading(numbering: none)
 
@@ -446,10 +391,7 @@
 }
 
 #let mainmatter(body) = {
-  {
-    show heading: none
-    blank-toc("")
-  }
+  blank-toc()
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   set page(numbering: "1")
@@ -459,10 +401,7 @@
 }
 
 #let appendix(body) = context {
-  {
-    show heading: none
-    blank-toc("")
-  }
+  blank-toc()
   document-state.update("APPENDIX")
   counter(heading).update(0)
   set heading(numbering: "A.1")
@@ -471,10 +410,7 @@
 }
 
 #let backmatter(body) = context {
-  {
-    show heading: none
-    blank-toc("")
-  }
+  blank-toc()
   document-state.update("BACKMATTER")
   set heading(numbering: none)
 
@@ -493,13 +429,8 @@
     .or(heading.where(outlined: true))
 )
 
-#let lists = figure.with(
-  kind: "lists",
-  numbering: none,
-  supplement: none,
-  outlined: true,
-  caption: [],
-)
+// lists figure to make the list of tables, list of figures to appear in the table of contents
+#let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
 #let toc = context {
   outline(
@@ -509,55 +440,41 @@
   )
 }
 
-// Table of contents
-#let list-of-figures = context {
-  show outline.entry: it => {
-    let count = (
-      str(counter(heading.where(level: 1)).at(it.element.location()).at(0))
-        + "."
-        + str(counter(figure.where(kind: image)).at(it.element.location()).at(0))
-    )
-    link(
-      it.element.location(),
-      {
-        count
-        h(1em)
-        it.element.at("caption").body
-        box(width: 1fr, repeat([. \u{0009} \u{0009}])) // \u{0009} = Tab
-        str(counter(page).at(it.element.location()).at(0))
-      },
-    )
-    linebreak()
-  }
-  outline(
-    title: lists(localization.at(text.lang).list-of-figures),
-    target: figure.where(kind: image),
+/// Internal helper function to create the custom lists of figures and table.
+///
+/// - outline-entry (outline-entry): Outline entry to edit.
+/// - kind (function): The kind of the outline entry element (image or table)
+/// -> content
+#let lists-entries-style(outline-entry, kind) = {
+  let count = (
+    str(counter(heading.where(level: 1)).at(outline-entry.element.location()).at(0))
+      + "."
+      + str(counter(figure.where(kind: kind)).at(outline-entry.element.location()).at(0))
   )
+  link(outline-entry.element.location(), {
+    count
+    h(1em)
+    outline-entry.element.at("caption").body
+    box(width: 1fr, repeat([. \u{0009} \u{0009}])) // \u{0009} = Tab
+    str(counter(page).at(outline-entry.element.location()).at(0))
+  })
+  linebreak()
 }
 
+// list of figures
+#let list-of-figures = context {
+  show outline.entry: it => {
+    lists-entries-style(it, image)
+  }
+  outline(title: lists(localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
+}
+
+// list of figures
 #let list-of-tables = context {
   show outline.entry: it => {
-    let count = (
-      str(counter(heading.where(level: 1)).at(it.element.location()).at(0))
-        + "."
-        + str(counter(figure.where(kind: table)).at(it.element.location()).at(0))
-    )
-    link(
-      it.element.location(),
-      {
-        count
-        h(1em)
-        it.element.at("caption").body
-        box(width: 1fr, repeat([. \u{0009} \u{0009}])) // \u{0009} = Tab
-        str(counter(page).at(it.element.location()).at(0))
-      },
-    )
-    linebreak()
+    lists-entries-style(it, table)
   }
-  outline(
-    title: lists(localization.at(text.lang).list-of-tables),
-    target: figure.where(kind: table),
-  )
+  outline(title: lists(localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
 }
 
 // Nomenclature
@@ -590,24 +507,122 @@
   }
 }
 
-#let theorem(body, numbered: true) = figure(
-  body,
-  kind: "theorem",
-  supplement: context localization.at(text.lang).theorem,
-  numbering: if numbered { "1" },
+
+// #let theorem(body, numbered: true) = {
+//   let theorem-figure = figure(
+//     body,
+//     kind: "theorem",
+//     supplement: context localization.at(text.lang).theorem,
+//     numbering: if numbered { "1" },
+//   )
+
+//   strong(context {
+//     localization.at(text.lang).theorem
+//     if numbered != none {
+//       [ ]
+//       str(counter(heading.where(level: 1)).at(here()).at(0))
+//       [.]
+//       str(counter(figure.where(kind: "theorem")).at(here()).at(0))
+//     }
+//     [. ]
+//   })
+//   emph(body)
+// }
+
+// #let proposition(body, numbered: true) = context {
+//   let proposition-figure = figure(
+//     body,
+//     kind: "proposition",
+//     supplement: context localization.at(text.lang).proposition,
+//     numbering: if numbered { "1" },
+//   )
+
+//   strong({
+//     localization.at(text.lang).proposition
+//     if numbered != none {
+//       [ ]
+//       str(counter(heading.where(level: 1)).at(here()).at(0))
+//       [.]
+//       str(counter(figure.where(kind: "proposition")).at(here()).at(0))
+//     }
+//     [. ]
+//   })
+//   emph(body)
+// }
+
+// #let proof(body) = context {
+//   emph(localization.at(text.lang).proof + ".")
+//   [ ] + body
+//   h(1fr)
+//   box(scale(160%, origin: bottom + right, sym.square.stroked))
+}
+
+
+// ctheorems implementation (doesn't work properly)
+
+// #import "@preview/ctheorems:1.1.3": *
+// #show: thmrules.with(qed-symbol: $square$)
+
+// #let theorem = thmbox("theorem", "Theorem")
+// #let corollary = thmplain(
+//   "corollary",
+//   "Corollary",
+//   base: "theorem",
+//   titlefmt: strong,
+// )
+
+
+// #let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
+
+// #let example = thmplain("example", "Example").with(numbering: none)
+// #let proof = thmproof("proof", "Proof")
+// #let proposition = thmproof("proposition", "Proposition")
+
+#import "@preview/great-theorems:0.1.2": *
+#import "@preview/headcount:0.1.0": *
+
+#let thm-cnt = counter("thm")
+#let prop-cnt = counter("prop")
+#let lemma-cnt = counter("lemma")
+#let remark-cnt = counter("remark")
+
+#let theorem = mathblock(
+  blocktitle: context localization.at(text.lang).theorem,
+  counter: thm-cnt,
+  bodyfmt: text.with(style: "italic"),
+  numbering: dependent-numbering("1.1", levels: 1),
 )
 
-#let proposition(body, numbered: true) = figure(
-  body,
-  kind: "proposition",
-  supplement: context localization.at(text.lang).proposition,
-  numbering: if numbered { "1" },
+#let proposition = mathblock(
+  blocktitle: context localization.at(text.lang).proposition,
+  counter: prop-cnt,
+  bodyfmt: text.with(style: "italic"),
+  numbering: dependent-numbering("1.1", levels: 1),
 )
 
-// And a function for a proof.
-#let proof(body) = context {
-  emph(localization.at(text.lang).proof + ".")
-  [ ] + body
-  h(1fr)
-  box(scale(160%, origin: bottom + right, sym.square.stroked))
+#let lemma = mathblock(
+  blocktitle: context localization.at(text.lang).lemma,
+  counter: lemma-cnt,
+  bodyfmt: text.with(style: "italic"),
+  numbering: dependent-numbering("1.1", levels: 1),
+)
+
+#let remark = mathblock(
+  blocktitle: context localization.at(text.lang).remark,
+  counter: remark-cnt,
+  bodyfmt: text.with(style: "italic"),
+  numbering: dependent-numbering("1.1", levels: 1),
+)
+
+#let proof = proofblock()
+
+
+#let theorems-init(body) = {
+  show: great-theorems-init
+  show heading.where(level: 1): reset-counter(thm-cnt, levels: 1)
+  show heading.where(level: 1): reset-counter(prop-cnt, levels: 1)
+  show heading.where(level: 1): reset-counter(lemma-cnt, levels: 1)
+  show heading.where(level: 1): reset-counter(remark-cnt, levels: 1)
+
+  body
 }
