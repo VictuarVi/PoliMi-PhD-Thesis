@@ -1,6 +1,6 @@
 [package]
 name = "elegant-polimi-thesis"
-version = "0.1.0"
+version = "0.1.1"
 entrypoint = "src/lib.typ"
 authors = ["Vittorio Robecchi <https://github.com/VictuarVi>"]
 repository = "https://github.com/VictuarVi/PoliMi-PhD-Thesis"

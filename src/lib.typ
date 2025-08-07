@@ -17,35 +17,45 @@
 
 #let localization = yaml("locale.yaml")
 
-// custom polimi colour
+/// Custom PoliMi colour (#box(baseline: 0.1em, rect(height: 0.7em, width: 0.7em, fill: rgb("#5f859f")))).
+/// -> color
 #let bluepoli = rgb("#5f859f")
 
-/// Main styling function of the template.
-///
-/// - title (str): Title of the thesis
-/// - author (str): Author of the name (Name Surname).
-/// - advisor (str): Advisor of the thesis.
-/// - coadvisor (str): Coadvisor of the thesis.
-/// - tutor (str): Tutor of the thesis.
-/// - phdcycle (str): Academic year (default to current one).
-/// - cycle (str): Cycle of the thesis (not used).
-/// - chair (str): Chair of the thesis (not used).
-/// - language (str): Language of the thesis (default: "en", can be "it").
-/// - colored-headings (bool): Whether to activate the colored headings or not.
-/// - main-logo (path): Path of the main logo of the thesis (default: engineering).
-/// - body (body): body
+/// Main formatting function of the template.
 /// -> content
 #let polimi-thesis(
+  /// Title of the thesis
+  /// -> str
   title: "Thesis Title",
+  /// Author of the name (Name Surname).
+  /// -> str
   author: "Name Surname",
+  /// Advisor of the thesis.
+  /// -> str
   advisor: "",
+  /// Coadvisor of the thesis.
+  /// -> str
   coadvisor: "",
+  /// Tutor of the thesis.
+  /// -> str
   tutor: "",
-  phdcycle: "", // {Year ... - ... Cycle}
+  /// Academic year. If empty, defaults to the current one: "#str(datetime.today().year() - 1) --- #str(datetime.today().year())".
+  /// -> str
+  phdcycle: "",
+  /// Cycle of the thesis (not used).
+  /// -> str
   cycle: none,
+  /// Chair of the thesis (not used).
+  /// -> str
   chair: none,
+  /// Language of the thesis.
+  /// -> str
   language: "en",
+  /// Whether to activate the colored headings or not.
+  /// -> bool
   colored-headings: true,
+  /// Path of the main logo of the thesis (default: engineering).
+  /// -> path
   main-logo: "img/logo_ingegneria.svg",
   body,
 ) = {
@@ -133,7 +143,7 @@
   // figures caption
   // bold[Figure Chapter.Num]: ""
   show figure.caption: it => context {
-    if (it.kind != "lists" and it.kind != "blank-toc") {
+    if (it.kind != "lists" and it.kind != "_blank-toc") {
       let heading_num = counter(heading).get().first()
       text(
         weight: "bold",
@@ -205,7 +215,7 @@
     phdcycle = str(datetime.today().year() - 1) + " - " + str(datetime.today().year())
   }
 
-  // helper function to detect if a field is presenr or none
+  // helper function to detect whether a field is present
   let isPresent(before, string, after: none) = {
     if (string != none and string != "") {
       return before + string + after + linebreak()
@@ -317,7 +327,7 @@
         it.element.body + box(width: 1fr, repeat([\u{0009} . \u{0009} \u{0009}])) + it.page(),
       ))
     } else if (
-      it.element.func() == figure and it.element.at("kind") == "blank-toc"
+      it.element.func() == figure and it.element.at("kind") == "_blank-toc"
     ) {
       // v(1em) //
       v(it.element.at("gap")) // \addtocontents{toc}{\vspace{1em}}
@@ -330,7 +340,7 @@
   // custom figure alignment
   show figure
     .where(kind: "lists")
-    .or(figure.where(kind: "blank-toc"))
+    .or(figure.where(kind: "_blank-toc"))
     .or(figure.where(kind: "theorem"))
     .or(figure.where(kind: "proposition")): it => {
     align(start, it)
@@ -350,13 +360,15 @@
   body
 }
 
-/// Helper function to manually add blank space above an outline entry (similar to LaTeX's `\addtocontents{toc}{\vspace{1em}}`).
-///
-/// - space (length): Vertical space to add before the following outline entry.
+/// Helper function to manually add blank space above an outline entry (similar to LaTeX's ```tex \addtocontents{toc}{\vspace{1em}}```).
 /// -> content
-#let blank-toc(space: 1em) = {
-  let blank-toc-figure = figure.with(
-    kind: "blank-toc",
+#let _blank-toc(
+  /// Vertical space to add before the next outline entry.
+  /// -> length
+  space: 1em,
+) = {
+  let _blank-toc-figure = figure.with(
+    kind: "_blank-toc",
     numbering: none,
     supplement: none,
     outlined: true,
@@ -367,12 +379,14 @@
   {
     show heading: none
     show figure: none
-    blank-toc-figure("")
+    _blank-toc-figure("")
   }
 }
 
 // Document sections
 
+/// Frontmatter section. Similar to LaTeX's ```tex \frontmatter```. It sets the page numbering to `"i"` and ```typc numbering: none``` for headings.
+/// -> content
 #let frontmatter(body) = {
   document-state.update("FRONTMATTER")
   // counter(page).update(0)
@@ -382,16 +396,20 @@
   body
 }
 
+/// Acknowledgements section. It sets ```typc numbering: none``` for headings.
+/// -> content
 #let acknowledgements(body) = {
-  blank-toc()
+  _blank-toc()
   document-state.update("ACKNOWLEDGEMENTS")
   set heading(numbering: none)
 
   body
 }
 
+/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```.  It sets to page numbering to `"1"`, ```typc numbering: "1.1"``` for headings and resets the page counter.
+/// -> content
 #let mainmatter(body) = {
-  blank-toc()
+  _blank-toc()
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   set page(numbering: "1")
@@ -400,8 +418,10 @@
   body
 }
 
+/// Appendix section. Similar to LaTeX's ```tex \appendix```.  It sets ```typc numbering: "A.1"``` for headings and resets their counter.
+/// -> content
 #let appendix(body) = context {
-  blank-toc()
+  _blank-toc()
   document-state.update("APPENDIX")
   counter(heading).update(0)
   set heading(numbering: "A.1")
@@ -409,8 +429,10 @@
   body
 }
 
+/// Backmatter section. Similar to LaTeX's ```tex \backmatter```. It sets ```typc numbering: none``` for headings.
+/// -> content
 #let backmatter(body) = context {
-  blank-toc()
+  _blank-toc()
   document-state.update("BACKMATTER")
   set heading(numbering: none)
 
@@ -425,13 +447,14 @@
       kind: "lists",
       outlined: true,
     )
-    .or(figure.where(kind: "blank-toc", outlined: true))
+    .or(figure.where(kind: "_blank-toc", outlined: true))
     .or(heading.where(outlined: true))
 )
 
 // lists figure to make the list of tables, list of figures to appear in the table of contents
 #let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
+/// Table of contents. It's a custom built upon ```typc outline()```.
 #let toc = context {
   outline(
     title: lists(localization.at(text.lang).toc),
@@ -441,11 +464,15 @@
 }
 
 /// Internal helper function to create the custom lists of figures and table.
-///
-/// - outline-entry (outline-entry): Outline entry to edit.
-/// - kind (function): The kind of the outline entry element (image or table)
 /// -> content
-#let lists-entries-style(outline-entry, kind) = {
+#let _lists-entries-style(
+  /// Outline entry to edit.
+  /// -> outline-entry
+  outline-entry,
+  /// The kind of the outline entry element (image or table)
+  /// -> function
+  kind,
+) = {
   let count = (
     str(counter(heading.where(level: 1)).at(outline-entry.element.location()).at(0))
       + "."
@@ -461,24 +488,34 @@
   linebreak()
 }
 
-// list of figures
+/// List of figures. Similar to LaTeX's ```tex \listoffigures```.
+/// -> content
 #let list-of-figures = context {
   show outline.entry: it => {
-    lists-entries-style(it, image)
+    _lists-entries-style(it, image)
   }
   outline(title: lists(localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
 }
 
-// list of figures
+/// List of tables. Similar to LaTeX's ```tex \listoftables```.
+/// -> content
 #let list-of-tables = context {
   show outline.entry: it => {
-    lists-entries-style(it, table)
+    _lists-entries-style(it, table)
   }
   outline(title: lists(localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
 }
 
-// Nomenclature
-#let nomenclature(dict, indented: true) = context {
+/// Nomenclature function.
+/// -> content
+#let nomenclature(
+  /// Dictionary that hold keys and values.
+  /// -> dictionary
+  dict,
+  /// Whether to indent or not the nomenclature.
+  /// -> bool
+  indented: true,
+) = context {
   heading(
     lists(localization.at(text.lang).nomenclature),
     outlined: false,
@@ -616,7 +653,12 @@
 
 #let proof = proofblock()
 
-
+/// Utility function to initialized the various theorem environments -- which are:
+/// - theorem
+/// - proposition
+/// - lemma
+/// - remark
+/// -> content
 #let theorems-init(body) = {
   show: great-theorems-init
   show heading.where(level: 1): reset-counter(thm-cnt, levels: 1)

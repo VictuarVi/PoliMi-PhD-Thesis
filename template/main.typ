@@ -1,6 +1,19 @@
-#import "@preview/elegant-polimi-thesis:0.1.0": *
+#import "@preview/elegant-polimi-thesis:0.1.1": *
 
-#show: polimi-thesis
+#show: polimi-thesis.with(
+  title: "Thesis Title",
+  author: "Name Surname",
+  advisor: "",
+  coadvisor: "",
+  tutor: "",
+  phdcycle: "", // defaults to current one
+  cycle: none,
+  chair: none,
+  language: "en",
+  colored-headings: true,
+)
+
+#show: theorems-init // if you don't plan to use theorems, proposition, lemmas or remarks this line can be removed
 
 #show: frontmatter
 
@@ -27,25 +40,27 @@
   indented: false,
 )
 
-#show: mainmatter.with()
+#show: mainmatter
 
 #heading("Introduction", numbering: none)
+
+#lorem(100)
 
 = First chapter
 
 #lorem(100)
 
-#show: backmatter.with()
+#show: backmatter
 
 // bibliography
 
-#show: appendix.with()
+#show: appendix
 
 = First appendix
 
 #lorem(100)
 
-#show: acknowledgements.with()
+#show: acknowledgements
 
 = Acknowledgements
 

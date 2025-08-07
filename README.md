@@ -8,7 +8,7 @@ Elegant and simple thesis template for [Typst](https://typst.app/), a modern typ
 They are rather similar. The main difference is the PoliBlu colour spread across the headings. I recommend to check them out.
 
 > [!NOTE]
-> See the [manual](https://victuarvi.github.io/PoliMi-PhD-Thesis/docs/manual.pdf) for more informations.
+> See the [manual](https://victuarvi.github.io/PoliMi-PhD-Thesis/docs/manual.pdf) for more information.
 
 ## Preview ✨
 
@@ -27,7 +27,7 @@ typst c main.typ --pdf-standard a-3b
 A very simple document:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.1.0": *
+#import "@preview/elegant-polimi-thesis:0.1.1": *
 
 #show: polimi_thesis.with(
   title: "Thesis Title",
@@ -93,7 +93,7 @@ The full list of options is as follows:
 - `colored-headings`: whether to use colored headings or not
 - `main-logo`: main logo of the thesis
 
-See the `docs/` folder for a thorough example on how to style the thesis.
+See the `docs/` folder for a thorough example on how to style the thesis; also have a look at `docs/docs.pdf` for the full documentation.
 
 # Contributing 🚀
 
