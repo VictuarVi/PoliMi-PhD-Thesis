@@ -6,8 +6,8 @@
   advisor: "",
   coadvisor: "",
   tutor: "",
-  phdcycle: "", // defaults to current one
-  cycle: none,
+  academic-year: "", // defaults to current one
+  cycle: "XXIV",
   chair: none,
   language: "en",
   colored-headings: true,

@@ -39,10 +39,13 @@
   /// Tutor of the thesis.
   /// -> str
   tutor: "",
-  /// Academic year. If empty, defaults to the current one: "#str(datetime.today().year() - 1) --- #str(datetime.today().year())".
+  /// Deprecated attribute. Academic year. If empty, defaults to the current one: "#str(datetime.today().year() - 1) --- #str(datetime.today().year())".
   /// -> str
   phdcycle: "",
-  /// Cycle of the thesis (not used).
+  /// If empty, defaults to the current one: "#str(datetime.today().year() - 1)".
+  /// -> str
+  academic-year: "",
+  /// Cycle of the thesis.
   /// -> str
   cycle: none,
   /// Chair of the thesis (not used).
@@ -54,7 +57,7 @@
   /// Whether to activate the colored headings or not.
   /// -> bool
   colored-headings: true,
-  /// Path of the main logo of the thesis (default: engineering).
+  /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
   main-logo: "img/logo_ingegneria.svg",
   body,
@@ -203,34 +206,37 @@
 
   v(1.5cm)
 
-  align(end)[
-    #set text(size: sizes.Large)
-    Doctoral Dissertation of: \
-    *#author*
-  ]
+  align(end, context {
+    set text(size: sizes.Large)
+    localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
+  })
 
   v(1fr)
 
   if (phdcycle == "") {
     phdcycle = str(datetime.today().year() - 1) + " - " + str(datetime.today().year())
   }
+  if (academic-year == "") {
+    academic-year = phdcycle
+  }
 
   // helper function to detect whether a field is present
-  let isPresent(before, string, after: none) = {
+  let isPresent(before, string, after: linebreak()) = {
     if (string != none and string != "") {
-      return before + string + after + linebreak()
+      return before + string + after
     } else {
       return none
     }
   }
 
-  align(start, {
+  align(start, context {
     set text(size: sizes.large)
-    isPresent("Advisor: Prof. ", advisor)
-    isPresent("Coadvisor: Prof. ", coadvisor)
-    isPresent("Tutor: Prof. ", tutor)
-    isPresent("Advisor: Prof. ", advisor)
-    isPresent("Year ", phdcycle, after: " Cycle")
+    isPresent(localization.at(text.lang).advisor + ": Prof. ", advisor)
+    isPresent(localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+    isPresent(localization.at(text.lang).tutor + ": Prof. ", tutor)
+    isPresent(localization.at(text.lang).advisor + ": Prof. ", advisor)
+    isPresent(localization.at(text.lang).year + " ", academic-year, after: none)
+    isPresent(" - ", cycle, after: " " + localization.at(text.lang).cycle)
   })
 
   // Document

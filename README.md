@@ -8,7 +8,7 @@ Elegant and simple thesis template for [Typst](https://typst.app/), a modern typ
 They are rather similar. The main difference is the PoliBlu colour spread across the headings. I recommend to check them out.
 
 > [!NOTE]
-> See the [manual](https://victuarvi.github.io/PoliMi-PhD-Thesis/docs/manual.pdf) for more information.
+> See the [manual](https://victuarvi.github.io/PoliMi-PhD-Thesis/docs/manual.pdf) and [documentation](https://victuarvi.github.io/PoliMi-PhD-Thesis/docs/docs.pdf) for more information.
 
 ## Preview ✨
 
@@ -88,7 +88,8 @@ The full list of options is as follows:
 - `advisor`: name and surname of the advisor
 - `coadvisor`: name and surname of the coadvisor (can be empty)
 - `tutor`: name and surname of the tutor
-- `phdcycle`: PhD cycle of the thesis (defaults to current year)
+- `academic-year`: the current academic year
+- `cycle`: the cycle of the thesis
 - `language`: language of the thesis
 - `colored-headings`: whether to use colored headings or not
 - `main-logo`: main logo of the thesis
