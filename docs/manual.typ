@@ -45,5 +45,5 @@
 
 #bibliography(
   "Thesis_bibliography.bib",
-  full: true,
+  full: false,
 )

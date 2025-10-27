@@ -6,29 +6,29 @@
 
 #show "LaTeX": LaTeX
 
-#let typst = {
+#let Typst = {
   text(
     fill: eastern,
     font: "Libertinus Serif",
     weight: "semibold",
-    "typst",
+    "Typst",
   )
 }
-#show "typst": typst
+#show "Typst": Typst
 
-In this section there will be useful information about how to style chapters, sections and so on. Be sure to read the typst guide for LaTeX users @typst-latex.
+In this section there will be useful information about how to style chapters, sections and so on. Be sure to read the Typst guide for LaTeX users @typst-latex.
 
 == Sections and subsection
 
-In #LaTeX, the canonical sections division is as follows:
+In LaTeX, the canonical sections division is as follows:
 ```tex
 \chapter{}
 \section{}
 \subsection{}
 \subsubsection{}
 ```
-in typst, there are just headings @typst-headings (similarly to Markdown) -- so the LaTeX system maps to:
-```typst
+in Typst, there are just headings @typst-headings (similar to Markdown) -- so the LaTeX system maps to:
+```typ
 = Chapter           // Heading level 1
 == Section          // Heading level 2
 === Subsection      // Heading level 3
@@ -44,36 +44,36 @@ in typst, there are just headings @typst-headings (similarly to Markdown) -- so 
 //     }
 //   },
 //   gutter: 0.5cm,
-//   grid.header(LaTeX, "", typst),
+//   grid.header(LaTeX, "", Typst),
 //   raw("\chapter{}", lang: "tex"), $|->$, raw("= Chapter", lang: "typc"),
 //   raw("\section{}", lang: "tex"), $|->$, raw("== Section", lang: "typc"),
 //   raw("\subsection{}", lang: "tex"), $|->$, raw("=== Subsection", lang: "typc"),
 //   raw("\subsubsection{}", lang: "tex"), $|->$, raw("==== Subsubsection", lang: "typc"),
 // )
 
-If you need to turn off the numbering you will call the ```typst heading``` function:
-```typst
-#heading("Heading Title", level: n, numbering: none)
+If you need to turn off the numbering you will call the ```Typst heading``` function:
+```typ
+#heading("Heading title", level: n, numbering: none)
 ```
 
 == Equations
 
-In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in typst there is just the equation environment called with dollars @typst-equation:
+In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
 
 - Inline math, same as LaTeX:
 #columns[
   #set align(center)
-  ```typst
+  ```Typst
   $a^2 + b^2 = c^2$
   ```
   #colbreak()
   $a^2 + b^2 = c^2$
 ]
 
-- Block math, by adding spaces before and after the content:
+- Block math, by adding whitespaces before and after the content:
 #columns[
   #set align(center)
-  ```typst
+  ```Typst
   $ a^2 + b^2 = c^2 $
   ```
   #colbreak()
@@ -83,74 +83,68 @@ In LaTeX, there are many environments (```tex equation, equation*, aligned```) -
 For a more complex equation the LaTeX code is:
 ```tex
 \begin{subequations}
-  \label{eq:maxwell}
-  \begin{align}[left=\empheqlbrace]
-  \nabla\cdot \bm{D} & = \rho, \label{eq:maxwell1} \\
-  \nabla \times \bm{E} + \frac{\partial \bm{B}}{\partial t} & = \bm{0}, \label{eq:maxwell2} \\
-  \nabla\cdot \bm{B} & = 0, \label{eq:maxwell3} \\
-  \nabla \times \bm{H} - \frac{\partial \bm{D}}{\partial t} &= \bm{J}. \label{eq:maxwell4}
+  \begin{align}
+    \nabla\cdot \bm{D} & = \rho, \\
+    \nabla \times \bm{E} + \frac{\partial \bm{B}}{\partial t} & = \bm{0}, \\
+    \nabla\cdot \bm{B} & = 0, \\
+    \nabla \times \bm{H} - \frac{\partial \bm{D}}{\partial t} &= \bm{J}.
   \end{align}
 \end{subequations}
 ```
-while the typst version:
-#grid(
-  columns: (65%, 35%),
-  align: left + horizon,
-  ```typm
-    $
-    lr(\{
-      #block[$
-        Delta dot bold(D) &= rho\, \
-        Delta times bold(E)
-          + display((partial bold(B))/(partial t))
-          &= 0\, \
-        Delta dot bold(B) &= 0\, \
-        Delta times bold(H)
-          - display((partial bold(D))/(partial t))
-          &= bold(J).
-      $]
-    )
-  $
-  ```,
-  $
-    lr(
-      \{
-      #block[$                                            Delta dot bold(D) & = rho\,    \
-        Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
-                                                   Delta dot bold(B) & = 0\,      \
-        Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
-    )
-  $,
-)
+while the Typst version:
+```typc
+$
+  lr(
+    \{
+    #block[$
+                                               Delta dot bold(D) & = rho\, \
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
+                                               Delta dot bold(B) & = 0\, \
+    Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J).
+    $]
+  )
+$
+```
 
-This is quite an _advanced way_ to get things done. To put it simply, this is the typst equivalent of LaTeX's ```tex \left{ equation \right.``` --- though if you don't understand how/why it works, that's ok -- I'll break it down, but first have a read at the `lr()` function documentation @typst-lr.
+Which evaluates to:
+$
+  lr(
+    \{
+    #block[$                                            Delta dot bold(D) & = rho\, \
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
+                                               Delta dot bold(B) & = 0\, \
+    Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
+  )
+$
+
+This is quite an _advanced way_ to get things done. To put it simply, this is the Typst equivalent of LaTeX's ```tex \left{ equation \right.``` --- though if you don't understand how/why it works, that's ok -- I'll break it down, but first have a read at the `lr()` function documentation @typst-lr.
 
 - The equations must be aligned to the center and I achieve that with `&`, the same as LaTeX
 
-- Then, the left part must have a `{` to wrap around it: in order to do, typst needs to have an element to compute the size for, which will be the `block[]` part
+- Then, the left part must have a `{` to wrap around it: in order to do so, Typst needs to have an element to compute the size for, which will be the `block[]` part
 
 - In the block, I'll insert all the equations by linebreaking with `\` (in LaTeX this is done via ```latex \\```, a double backslash)
 
-- Finally, I'll wrap both the parenthesis AND the block in the same `lr()` call, effectively sizing everything
+- Finally, I'll wrap both the parenthesis AND the block in the same ```typc lr()``` call, effectively sizing everything
 
-I highly encourage you to mess with the above code to see how it changes. It will dramatically help you to understand how typst works.
+I highly encourage you to mess with the above code to see how it changes. It will dramatically help you to understand how Typst works.
 
-The "normal" representation would have been just to use the ```typst cases()``` function:
-```typm
+The "normal" representation would have been just to use the ```typm cases()``` function:
+```typc
 $
   cases(
-    Delta dot bold(D) &= rho\, \
-    Delta times bold(E) + display((partial bold(B))/(partial t)) &= 0\, \
-    Delta dot bold(B) &= 0\, \
-    Delta times bold(H) - display((partial bold(D))/(partial t)) &= bold(J).
+    Delta dot bold(D) & = rho\,,
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
+    Delta dot bold(B) & = 0\,,
+    Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J).
   )
 $
 ```
 $
   cases(
-                                               Delta dot bold(D) & = rho\,    \
-    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
-                                               Delta dot bold(B) & = 0\,      \
+    Delta dot bold(D) & = rho\,,
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
+    Delta dot bold(B) & = 0\,,
     Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J).
   )
 $
@@ -162,10 +156,10 @@ By default, the equations are *not* numbered -- however if you need to:
   $
     lr(
       \{
-      #block[$                                            Delta dot bold(D) & = rho\,    \
-        Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,      \
-                                                   Delta dot bold(B) & = 0\,      \
-        Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
+      #block[$                                            Delta dot bold(D) & = rho\, \
+      Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
+                                                 Delta dot bold(B) & = 0\, \
+      Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
     )
   $,
 )<maxwell-equation>
@@ -176,29 +170,35 @@ And to reference it just type @maxwell-equation.
 
 === Figures
 
-Via the ```typst figure``` environment @typst-figure, as you would done in LaTeX:
+Via the ```Typst figure``` environment @typst-figure, as you would do in LaTeX:
 #figure(image("../../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
 
-However, since typst does not _natively_ support subfigures, one could make use of the `subpar` package @typst-subpar:
+However, since Typst does not _natively_ support subfigures (see #link("https://github.com/typst/typst/issues/246", "related issue")), the packages smartaref @typst-smartaref and hallon @typst-hallon have been integrated:
 
-#import "@preview/subpar:0.2.2": *
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    align: horizon,
+    subfigure(
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
+      caption: [
+        Left Polimi logo.
+      ],
+      label: <a>,
+    ),
 
-#grid(
-  figure(image("../../src/img/logo_ingegneria.svg", width: 50%), caption: [
-    Left Polimi logo.
-  ]),
-  <a>,
-
-  figure(image("../../src/img/logo_ingegneria.svg", width: 50%), caption: [
-    Right Polimi logo.
-  ]),
-  <b>,
-
-  columns: (1fr, 1fr),
-  align: horizon,
+    subfigure(
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
+      caption: [
+        Right Polimi logo.
+      ],
+      label: <b>,
+    ),
+  ),
   caption: [A figure composed of two sub figures, similar to ```latex \subfloat{}```.],
-  label: <full>,
-)
+)<full>
+
+You can reference either the main @full; or a single subfigure: @a, or @b.
 
 === Tables
 
@@ -249,14 +249,14 @@ However, since typst does not _natively_ support subfigures, one could make use 
     [row 2], $alpha$, $beta$, $gamma$,
     [row 3], [alpha], [beta], [gamma],
   ),
-  caption: [Caption of the Table to appear in the List of Tables],
+  caption: [Caption of the Table to appear in the List of Tables.],
 )
 
 As you can see, it could be useful to implement a default style for every table @typst-tables.
 
 === Algorithms
 
-For algorithms, there are a lot of packages on typst universe @typst-universe. The following are my recommendations.
+For algorithms, there are a lot of packages on Typst universe @typst-universe. The following are my recommendations.
 
 - `lovelace` @typst-lovelace
 #import "@preview/lovelace:0.3.0": *
@@ -282,7 +282,7 @@ For algorithms, there are a lot of packages on typst universe @typst-universe. T
 
 See @first-algorithm.
 
-#pagebreak()
+// #pagebreak()
 
 - `algo` @typst-algo
 #import "@preview/algo:0.3.6": *

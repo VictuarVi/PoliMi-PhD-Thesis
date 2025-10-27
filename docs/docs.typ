@@ -18,9 +18,9 @@
 
 #v(1em)
 
-This chapter is the result of the documentation generated from the source code. Since it's not strictly needed to use the template -- there are very little functions to actually use, which are only section organizers -- it's quite barebones.
+This chapter is the result of the documentation generated from the source code. Since it's not strictly needed to use the template -- most of the functions that are to be used are straightforward -- it's quite barebones.
 
-The intended order of use of the functions is as follows:
+The intended section order is as follows:
 
 #block(height: 2.4cm, columns[
   + frontmatter
@@ -36,7 +36,7 @@ The intended order of use of the functions is as follows:
 
 The acknowledgements section can be moved in frontmatter, as one prefers (or as the advisor requests).
 
-#block(height: 3.5cm, columns[#outline(depth: 2, indent: 0em)])
+#block(height: 5cm, columns[#outline(depth: 2, indent: 0em)])
 
 #set heading(numbering: none)
 

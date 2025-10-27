@@ -1,14 +1,11 @@
 # elegant-polimi-thesis 🎓
 
-Elegant and simple thesis template for [Typst](https://typst.app/), a modern typesetting program alternative to LaTeX. I based the design of the document on the following two templates:
+[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Its design has been based on the following two templates:
 
 - [PhD Thesis Template](https://www.overleaf.com/latex/templates/phd-thesis-template/nwjkggvhrzmz)
 - [DEIB PhD Thesis Template](https://www.overleaf.com/latex/templates/politecnico-di-milano-deib-phd-thesis-template/ydsvtyzwxfdk)
 
-They are rather similar. The main difference is the PoliBlu colour spread across the headings. I recommend to check them out.
-
-> [!NOTE]
-> See the [manual](docs/manual.pdf) and [documentation](docs/docs.pdf) for more information.
+See the [manual](docs/manual.pdf) and [documentation](docs/docs.pdf) for more information.
 
 ## Preview ✨
 
@@ -18,16 +15,16 @@ They are rather similar. The main difference is the PoliBlu colour spread across
 
 ## Usage 🖋
 
-Compile with:
+You can either use this template in the webapp or, from the CLI, import it with:
 
 ```shell
-typst c main.typ --pdf-standard a-3b
+typst init @preview/elegant-polimi-thesis:0.1.2
 ```
 
-A very simple document:
+To get started:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.1.1": *
+#import "@preview/elegant-polimi-thesis:0.1.2": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
@@ -78,7 +75,7 @@ A very simple document:
 
 #show: acknowledgements
 
-// acknowlegments
+// acknowlegements
 ```
 
 The full list of options is as follows:
@@ -88,14 +85,45 @@ The full list of options is as follows:
 - `advisor`: name and surname of the advisor
 - `coadvisor`: name and surname of the coadvisor (can be empty)
 - `tutor`: name and surname of the tutor
-- `academic-year`: the current academic year
+- `academic-year`: the corresponding academic year
 - `cycle`: the cycle of the thesis
-- `language`: language of the thesis
+- `language`: language of the thesis (default: `en`; other supported: `it`)
 - `colored-headings`: whether to use colored headings or not
 - `main-logo`: main logo of the thesis
 
-See the `docs/` folder for a thorough example on how to style the thesis; also have a look at `docs/docs.pdf` for the full documentation.
+See the `docs/` folder for a thorough example on how to style the thesis.
+
+## Recommended packages
+
+Useful packages for a thesis include:
+
+- [equate](https://typst.app/universe/package/equate), [phisica](https://typst.app/universe/package/physica) for mathematical expressions
+- [unify](https://typst.app/universe/package/unify), [zero](https://typst.app/universe/package/zero) to correctly format numbers
+- [cetz](https://typst.app/universe/package/cetz), [fletcher](https://typst.app/universe/package/fletcher) for drawing diagrams, [lilaq](https://typst.app/universe/package/lilaq) to plot data
+- [zebraw](https://typst.app/universe/package/zebraw), [codly](https://typst.app/universe/package/codly) for syntax highlighting in code blocks
+- [frame-it](https://typst.app/universe/package/frame-it), [showybox](https://typst.app/universe/package/showybox) to display formatted blocks
+- [alexandria](https://typst.app/universe/package/alexandria) for multiple bibliographies ([currently unsupported](https://github.com/typst/typst/issues/1097))
+
+The [smartaref](https://typst.app/universe/package/smartaref) (+ [hallon](https://typst.app/universe/package/hallon)), [great-theorems](https://typst.app/universe/package/great-theorems) packages have been integrated to provide subfigures ([currenly unsupported](https://github.com/typst/typst/issues/246)) and theorems implementations.
+
+|                      Typst package                      |             LaTeX equivalent              |
+| :-----------------------------------------------------: | :---------------------------------------: |
+|   [equate](https://typst.app/universe/package/equate)   |             ams\*, mathtools              |
+|  [phisica](https://typst.app/universe/package/physica)  |             ams\*, mathtools              |
+|    [unify](https://typst.app/universe/package/unify)    |  [siunitx](https://ctan.org/pkg/siunitx)  |
+|     [zero](https://typst.app/universe/package/zero)     |  [siunitx](https://ctan.org/pkg/siunitx)  |
+|     [cetz](https://typst.app/universe/package/cetz)     |         [TikZ](https://tikz.dev/)         |
+| [fletcher](https://typst.app/universe/package/fletcher) |         [TikZ](https://tikz.dev/)         |
+|    [lilaq](https://typst.app/universe/package/lilaq)    |         [TikZ](https://tikz.dev/)         |
+|   [zebraw](https://typst.app/universe/package/zebraw)   | [listings](https://ctan.org/pkg/listings) |
+|    [codly](https://typst.app/universe/package/codly)    | [listings](https://ctan.org/pkg/listings) |
+| [frame-it](https://typst.app/universe/package/frame-it) | [mdframed](https://ctan.org/pkg/mdframed) |
+| [showybox](https://typst.app/universe/package/showybox) | [mdframed](https://ctan.org/pkg/mdframed) |
+| [lovelace](https://typst.app/universe/package/lovelace) |   [pseudo](https://ctan.org/pkg/pseudo)   |
+|     [algo](https://typst.app/universe/package/algo)     |   [pseudo](https://ctan.org/pkg/pseudo)   |
+
+The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
 
 # Contributing 🚀
 
-If you happen to have suggestions, ideas or anything else feel free to open issues and pull requests.
+If you happen to have suggestions, ideas or anything else feel free to open issues and pull requests or contact me.

@@ -17,17 +17,20 @@
 
 #let localization = yaml("locale.yaml")
 
-/// Custom PoliMi colour (#box(baseline: 0.1em, rect(height: 0.7em, width: 0.7em, fill: rgb("#5f859f")))).
+/// Signature PoliMi colour (#box(baseline: 0.1em, rect(height: 0.7em, width: 0.7em, fill: rgb("#5f859f")))), used in headings and labels.
 /// -> color
 #let bluepoli = rgb("#5f859f")
+
+// https://typst.app/universe/package/smartaref
+#import "@preview/smartaref:0.1.0": Cref, cref
 
 /// Main formatting function of the template.
 /// -> content
 #let polimi-thesis(
-  /// Title of the thesis
+  /// Title of the thesis.
   /// -> str
   title: "Thesis Title",
-  /// Author of the name (Name Surname).
+  /// Author of the thesis.
   /// -> str
   author: "Name Surname",
   /// Advisor of the thesis.
@@ -39,10 +42,10 @@
   /// Tutor of the thesis.
   /// -> str
   tutor: "",
-  /// Deprecated attribute. Academic year. If empty, defaults to the current one: "#str(datetime.today().year() - 1) --- #str(datetime.today().year())".
+  /// Deprecated attribute. "Old" academic year. If empty, defaults to "#str(datetime.today().year()) --- #str(datetime.today().year() + 1)".
   /// -> str
   phdcycle: "",
-  /// If empty, defaults to the current one: "#str(datetime.today().year() - 1)".
+  /// Academic year of the thesis. If empty, defaults to "#str(datetime.today().year())".
   /// -> str
   academic-year: "",
   /// Cycle of the thesis.
@@ -138,31 +141,125 @@
     footer: {},
   )
 
-  // FIGURE
+  // FIGURES SETTINGS
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
 
-  // figures caption
-  // bold[Figure Chapter.Num]: ""
+  // From Hallon 0.1.3 (https://typst.app/universe/package/hallon)
+
+  /// Nameref displays a reference using section name (instead of numbering).
+  let nameref(label) = {
+    show ref: it => {
+      if it.element == none {
+        it
+      } else if it.element.func() != heading {
+        it
+      } else {
+        let l = it.target // label
+        let h = it.element // heading
+        link(l, h.body)
+      }
+    }
+    ref(label)
+  }
+
+  /// Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
+  let subfigure-caption(it, parent: none) = context {
+    align(
+      center,
+      block({
+        set align(left)
+        text(
+          fill: if (colored-headings) { bluepoli } else { black },
+          it.counter.display("(a)"),
+        )
+        [ ]
+        it.body
+      }),
+    )
+  }
+
+  /// Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
+  let style-figures(body, heading-levels: 0) = context {
+    // Numbering patterns for figures and subfigures.
+    let fig-numbering = "1." * heading-levels + "1" // e.g. "1.1"
+    let subfig-numbering = "1." * heading-levels + "1a" // e.g. "1.1a"
+
+    // Set default supplement for subfigures.
+    show figure.where(kind: "subfigure"): set figure(
+      supplement: localization.at(text.lang).figure,
+    )
+
+    // removed styling function because the one used is the template global one
+
+    show heading: outer => {
+      if outer.level <= heading-levels {
+        // reset figure counter.
+        counter(figure.where(kind: image)).update(0)
+        counter(figure.where(kind: table)).update(0)
+        counter(figure.where(kind: raw)).update(0)
+      }
+      outer
+    }
+
+    set figure(numbering: (..nums) => {
+      // TODO: check if we need to provide more context (i.e. using `at` instead
+      // of `get`)?
+      //
+      // ref: https://github.com/typst/typst/issues/3930
+      let heading-nums = counter(heading).get()
+      if heading-nums.len() > heading-levels {
+        // truncate if needed.
+        heading-nums = heading-nums.slice(0, heading-levels)
+      } else if heading-nums.len() < heading-levels {
+        // zero pad if needed.
+        for i in range(heading-nums.len(), heading-levels) {
+          heading-nums.push(0)
+        }
+      }
+      std.numbering(fig-numbering, ..heading-nums, ..nums)
+    })
+
+    show figure.where(kind: image): outer => {
+      // reset subfigure counter
+      counter(figure.where(kind: "subfigure")).update(0)
+
+      // use nesting level of figure to infer numbering of subfigures.
+      set figure(numbering: (..nums) => {
+        let heading-nums = counter(heading).at(outer.location())
+        if heading-nums.len() > heading-levels {
+          // truncate if needed.
+          heading-nums = heading-nums.slice(0, heading-levels)
+        } else if heading-nums.len() < heading-levels {
+          // zero pad if needed.
+          for i in range(heading-nums.len(), heading-levels) {
+            heading-nums.push(0)
+          }
+        }
+        let outer-nums = counter(figure.where(kind: image)).at(outer.location())
+        std.numbering(subfig-numbering, ..heading-nums, ..outer-nums, ..nums)
+      })
+
+      show figure.where(kind: "subfigure"): inner => {
+        show figure.caption: subfigure-caption.with(parent: outer)
+        inner
+      }
+      outer
+    }
+
+    body
+  }
+  show: style-figures.with(heading-levels: 1)
+
   show figure.caption: it => context {
     if (it.kind != "lists" and it.kind != "_blank-toc") {
-      let heading_num = counter(heading).get().first()
       text(
-        weight: "bold",
         fill: if (colored-headings) { bluepoli } else { black },
         {
           it.supplement
-          if it.numbering != none {
-            [ ]
-            str(heading_num)
-            [.]
-            if (it.kind == image) {
-              counter(figure.where(kind: image)).display()
-            } else if (it.kind == table) {
-              counter(figure.where(kind: table)).display()
-            }
-          }
+          " "
+          it.counter.display(it.numbering)
           it.separator
         },
       )
@@ -214,10 +311,10 @@
   v(1fr)
 
   if (phdcycle == "") {
-    phdcycle = str(datetime.today().year() - 1) + " - " + str(datetime.today().year())
+    phdcycle = str(datetime.today().year()) + " - " + str(datetime.today().year() + 1)
   }
   if (academic-year == "") {
-    academic-year = str(datetime.today().year() - 1)
+    academic-year = str(datetime.today().year())
   }
 
   // helper function to detect whether a field is present
@@ -295,11 +392,12 @@
     )
     v(10pt)
 
-    // counters reset
-    counter(figure.where(kind: image)).update(0)
-    counter(figure.where(kind: table)).update(0)
-    // counter(figure.where(kind: "theorem")).update(1)
-    // counter(figure.where(kind: "proposition")).update(1)
+    // reset all figures counter
+    context {
+      for e in query(figure).map(e => e.kind).dedup() {
+        counter(figure.where(kind: e)).update(0)
+      }
+    }
   }
 
   show heading: it => context {
@@ -460,7 +558,7 @@
 // lists figure to make the list of tables, list of figures to appear in the table of contents
 #let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
-/// Table of contents. It's a custom built upon ```typc outline()```.
+/// Table of contents. It's custom built upon ```typc outline()```.
 #let toc = context {
   outline(
     title: lists(localization.at(text.lang).toc),
@@ -512,7 +610,7 @@
   outline(title: lists(localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
 }
 
-/// Nomenclature function.
+/// Displays a simple nomenclature with keys and values.
 /// -> content
 #let nomenclature(
   /// Dictionary that hold keys and values.
@@ -550,76 +648,7 @@
   }
 }
 
-
-// #let theorem(body, numbered: true) = {
-//   let theorem-figure = figure(
-//     body,
-//     kind: "theorem",
-//     supplement: context localization.at(text.lang).theorem,
-//     numbering: if numbered { "1" },
-//   )
-
-//   strong(context {
-//     localization.at(text.lang).theorem
-//     if numbered != none {
-//       [ ]
-//       str(counter(heading.where(level: 1)).at(here()).at(0))
-//       [.]
-//       str(counter(figure.where(kind: "theorem")).at(here()).at(0))
-//     }
-//     [. ]
-//   })
-//   emph(body)
-// }
-
-// #let proposition(body, numbered: true) = context {
-//   let proposition-figure = figure(
-//     body,
-//     kind: "proposition",
-//     supplement: context localization.at(text.lang).proposition,
-//     numbering: if numbered { "1" },
-//   )
-
-//   strong({
-//     localization.at(text.lang).proposition
-//     if numbered != none {
-//       [ ]
-//       str(counter(heading.where(level: 1)).at(here()).at(0))
-//       [.]
-//       str(counter(figure.where(kind: "proposition")).at(here()).at(0))
-//     }
-//     [. ]
-//   })
-//   emph(body)
-// }
-
-// #let proof(body) = context {
-//   emph(localization.at(text.lang).proof + ".")
-//   [ ] + body
-//   h(1fr)
-//   box(scale(160%, origin: bottom + right, sym.square.stroked))
-}
-
-
-// ctheorems implementation (doesn't work properly)
-
-// #import "@preview/ctheorems:1.1.3": *
-// #show: thmrules.with(qed-symbol: $square$)
-
-// #let theorem = thmbox("theorem", "Theorem")
-// #let corollary = thmplain(
-//   "corollary",
-//   "Corollary",
-//   base: "theorem",
-//   titlefmt: strong,
-// )
-
-
-// #let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
-
-// #let example = thmplain("example", "Example").with(numbering: none)
-// #let proof = thmproof("proof", "Proof")
-// #let proposition = thmproof("proposition", "Proposition")
+// Theorems implementation
 
 #import "@preview/great-theorems:0.1.2": *
 #import "@preview/headcount:0.1.0": *
@@ -629,6 +658,8 @@
 #let lemma-cnt = counter("lemma")
 #let remark-cnt = counter("remark")
 
+/// Theorem block.
+/// -> content
 #let theorem = mathblock(
   blocktitle: context localization.at(text.lang).theorem,
   counter: thm-cnt,
@@ -636,6 +667,8 @@
   numbering: dependent-numbering("1.1", levels: 1),
 )
 
+/// Proposition block.
+/// -> content
 #let proposition = mathblock(
   blocktitle: context localization.at(text.lang).proposition,
   counter: prop-cnt,
@@ -643,6 +676,8 @@
   numbering: dependent-numbering("1.1", levels: 1),
 )
 
+/// Lemma block.
+/// -> content
 #let lemma = mathblock(
   blocktitle: context localization.at(text.lang).lemma,
   counter: lemma-cnt,
@@ -650,6 +685,8 @@
   numbering: dependent-numbering("1.1", levels: 1),
 )
 
+/// Remark block.
+/// -> content
 #let remark = mathblock(
   blocktitle: context localization.at(text.lang).remark,
   counter: remark-cnt,
@@ -657,9 +694,11 @@
   numbering: dependent-numbering("1.1", levels: 1),
 )
 
+/// Proof block.
+/// -> content
 #let proof = proofblock()
 
-/// Utility function to initialized the various theorem environments -- which are:
+/// Utility function to initialize the theorem environments#footnote[Provided by #link("https://typst.app/universe/package/great-theorems", "great-theorems") package.]:
 /// - theorem
 /// - proposition
 /// - lemma
@@ -673,4 +712,23 @@
   show heading.where(level: 1): reset-counter(remark-cnt, levels: 1)
 
   body
+}
+
+/// Creates a new subfigure with the given arguments and an optional label. From #link("https://github.com/mewmew/hallon-typ", "hallon") package.
+/// -> content
+#let subfigure(
+  ..args,
+  /// Whether to outline this subfigure or not.
+  /// -> bool
+  outlined: false,
+  /// Unique label to reference this subfigure
+  /// -> str
+  label: none,
+  body,
+) = {
+  let fig = figure(body, kind: "subfigure", outlined: outlined, ..args)
+  if label == none {
+    return fig
+  }
+  [ #fig #label ]
 }
