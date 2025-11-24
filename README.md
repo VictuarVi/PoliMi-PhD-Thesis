@@ -1,9 +1,6 @@
 # elegant-polimi-thesis 🎓
 
-[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Its design has been based on the following two templates:
-
-- [PhD Thesis Template](https://www.overleaf.com/latex/templates/phd-thesis-template/nwjkggvhrzmz)
-- [DEIB PhD Thesis Template](https://www.overleaf.com/latex/templates/politecnico-di-milano-deib-phd-thesis-template/ydsvtyzwxfdk)
+[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Its design has been based on the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
 See the [manual](docs/manual.pdf) and [documentation](docs/docs.pdf) for more information.
 
@@ -15,11 +12,13 @@ See the [manual](docs/manual.pdf) and [documentation](docs/docs.pdf) for more in
 
 ## Usage 🖋
 
-You can either use this template in the webapp or, from the CLI, import it with:
+You can either use this template in the webapp by clicking on "Create project in webapp" or, from the CLI, run:
 
 ```shell
 typst init @preview/elegant-polimi-thesis:0.1.2
 ```
+
+I'd also recommend to use the `--pdf-standard a-3u` flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
 
 To get started:
 
@@ -83,13 +82,13 @@ The full list of options is as follows:
 - `title`: title of the thesis
 - `author`: name and surname of the author
 - `advisor`: name and surname of the advisor
-- `coadvisor`: name and surname of the coadvisor (can be empty)
+- `coadvisor`: name and surname of the coadvisor(s) (can be empty)
 - `tutor`: name and surname of the tutor
 - `academic-year`: the corresponding academic year
 - `cycle`: the cycle of the thesis
 - `language`: language of the thesis (default: `en`; other supported: `it`)
-- `colored-headings`: whether to use colored headings or not
-- `main-logo`: main logo of the thesis
+- `colored-headings`: whether to use colored headings, captions or not
+- `main-logo`: logo of the thesis
 
 See the `docs/` folder for a thorough example on how to style the thesis.
 
@@ -97,14 +96,14 @@ See the `docs/` folder for a thorough example on how to style the thesis.
 
 Useful packages for a thesis include:
 
-- [equate](https://typst.app/universe/package/equate), [phisica](https://typst.app/universe/package/physica) for mathematical expressions
+- [equate](https://typst.app/universe/package/equate), [physica](https://typst.app/universe/package/physica) for mathematical expressions
 - [unify](https://typst.app/universe/package/unify), [zero](https://typst.app/universe/package/zero) to correctly format numbers
 - [cetz](https://typst.app/universe/package/cetz), [fletcher](https://typst.app/universe/package/fletcher) for drawing diagrams, [lilaq](https://typst.app/universe/package/lilaq) to plot data
 - [zebraw](https://typst.app/universe/package/zebraw), [codly](https://typst.app/universe/package/codly) for syntax highlighting in code blocks
 - [frame-it](https://typst.app/universe/package/frame-it), [showybox](https://typst.app/universe/package/showybox) to display formatted blocks
 - [alexandria](https://typst.app/universe/package/alexandria) for multiple bibliographies ([currently unsupported](https://github.com/typst/typst/issues/1097))
 
-The [smartaref](https://typst.app/universe/package/smartaref) (+ [hallon](https://typst.app/universe/package/hallon)), [great-theorems](https://typst.app/universe/package/great-theorems) packages have been integrated to provide subfigures ([currenly unsupported](https://github.com/typst/typst/issues/246)) and theorems implementations.
+The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https://typst.app/universe/package/hallon) packages have been integrated to provide subfigures ([currently unsupported](https://github.com/typst/typst/issues/246)), while [great-theorems](https://typst.app/universe/package/great-theorems) and [headcount](https://typst.app/universe/package/headcount) to handle theorems implementations.
 
 |                      Typst package                      |             LaTeX equivalent              |
 | :-----------------------------------------------------: | :---------------------------------------: |

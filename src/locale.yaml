@@ -1,6 +1,7 @@
 it:
   advisor: Relatore
   coadvisor: Correlatore
+  coadvisors: Correlatori
   tutor: Tutor
   toc: Indice
   dissertation: Tesi di laurea di
@@ -17,7 +18,8 @@ it:
   figure: Figura
 en:
   advisor: Advisor
-  coadvisor: Coadvisor
+  coadvisor: Co-advisor
+  coadvisors: Co-advisors
   tutor: Tutor
   dissertation: Doctoral Dissertation of
   year: Year

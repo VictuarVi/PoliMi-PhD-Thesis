@@ -1,19 +1,20 @@
-#import "@preview/elegant-polimi-thesis:0.1.1": *
+#import "@preview/elegant-polimi-thesis:0.1.2": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
   author: "Name Surname",
-  advisor: "",
-  coadvisor: "",
-  tutor: "",
+  advisor: "Advisor",
+  coadvisor: "Coadvisor",
+  // coadvisor: ("Coadvisor1", "Coadvisor2"),
+  tutor: "Tutor",
   academic-year: "", // defaults to current one
-  cycle: "XXIV",
+  cycle: "XXV",
   chair: none,
   language: "en",
   colored-headings: true,
 )
 
-#show: theorems-init // if you don't plan to use theorems, proposition, lemmas or remarks this line can be removed
+#show: theorems-init // remove if you don't plan to use theorems, proposition, lemmas or remarks
 
 #show: frontmatter
 

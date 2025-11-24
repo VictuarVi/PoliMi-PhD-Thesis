@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 pkg_name="elegant-polimi-thesis"
-version=0.1.1
+version=0.1.2
 
 source=$PWD
 destinations=("$HOME/.cache/typst/packages/preview/$pkg_name/" "$HOME/.local/share/typst/packages/local/$pkg_name/")

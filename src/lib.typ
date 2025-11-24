@@ -1,19 +1,51 @@
-// LaTeX sizes to match original template
+// LaTeX sizes to match original templates
+// https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
 #let sizes = (
-  tiny: 0.5em,
-  scriptsize: 0.7em,
-  footnotesize: 0.8em,
-  small: 0.9em,
-  normalsize: 1em,
-  large: 1.2em,
-  Large: 1.44em,
-  LARGE: 1.728em,
-  huge: 2.074em,
-  Huge: 2.488em,
+  "10pt": (
+    tiny: 5pt,
+    scriptsize: 7pt,
+    footnotesize: 8pt,
+    small: 9pt,
+    normalsize: 10pt,
+    large: 12pt,
+    Large: 14.4pt,
+    LARGE: 17.28pt,
+    huge: 20.74pt,
+    Huge: 24.88pt,
+  ),
+  "11pt": (
+    tiny: 6pt,
+    scriptsize: 8pt,
+    footnotesize: 9pt,
+    small: 10pt,
+    normalsize: 10.95pt,
+    large: 12pt,
+    Large: 14.4pt,
+    LARGE: 17.28pt,
+    huge: 20.74pt,
+    Huge: 24.88pt,
+  ),
+  "12pt": (
+    tiny: 6pt,
+    scriptsize: 8pt,
+    footnotesize: 10pt,
+    small: 10.95pt,
+    normalsize: 12pt,
+    large: 14.4pt,
+    Large: 17.28pt,
+    LARGE: 20.74pt,
+    huge: 24.88pt,
+    Huge: 24.88pt,
+  ),
 )
 
-// the current state (title page, front-,main-,backmatter...)
+/// The current state (title page, front-,main-,backmatter...)
+/// -> state
 #let document-state = state("init", "TITLE_PAGE")
+
+/// The current type of document:
+/// -> state
+#let document-type = state("init", "PhD")
 
 #let localization = yaml("locale.yaml")
 
@@ -42,27 +74,27 @@
   /// Tutor of the thesis.
   /// -> str
   tutor: "",
-  /// Deprecated attribute. "Old" academic year. If empty, defaults to "#str(datetime.today().year()) --- #str(datetime.today().year() + 1)".
-  /// -> str
-  phdcycle: "",
   /// Academic year of the thesis. If empty, defaults to "#str(datetime.today().year())".
   /// -> str
   academic-year: "",
   /// Cycle of the thesis.
   /// -> str
   cycle: none,
-  /// Chair of the thesis (not used).
+  /// Chair of the thesis.
   /// -> str
   chair: none,
   /// Language of the thesis.
   /// -> str
   language: "en",
-  /// Whether to activate the colored headings or not.
+  /// Whether to activate the colored headings and captions (such as Figure n, Table n...) or not.
   /// -> bool
   colored-headings: true,
   /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
   main-logo: "img/logo_ingegneria.svg",
+  /// Frontispiece of the thesis. Can be either: `PhD`, `DEIB PhD`, `Computer Science and Engineering Master`, `Classical Master`.
+  /// -> str
+  frontispiece: "PhD",
   body,
 ) = {
   set document(
@@ -148,7 +180,7 @@
 
   // From Hallon 0.1.3 (https://typst.app/universe/package/hallon)
 
-  /// Nameref displays a reference using section name (instead of numbering).
+  // Nameref displays a reference using section name (instead of numbering).
   let nameref(label) = {
     show ref: it => {
       if it.element == none {
@@ -164,7 +196,7 @@
     ref(label)
   }
 
-  /// Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
+  // Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
   let subfigure-caption(it, parent: none) = context {
     align(
       center,
@@ -180,7 +212,7 @@
     )
   }
 
-  /// Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
+  // Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
   let style-figures(body, heading-levels: 0) = context {
     // Numbering patterns for figures and subfigures.
     let fig-numbering = "1." * heading-levels + "1" // e.g. "1.1"
@@ -283,7 +315,6 @@
 
   // --------------------- [ TITLE PAGE ] ---------------------
 
-  // Logo
   v(0.6fr)
 
   place(dx: 44%, dy: -28%, raggiera-image(90%))
@@ -291,31 +322,21 @@
 
   v(4.20fr)
 
-  // Titolazione
   text(
-    size: sizes.huge,
+    size: sizes.at("12pt").huge,
     weight: 700,
     fill: if (colored-headings) { bluepoli } else { black },
     title,
   )
-  // v(1.2em, weak: true)
-  // text(1.1em, style: "italic", subtitle)
 
   v(1.5cm)
 
   align(end, context {
-    set text(size: sizes.Large)
+    set text(size: sizes.at("12pt").Large)
     localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
   })
 
   v(1fr)
-
-  if (phdcycle == "") {
-    phdcycle = str(datetime.today().year()) + " - " + str(datetime.today().year() + 1)
-  }
-  if (academic-year == "") {
-    academic-year = str(datetime.today().year())
-  }
 
   // helper function to detect whether a field is present
   let isPresent(before, string, after: linebreak()) = {
@@ -327,11 +348,15 @@
   }
 
   align(start, context {
-    set text(size: sizes.large)
+    set text(size: sizes.at("12pt").large)
     isPresent(localization.at(text.lang).advisor + ": Prof. ", advisor)
-    isPresent(localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+    if type(coadvisor) == str {
+      isPresent(localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+    } else if type(coadvisor) == array and coadvisor.len() > 1 {
+      localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+      linebreak()
+    }
     isPresent(localization.at(text.lang).tutor + ": Prof. ", tutor)
-    isPresent(localization.at(text.lang).advisor + ": Prof. ", advisor)
     isPresent(localization.at(text.lang).year + " ", academic-year, after: none)
     isPresent(" - ", cycle, after: " " + localization.at(text.lang).cycle)
   })
@@ -345,11 +370,6 @@
   }
 
   // --------------------- [ CHAPTER STYLE ] ---------------------
-
-  // let raggera = {
-  //   v(1fr)
-  //   place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
-  // }
 
   show heading.where(level: 1): it => context {
     // checks if the page is empty: the cursor is at the same height from the top as the top margin
@@ -460,6 +480,294 @@
   set list(indent: 1.2em)
 
   set enum(indent: 1.2em)
+
+  body
+}
+
+#let banner(body) = rect(
+  width: 100%,
+  fill: bluepoli.lighten(40%),
+  inset: (rest: 1em, x: 1.7em),
+  text(
+    fill: white,
+    weight: "bold",
+    body,
+  ),
+)
+
+/// The thesis article format styling function.
+/// -> content
+#let polimi-article-format-thesis(
+  /// Title of the thesis.
+  /// -> str
+  title: "Thesis Title",
+  /// Author of the thesis.
+  /// -> str
+  author: "Name Surname",
+  /// Advisor of the thesis.
+  /// -> str
+  advisor: "Prof. Name Surname",
+  /// Coadvisor(s) of the thesis.
+  /// -> str | array
+  coadvisor: "Prof. Name Surname",
+  /// Academic year of the thesis.
+  /// -> str
+  academic-year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()),
+  /// Student ID
+  /// -> str
+  student-id: "00000000",
+  /// Student course.
+  /// -> str
+  course: "Course Engineering",
+  /// Language of the thesis.
+  /// -> str
+  language: "en",
+  /// Abstract.
+  /// -> content
+  abstract: [],
+  /// Keywords, that appear below the abstract (and in the PDF metadata).
+  /// -> str
+  keywords: "",
+  /// Logo of the thesis.
+  /// -> path
+  logo: "img/logo_ingegneria.svg",
+  body,
+) = {
+  set document(
+    title: title,
+    author: author,
+    keywords: keywords,
+  )
+
+  set text(
+    lang: language,
+    size: 11pt,
+    font: "New Computer Modern",
+  )
+  show math.equation: set text(font: "New Computer Modern Math")
+
+  set par(
+    justify: true,
+    linebreaks: "optimized",
+    spacing: 1.7em,
+    first-line-indent: 0pt,
+  )
+
+  set page(
+    margin: (
+      top: 2.0cm,
+      right: 2.0cm,
+      bottom: 2.0cm,
+      left: 2.0cm,
+    ),
+    numbering: "1",
+    number-align: bottom + center,
+  )
+
+  {
+    // Title
+
+    set text(size: 0.3cm, weight: "bold")
+    set par(spacing: 0.5cm)
+
+    move(
+      dx: -0.6cm,
+      image(
+        width: 60%,
+        logo,
+      ),
+    )
+    {
+      set text(fill: bluepoli)
+
+      text(size: sizes.at("11pt").large, title)
+
+      parbreak()
+
+      smallcaps(
+        "Tesi di Laurea Magistrale in" + linebreak() + course,
+      )
+    }
+
+    parbreak()
+
+    (author, student-id).map(e => text(size: sizes.at("11pt").large, e)).join(", ")
+  }
+
+  line(length: 100%, stroke: 0.4pt)
+
+  // Abstract
+
+  grid(
+    columns: (24%, 1fr),
+    align: (horizon, left),
+    grid.cell(
+      inset: 5%,
+      [
+        #set text(size: sizes.at("11pt").scriptsize)
+
+        #text(weight: "bold", "Advisor:") \
+        #advisor
+
+        #if type(coadvisor) == str {
+          text(weight: "bold", "Co-advisor:") + linebreak()
+          coadvisor
+        } else if type(coadvisor) == array and coadvisor.len() == 2 {
+          text(weight: "bold", "Co-advisors:") + linebreak()
+          coadvisor.map(smallcaps).join(", ")
+        }
+
+        #text(weight: "bold", "Academic year:") \
+        #academic-year
+      ],
+    ),
+    text(fill: bluepoli, "Abstract: ") + abstract,
+  )
+
+  banner("Keywords:" + keywords)
+
+  // Mainmatter
+
+  set list(indent: 1.2em, tight: true, marker: ($bullet$, $circle$, $-$))
+  set enum(indent: 1.2em, tight: true)
+
+  set heading(numbering: "1.1.")
+  show heading: it => {
+    set text(fill: bluepoli) // fix sizing
+    counter(heading).display()
+    h(1em)
+    it.body
+  }
+
+  body
+}
+
+/// The executive summary styling function.
+/// -> content
+#let polimi-executive-summary(
+  /// Title of the thesis.
+  /// -> str
+  title: "Thesis Title",
+  /// Author of the thesis.
+  /// -> str
+  author: "Name Surname",
+  /// Advisor of the thesis.
+  /// -> str
+  advisor: "Prof. Name Surname",
+  /// Coadvisor(s) of the thesis.
+  /// -> str | array
+  coadvisor: "Prof. Name Surname",
+  /// Academic year of the thesis.
+  /// -> str
+  academic-year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()),
+  /// Student course.
+  /// -> str
+  course: "Course Engineering",
+  /// Language of the thesis.
+  /// -> str
+  language: "en",
+  /// Logo of the thesis.
+  /// -> path
+  logo: "img/logo_ingegneria.svg",
+  body,
+) = {
+  set document(
+    title: title,
+    author: author,
+  )
+
+  set text(
+    lang: language,
+    size: 11pt,
+    font: "New Computer Modern",
+  )
+  show math.equation: set text(font: "New Computer Modern Math")
+
+  set par(
+    justify: true,
+    linebreaks: "optimized",
+    spacing: 0.7em,
+    first-line-indent: 0pt,
+  )
+
+  set page(
+    margin: (
+      top: 3cm,
+      left: 2.0cm,
+      right: 2.0cm,
+      bottom: 2cm,
+    ),
+    numbering: "1",
+    number-align: bottom + center,
+    columns: 2,
+    header: context if here().page() > 1 {
+      banner("Executive Summary" + h(1fr) + author)
+    },
+  )
+  set columns(gutter: 30pt)
+
+  // Title
+
+  place(
+    top + left,
+    float: true,
+    scope: "parent",
+    {
+      set text(weight: "bold", size: 0.3cm)
+      set par(spacing: 0.5cm)
+
+      move(
+        dx: -0.6cm,
+        image(
+          width: 60%,
+          logo,
+        ),
+      )
+      {
+        set text(fill: bluepoli)
+
+        smallcaps(
+          "Executive Summary of the Thesis",
+        )
+
+        parbreak()
+
+        text(size: sizes.at("11pt").large, title)
+
+        parbreak()
+
+        smallcaps(
+          "Laurea Magistrale in " + course,
+        )
+      }
+
+      parbreak()
+
+      "Author: " + smallcaps(author) + parbreak()
+      "Advisor: " + smallcaps(advisor) + parbreak()
+      if type(coadvisor) == str {
+        "Co-advisor: " + smallcaps(coadvisor) + parbreak()
+      } else if type(coadvisor) == array and coadvisor.len() == 2 {
+        "Co-advisors: " + coadvisor.map(smallcaps).join(", ") + parbreak()
+      }
+      "Academic year: " + smallcaps(academic-year)
+
+      line(length: 100%, stroke: 0.4pt)
+    },
+  )
+
+  // Mainmatter
+
+  set list(indent: 1.2em, tight: true, marker: ($bullet$, $circle$, $-$))
+  set enum(indent: 1.2em, tight: true)
+
+  set heading(numbering: "1.1.")
+  show heading: it => {
+    set text(fill: bluepoli)
+    counter(heading).display()
+    h(1em)
+    it.body
+  }
 
   body
 }
