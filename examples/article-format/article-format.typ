@@ -1,6 +1,14 @@
 #import "@preview/elegant-polimi-thesis:0.1.2": *
 
+#let data = yaml("../shared_data.yaml")
+
 #show: polimi-article-format-thesis.with(
+  title: [`article-format` manual],
+  author: data.author,
+  advisor: data.advisor,
+  coadvisor: data.coadvisor,
+  academic-year: data.academic-year,
+  language: "en",
   abstract: [
     Here goes the Abstract in English of your thesis (in article format)
     followed by a list of keywords. The Abstract is a concise summary of the content
@@ -19,6 +27,8 @@
     to your field or sub-field. Keywords may be a single word or two to four words
   ],
 )
+
+#show: theorems-init
 
 = Introduction
 
@@ -77,13 +87,190 @@ as follows: ```typ @section-name```.
 
 = Equations
 
+In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
+
+- Inline math, same as LaTeX:
+#columns[
+  #set align(center)
+  ```Typst
+  $a^2 + b^2 = c^2$
+  ```
+  #colbreak()
+  $a^2 + b^2 = c^2$
+]
+
+- Block math, by adding whitespaces before and after the content:
+#columns[
+  #set align(center)
+  ```Typst
+  $ a^2 + b^2 = c^2 $
+  ```
+  #colbreak()
+  $ a^2 + b^2 = c^2 $
+]
+
+Now a more complex equation:
+
+$
+  cases(
+    Delta dot bold(D) & = rho\,,
+    Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
+    Delta dot bold(B) & = 0\,,
+    Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J).
+  )
+$
+
+By default, the equations are *not* numbered -- however if you need to:
+#math.equation(
+  numbering: "(1.1)",
+  block: true,
+  $
+    lr(
+      \{
+      #block[$                                            Delta dot bold(D) & = rho\, \
+      Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
+                                                 Delta dot bold(B) & = 0\, \
+      Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
+    )
+  $,
+)<maxwell-equation>
+
+And to reference it just type @maxwell-equation.
+
 = Figures, Tables and Algorithms
 
 == Figures
 
+Via the ```Typst figure``` environment @typst-figure, as you would do in LaTeX:
+#figure(image("../../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
+
+However, since Typst does not _natively_ support subfigures (see #link("https://github.com/typst/typst/issues/246", "related issue")), the packages smartaref @typst-smartaref and hallon @typst-hallon have been integrated:
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    align: horizon,
+    subfigure(
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
+      caption: [
+        Left Polimi logo.
+      ],
+      label: <a>,
+    ),
+
+    subfigure(
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
+      caption: [
+        Right Polimi logo.
+      ],
+      label: <b>,
+    ),
+  ),
+  caption: [A figure composed of two sub figures, similar to ```latex \subfloat{}```.],
+)<full>
+
+You can reference either the main @full; or a single subfigure: @a, or @b.
+
 == Tables
 
+#let frame(color) = (
+  (x, y) => (
+    left: if x > 0 {
+      0pt
+    } else {
+      color
+    },
+    right: color,
+    top: if y < 2 {
+      color
+    } else {
+      0pt
+    },
+    bottom: color,
+  )
+)
+
+#let shading(color) = (
+  (x, y) => {
+    if y == 0 {
+      color
+    } else {
+      none
+    }
+  }
+)
+
+#show table.cell: it => {
+  if (it.x == 0 or it.y == 0) {
+    text(weight: "bold", it)
+  } else {
+    it
+  }
+}
+
+#set table(align: center)
+
+#figure(
+  table(
+    columns: 4,
+    stroke: frame(black),
+    fill: shading(aqua.darken(20%)),
+    table.header([], [Column 1], [Column 2], [Column 3]),
+    [row 1], [1], [2], [3],
+    [row 2], $alpha$, $beta$, $gamma$,
+    [row 3], [alpha], [beta], [gamma],
+  ),
+  caption: [Caption of the Table to appear in the List of Tables.],
+)
+
+As you can see, it could be useful to implement a default style for every table @typst-tables.
+
 == Algorithms
+
+For algorithms, there are a lot of packages on Typst universe @typst-universe. The following are my recommendations.
+
+- `lovelace` @typst-lovelace
+#import "@preview/lovelace:0.3.0": *
+
+#figure(
+  kind: "algorithm",
+  supplement: [Algorithm],
+
+  pseudocode-list(booktabs: true, numbered-title: [My cool algorithm])[
+    + Initial instructions
+    + *for* _for − condition_ *do*
+      + Some instructions
+      + *if* _if − condition_ *then*
+      + Some other instructions
+      + *end if*
+    + *end for*
+    + *while* _while − condition_ *do*
+      + Some further instructions
+    + *end while*
+    + Final instructions
+  ],
+) <first-algorithm>
+
+See @first-algorithm.
+
+// #pagebreak()
+
+- `algo` @typst-algo
+#import "@preview/algo:0.3.6": *
+
+#algo(header: [Name of Algorithm])[
+  Initial instructions \
+  *for* _for − condition_ *do* #i\
+  Some instructions \
+  *if* _if − condition_ *then* #i\
+  Some other instructions #d\
+  *end if* #d\
+  *end for* \
+  *while* _while − condition_ *do* #i\
+  Some further instructions #d\
+  *end while* \
+  Final instructions
+]
 
 = Some further useful recommendations
 
@@ -119,7 +306,7 @@ A final section containing the main conclusions of your research/study have to b
 Your thesis must contain a suitable Bibliography which lists all the sources consulted on developing the work. The list of references is placed at the end of the manuscript after the chapter containing the conclusions. It is suggested to use the BibTeX package and save the bibliographic references in the file `Thesis_bibliography.bib`.
 
 #bibliography(
-  "Thesis_bibliography.bib",
+  data.bibliography,
   full: true,
 )
 
@@ -137,7 +324,7 @@ It may be necessary to include another appendix to better organize the presentat
 
 Qui va l'Abstract in lingua italiana della tesi seguito dalla lista di parole chiave.
 
-#banner[*Parole chiave*: qui, le parole chiave, della tesi, in italiano]
+#keywords-banner[*Parole chiave*: qui, le parole chiave, della tesi, in italiano]
 
 #show: acknowledgements
 

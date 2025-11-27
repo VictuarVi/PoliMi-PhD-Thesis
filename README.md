@@ -1,6 +1,6 @@
 # elegant-polimi-thesis 🎓
 
-[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Its design has been based on the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
+[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
@@ -31,7 +31,8 @@ To get started:
   advisor: "Prof. Donatella Sciuto",
   coadvisor: "Prof. Antonio Capone",
   tutor: "Prof. Marco Bramanti",
-  colored-headings: true
+  colored-headings: true,
+  frontispiece: "phd"
 )
 
 #show: frontmatter
@@ -77,20 +78,62 @@ To get started:
 // acknowlegements
 ```
 
-The full list of options is as follows:
+Depending on the **thesis template** you need to use, change the `frontispiece` argument:
 
-- `title`: title of the thesis
+- "PhD Thesis Template", "DEIB PhD Thesis" are mapped to `phd`
+- "Classical Format Thesis" is mapped to `classical-format`
+- "Computer Science and Engineering" is mapped to `cs-eng-master`
+
+The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
+
+```typ
+#import "@preview/elegant-polimi-thesis:0.1.2": *
+
+// For the article format
+#show: polimi-article-format.with(
+  title: "Thesis Title",
+  author: "Vittorio Robecchi",
+  advisor: "Prof. Donatella Sciuto",
+  coadvisor: "Prof. Antonio Capone",
+  abstract: include "../sections/abstract.typ"
+)
+
+// For the executive summary
+#show: polimi-executive-summary.with(
+  title: "Thesis Title",
+  author: "Vittorio Robecchi",
+  advisor: "Prof. Donatella Sciuto",
+  coadvisor: "Prof. Antonio Capone",
+)
+```
+
+The template are **three distinct documents**, however they share _most_ of the features:
+
+- `title`: title of the document
 - `author`: name and surname of the author
 - `advisor`: name and surname of the advisor
 - `coadvisor`: name and surname of the coadvisor(s) (can be empty)
 - `tutor`: name and surname of the tutor
 - `academic-year`: the corresponding academic year
+- `language`: language of the thesis (default: `en`; other supported: `it`)
+- `logo`: logo of the thesis
+
+I recommend to import all the library anyway in order to access all the functions (`*matter`, theorems-related among others).
+
+The following are exclusive to `polimi-thesis`:
+
+- `tutor`: name and surname of the tutor
 - `cycle`: the cycle of the thesis
 - `language`: language of the thesis (default: `en`; other supported: `it`)
 - `colored-headings`: whether to use colored headings, captions or not
-- `main-logo`: logo of the thesis
 
-See the `docs/` folder for a thorough example on how to style the thesis.
+The following are exclusive to `polimi-article-format-thesis`:
+
+- `student-id`: your student ID
+- `abstract`: the abstract
+- `keywords`: keywords (that will also appear in the document metadata)
+
+Both the `polimi-article-format-thesis` and `polimi-executive-summary` share the `course` option.
 
 ## Recommended packages
 

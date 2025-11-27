@@ -1,71 +1,65 @@
 #import "@preview/elegant-polimi-thesis:0.1.2": *
 
-#show: polimi-thesis.with(
-  title: [`elegant-polimi-thesis` manual],
-  author: "Vittorio Robecchi",
+#let data = yaml("../shared_data.yaml")
+
+#show: polimi-executive-summary.with(
+  title: [`executive-summary` manual],
+  author: data.author,
+  advisor: data.advisor,
+  coadvisor: data.coadvisor,
+  academic-year: data.academic-year,
   language: "en",
 )
 
 #show: theorems-init
 
-#show: frontmatter
+= Introduction
 
-#toc
-#list-of-figures
-#list-of-tables
+This document is intended to be both an example of the Polimi Typst template for the Executive Summary of your thesis, as well as a short introduction to its use.
 
-#let nomenclature_ = (
-  "Polimi": "Politecnico di Milano",
-  "CdL": "Corso di Laurea",
-  "CCS": "Consigli di Corsi di Studio",
-  "CFU": "Crediti Formativi Universitari",
-)
+The Executive Summary is required only if the thesis has been assigned to a reviewer (#emph("controrelatore")) for an independent evaluation of its quality, scientific/technical relevance and original contribution.
 
-#nomenclature(
-  nomenclature_,
-  indented: false,
-)
+= Guidelines
 
-#show: mainmatter
+The Executive Summary is a critical overview of your thesis
+with a focus on the main achievements that have emerged from your research.
 
-= Chapter one
+The Executive Summary should be organized in sections/paragraphs in order to better highlight the major points of your work.
+The length should range from four to six pages depending on the length of the thesis manuscript.
+Keep the Executive Summary concise enough to be effective but long enough to allow it to be complete.
+It should be written after completing the thesis manuscript as a stand-alone independent document
+of sufficient clarity and detail to ensure that the reader can figure out the overall objectives, the methodology employed and the results/impact of your research.
 
-#import "@preview/metalogo:1.2.0": LaTeX, TeX
-#show "LaTeX": LaTeX
+In writing the Executive Summary, keep in mind that it is not an abstract, it is not a preface, and it is not a random collection of highlights.
+With a few exceptions, do not simply cut and paste whole sections or paragraphs of the thesis manuscript into a disorganized and cluttered Executive Summary.
+You should reorganize information to be informative as well as concise.
 
-#let Typst = {
-  text(
-    fill: eastern,
-    font: "Libertinus Serif",
-    weight: "semibold",
-    "Typst",
-  )
-}
-#show "Typst": Typst
+The Executive Summary could contain a few important equations related to your work.
+It could also include the most relevant figures and tables taken or elaborated from the thesis manuscript.
 
-In this section there will be useful information about how to style chapters, sections and so on. Be sure to read the Typst guide for LaTeX users @typst-latex.
+You should also include in the Executive Summary the very essential bibliography of your study.
+The number of selected references should range from three to five depending on the type of work.
 
-== Sections and subsection
+The Executive Summary should contain a final section reporting the main conclusions drawn from your research.
 
-In LaTeX, the canonical sections division is as follows:
-```tex
-\chapter{}
-\section{}
-\subsection{}
-\subsubsection{}
-```
-in Typst, there are just headings @typst-headings (similar to Markdown) -- so the LaTeX system maps to:
+= Sections and subsections
+
+It is convenient to organize the Executive Summary of your thesis into sections and subsections.
+If necessary, subsubsections, paragraphs and subparagraphs can be also used.
+A new section or subsection can be included  with the commands
 ```typ
-= Chapter           // Heading level 1
-== Section          // Heading level 2
-=== Subsection      // Heading level 3
-==== Subsubsection  // Heading level 4
+= Title of the section
+== Title of the subsection
 ```
 
-If you need to turn off the numbering you will call the ```Typst heading``` function:
+It is recommended to give a label to each section by using the command
 ```typ
-#heading("Heading title", level: n, numbering: none)
+= Title of the section<section-name>
 ```
+where the argument is just a text string that you'll use to reference that part
+as follows: ```typ @section-name```.
+
+= Equations, Figures, Tables and Algorithms
 
 == Equations
 
@@ -119,12 +113,10 @@ By default, the equations are *not* numbered -- however if you need to:
 
 And to reference it just type @maxwell-equation.
 
-== Figures, Tables and Algorithms
-
-=== Figures
+== Figures
 
 Via the ```Typst figure``` environment @typst-figure, as you would do in LaTeX:
-#figure(image("../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
+#figure(image("../../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
 
 However, since Typst does not _natively_ support subfigures (see #link("https://github.com/typst/typst/issues/246", "related issue")), the packages smartaref @typst-smartaref and hallon @typst-hallon have been integrated:
 
@@ -133,7 +125,7 @@ However, since Typst does not _natively_ support subfigures (see #link("https://
     columns: (1fr, 1fr),
     align: horizon,
     subfigure(
-      image("../src/img/logo_ingegneria.svg", width: 50%),
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
       caption: [
         Left Polimi logo.
       ],
@@ -141,7 +133,7 @@ However, since Typst does not _natively_ support subfigures (see #link("https://
     ),
 
     subfigure(
-      image("../src/img/logo_ingegneria.svg", width: 50%),
+      image("../../src/img/logo_ingegneria.svg", width: 50%),
       caption: [
         Right Polimi logo.
       ],
@@ -153,7 +145,7 @@ However, since Typst does not _natively_ support subfigures (see #link("https://
 
 You can reference either the main @full; or a single subfigure: @a, or @b.
 
-=== Tables
+== Tables
 
 #let frame(color) = (
   (x, y) => (
@@ -207,7 +199,7 @@ You can reference either the main @full; or a single subfigure: @a, or @b.
 
 As you can see, it could be useful to implement a default style for every table @typst-tables.
 
-=== Algorithms
+== Algorithms
 
 For algorithms, there are a lot of packages on Typst universe @typst-universe. The following are my recommendations.
 
@@ -254,53 +246,32 @@ See @first-algorithm.
   Final instructions
 ]
 
-== Theorems, propositions and lists
+= Some further useful recommendations
 
-#theorem[
-  Write here your theorem.
-]
+// theorems and such
 
-#proposition[
-  Write here your proposition.
-]
+How to insert itemized lists:
+- first item;
+- second item.
 
-#proof[
-  If useful you can report here the proof.
-]
+How to insert numbered lists:
+1. first item;
+2. second item.
 
-Powered by @typst-great-theorems.
+= Bibliography
 
-Normal list:
-- First item
-- Second item
+The Executive Summary should contain the very essential bibliography of your study. It is suggested to use the BibTeX package LINK and save the bibliographic references in the file
+`bibliography.bib`.
 
-Numbered list:
-+ First item
-+ Second item
+= Conclusions
 
-== Plagiarism
+A final section containing the main conclusions of your research/study have to be inserted here.
 
-You have to be sure to respect the rules on Copyright and avoid an involuntary plagia-
-rism. It is allowed to take other persons’ ideas only if the author and his original work are clearly mentioned. As stated in the Code of Ethics and Conduct, Politecnico di Milano promotes the integrity of research, condemns manipulation and the infringement of intellectual property, and gives opportunity to all those who carry out research activities to have an adequate training on ethical conduct and integrity while doing research. To be sure to respect the copyright rules, read the guides on Copyright legislation and citation styles available at:
+= Acknowledgements
 
-#align(center, link("https://www.biblio.polimi.it/en/tools/courses-and-tutorials"))
-
-You can also attend the courses which are periodically organized on "Bibliographic cita-
-tions and bibliography management".
-
-== Bibliography and citations
-
-Your thesis must contain a suitable Bibliography which lists all the sources consulted on developing the work. The list of references is placed at the end of the manuscript after the chapter containing the conclusions. We suggest to use the BibTeX package @bibtex-cheat-sheet and save the bibliographic references in the file `Thesis_bibliography.bib`. This is indeed a database containing all the information about the references.
-
-To cite in your manuscript, use the `cite` @typst-cite command as follows:
-
-#align(center, emph([Here is how you cite bibliography entries: @knuth74 or chained @knuth92@lamport94.]))
-
-As it would have been in LaTeX, the bibliography @typst-bibliography is automatically generated.
-
-#show: backmatter
+Here you might want to acknowledge someone.
 
 #bibliography(
-  "Thesis_bibliography.bib",
-  full: false,
+  data.bibliography,
+  full: true,
 )

@@ -41,13 +41,13 @@
 
 /// The current state (title page, front-,main-,backmatter...)
 /// -> state
-#let document-state = state("init", "TITLE_PAGE")
+#let _document-state = state("init", "TITLE_PAGE")
 
 /// The current type of document:
 /// -> state
-#let document-type = state("init", "PhD")
+#let _document-type = state("init", "PhD")
 
-#let localization = yaml("locale.yaml")
+#let _localization = yaml("locale.yaml")
 
 /// Signature PoliMi colour (#box(baseline: 0.1em, rect(height: 0.7em, width: 0.7em, fill: rgb("#5f859f")))), used in headings and labels.
 /// -> color
@@ -56,6 +56,111 @@
 // https://typst.app/universe/package/smartaref
 #import "@preview/smartaref:0.1.0": Cref, cref
 
+// From Hallon 0.1.3 (https://typst.app/universe/package/hallon)
+
+// Nameref displays a reference using section name (instead of numbering).
+#let nameref(label) = {
+  show ref: it => {
+    if it.element == none {
+      it
+    } else if it.element.func() != heading {
+      it
+    } else {
+      let l = it.target // label
+      let h = it.element // heading
+      link(l, h.body)
+    }
+  }
+  ref(label)
+}
+
+// Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
+#let subfigure-caption(it, colored-caption: true, parent: none) = context {
+  align(
+    center,
+    block({
+      set align(left)
+      text(
+        fill: if (colored-caption) { bluepoli } else { black },
+        it.counter.display("(a)"),
+      )
+      [ ]
+      it.body
+    }),
+  )
+}
+
+// Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
+#let style-figures(body, colored-caption: true, heading-levels: 0) = context {
+  // Numbering patterns for figures and subfigures.
+  let fig-numbering = "1." * heading-levels + "1" // e.g. "1.1"
+  let subfig-numbering = "1." * heading-levels + "1a" // e.g. "1.1a"
+
+  // Set default supplement for subfigures.
+  show figure.where(kind: "subfigure"): set figure(
+    supplement: _localization.at(text.lang).figure,
+  )
+
+  // removed styling function because the one used is the template global one
+
+  show heading: outer => {
+    if outer.level <= heading-levels {
+      // reset figure counter.
+      counter(figure.where(kind: image)).update(0)
+      counter(figure.where(kind: table)).update(0)
+      counter(figure.where(kind: raw)).update(0)
+    }
+    outer
+  }
+
+  set figure(numbering: (..nums) => {
+    // TODO: check if we need to provide more context (i.e. using `at` instead
+    // of `get`)?
+    //
+    // ref: https://github.com/typst/typst/issues/3930
+    let heading-nums = counter(heading).get()
+    if heading-nums.len() > heading-levels {
+      // truncate if needed.
+      heading-nums = heading-nums.slice(0, heading-levels)
+    } else if heading-nums.len() < heading-levels {
+      // zero pad if needed.
+      for i in range(heading-nums.len(), heading-levels) {
+        heading-nums.push(0)
+      }
+    }
+    std.numbering(fig-numbering, ..heading-nums, ..nums)
+  })
+
+  show figure.where(kind: image): outer => {
+    // reset subfigure counter
+    counter(figure.where(kind: "subfigure")).update(0)
+
+    // use nesting level of figure to infer numbering of subfigures.
+    set figure(numbering: (..nums) => {
+      let heading-nums = counter(heading).at(outer.location())
+      if heading-nums.len() > heading-levels {
+        // truncate if needed.
+        heading-nums = heading-nums.slice(0, heading-levels)
+      } else if heading-nums.len() < heading-levels {
+        // zero pad if needed.
+        for i in range(heading-nums.len(), heading-levels) {
+          heading-nums.push(0)
+        }
+      }
+      let outer-nums = counter(figure.where(kind: image)).at(outer.location())
+      std.numbering(subfig-numbering, ..heading-nums, ..outer-nums, ..nums)
+    })
+
+    show figure.where(kind: "subfigure"): inner => {
+      show figure.caption: subfigure-caption.with(colored-caption: colored-caption, parent: outer)
+      inner
+    }
+    outer
+  }
+
+  body
+}
+
 /// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
 /// -> content
 #let _empty-page() = {
@@ -63,6 +168,23 @@
   pagebreak(weak: true, to: "odd")
   [#metadata(none) <chapter-start>]
 }
+
+/// Draw the keywords banner.
+/// -> content
+#let keywords-banner(
+  /// Body of the banner.
+  /// -> content
+  body,
+) = rect(
+  width: 100%,
+  fill: bluepoli.lighten(40%),
+  inset: (rest: 1em, x: 1.7em),
+  text(
+    fill: white,
+    weight: "bold",
+    body,
+  ),
+)
 
 /// Main formatting function of the template.
 /// -> content
@@ -75,14 +197,14 @@
   author: "Name Surname",
   /// Advisor of the thesis.
   /// -> str
-  advisor: "",
-  /// Coadvisor of the thesis.
-  /// -> str
-  coadvisor: "",
+  advisor: "Prof. Advisor",
+  /// Coadvisor(s) of the thesis.
+  /// -> str | arr
+  coadvisor: "Prof. Coadvisor",
   /// Tutor of the thesis.
   /// -> str
-  tutor: "",
-  /// Academic year of the thesis. If empty, defaults to "#str(datetime.today().year())".
+  tutor: "Prof. Tutor",
+  /// Academic year of the thesis. If empty, defaults to '#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}'.
   /// -> str
   academic-year: "",
   /// Cycle of the thesis.
@@ -100,9 +222,9 @@
   /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
   logo: "img/logo_ingegneria.svg",
-  /// Frontispiece of the thesis. Can be either: `PhD`, `DEIB PhD`, `Computer Science and Engineering Master`, `Classical Master`.
+  /// Frontispiece of the thesis. Can be either: `phd`, `cs-eng-master` or `classical-master`.
   /// -> str
-  frontispiece: "PhD",
+  frontispiece: "phd",
   body,
 ) = {
   set document(
@@ -114,6 +236,7 @@
     lang: language,
     size: 12pt,
     font: "New Computer Modern",
+    hyphenate: true,
   )
   show math.equation: set text(font: "New Computer Modern Math")
 
@@ -164,11 +287,11 @@
     numbering: "i",
     header: context {
       if (
-        is-page-empty() or document-state.get() == "TITLE_PAGE"
+        is-page-empty() or _document-state.get() == "TITLE_PAGE"
       ) {
         return
       } else if (
-        ("FRONTMATTER", "BACKMATTER").contains(document-state.get())
+        ("FRONTMATTER", "BACKMATTER").contains(_document-state.get())
       ) {
         if (calc.even(here().page())) {
           counter(page).display()
@@ -178,7 +301,7 @@
           counter(page).display()
         }
       } else if (
-        ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(document-state.get())
+        ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(_document-state.get())
       ) {
         let isThereH1 = query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page())
         let before = query(selector(heading.where(level: 1)).before(here()))
@@ -219,112 +342,7 @@
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
-
-  // From Hallon 0.1.3 (https://typst.app/universe/package/hallon)
-
-  // Nameref displays a reference using section name (instead of numbering).
-  let nameref(label) = {
-    show ref: it => {
-      if it.element == none {
-        it
-      } else if it.element.func() != heading {
-        it
-      } else {
-        let l = it.target // label
-        let h = it.element // heading
-        link(l, h.body)
-      }
-    }
-    ref(label)
-  }
-
-  // Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
-  let subfigure-caption(it, parent: none) = context {
-    align(
-      center,
-      block({
-        set align(left)
-        text(
-          fill: if (colored-headings) { bluepoli } else { black },
-          it.counter.display("(a)"),
-        )
-        [ ]
-        it.body
-      }),
-    )
-  }
-
-  // Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
-  let style-figures(body, heading-levels: 0) = context {
-    // Numbering patterns for figures and subfigures.
-    let fig-numbering = "1." * heading-levels + "1" // e.g. "1.1"
-    let subfig-numbering = "1." * heading-levels + "1a" // e.g. "1.1a"
-
-    // Set default supplement for subfigures.
-    show figure.where(kind: "subfigure"): set figure(
-      supplement: localization.at(text.lang).figure,
-    )
-
-    // removed styling function because the one used is the template global one
-
-    show heading: outer => {
-      if outer.level <= heading-levels {
-        // reset figure counter.
-        counter(figure.where(kind: image)).update(0)
-        counter(figure.where(kind: table)).update(0)
-        counter(figure.where(kind: raw)).update(0)
-      }
-      outer
-    }
-
-    set figure(numbering: (..nums) => {
-      // TODO: check if we need to provide more context (i.e. using `at` instead
-      // of `get`)?
-      //
-      // ref: https://github.com/typst/typst/issues/3930
-      let heading-nums = counter(heading).get()
-      if heading-nums.len() > heading-levels {
-        // truncate if needed.
-        heading-nums = heading-nums.slice(0, heading-levels)
-      } else if heading-nums.len() < heading-levels {
-        // zero pad if needed.
-        for i in range(heading-nums.len(), heading-levels) {
-          heading-nums.push(0)
-        }
-      }
-      std.numbering(fig-numbering, ..heading-nums, ..nums)
-    })
-
-    show figure.where(kind: image): outer => {
-      // reset subfigure counter
-      counter(figure.where(kind: "subfigure")).update(0)
-
-      // use nesting level of figure to infer numbering of subfigures.
-      set figure(numbering: (..nums) => {
-        let heading-nums = counter(heading).at(outer.location())
-        if heading-nums.len() > heading-levels {
-          // truncate if needed.
-          heading-nums = heading-nums.slice(0, heading-levels)
-        } else if heading-nums.len() < heading-levels {
-          // zero pad if needed.
-          for i in range(heading-nums.len(), heading-levels) {
-            heading-nums.push(0)
-          }
-        }
-        let outer-nums = counter(figure.where(kind: image)).at(outer.location())
-        std.numbering(subfig-numbering, ..heading-nums, ..outer-nums, ..nums)
-      })
-
-      show figure.where(kind: "subfigure"): inner => {
-        show figure.caption: subfigure-caption.with(parent: outer)
-        inner
-      }
-      outer
-    }
-
-    body
-  }
-  show: style-figures.with(heading-levels: 1)
+  show: style-figures.with(colored-caption: colored-headings, heading-levels: 1)
 
   show figure.caption: it => context {
     if (it.kind != "lists" and it.kind != "_blank-toc") {
@@ -363,7 +381,7 @@
 
   align(end, context {
     set text(size: sizes.at("12pt").Large)
-    localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
+    _localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
   })
 
   v(1fr)
@@ -379,16 +397,19 @@
 
   align(start, context {
     set text(size: sizes.at("12pt").large)
-    isPresent(localization.at(text.lang).advisor + ": Prof. ", advisor)
+    isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
     if type(coadvisor) == str {
-      isPresent(localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
     } else if type(coadvisor) == array and coadvisor.len() > 1 {
-      localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+      _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
       linebreak()
     }
-    isPresent(localization.at(text.lang).tutor + ": Prof. ", tutor)
-    isPresent(localization.at(text.lang).year + " ", academic-year, after: none)
-    isPresent(" - ", cycle, after: " " + localization.at(text.lang).cycle)
+    isPresent(_localization.at(text.lang).tutor + ": Prof. ", tutor)
+    if academic-year == "" {
+      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+    }
+    isPresent(_localization.at(text.lang).year + " ", academic-year, after: none)
+    isPresent(" - ", cycle, after: " " + _localization.at(text.lang).cycle)
   })
 
   // Document
@@ -408,7 +429,7 @@
 
     let heading-num = counter(selector(heading)).display()
     if (
-      it.numbering != none and (document-state.get() == "MAINMATTER" or document-state.get() == "APPENDIX")
+      it.numbering != none and (_document-state.get() == "MAINMATTER" or _document-state.get() == "APPENDIX")
     ) {
       text(
         size: 50pt,
@@ -499,17 +520,6 @@
   body
 }
 
-#let banner(body) = rect(
-  width: 100%,
-  fill: bluepoli.lighten(40%),
-  inset: (rest: 1em, x: 1.7em),
-  text(
-    fill: white,
-    weight: "bold",
-    body,
-  ),
-)
-
 /// The thesis article format styling function.
 /// -> content
 #let polimi-article-format-thesis(
@@ -525,10 +535,10 @@
   /// Coadvisor(s) of the thesis.
   /// -> str | array
   coadvisor: "Prof. Name Surname",
-  /// Academic year of the thesis.
+  /// Academic year of the thesis. If empty, defaults to '#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}'.
   /// -> str
-  academic-year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()),
-  /// Student ID
+  academic-year: "",
+  /// Student ID.
   /// -> str
   student-id: "00000000",
   /// Student course.
@@ -558,6 +568,7 @@
     lang: language,
     size: 11pt,
     font: "New Computer Modern",
+    hyphenate: true,
   )
   show math.equation: set text(font: "New Computer Modern Math")
 
@@ -615,11 +626,12 @@
 
   grid(
     columns: (24%, 1fr),
-    align: (horizon, left),
+    align: (horizon + left, left),
     grid.cell(
       inset: 5%,
       [
         #set text(size: sizes.at("11pt").scriptsize)
+        #set par(justify: false)
 
         #text(weight: "bold", "Advisor:") \
         #advisor
@@ -633,13 +645,16 @@
         }
 
         #text(weight: "bold", "Academic year:") \
+        #if academic-year == "" {
+          academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+        }
         #academic-year
       ],
     ),
     text(fill: bluepoli, "Abstract: ") + abstract,
   )
 
-  banner("Keywords:" + keywords)
+  keywords-banner("Keywords:" + keywords)
 
   // Mainmatter
 
@@ -653,6 +668,10 @@
     h(1em)
     it.body
   }
+
+  set figure(gap: 1.5em)
+  show figure: set block(breakable: true)
+  show: style-figures.with(colored-caption: true, heading-levels: 1)
 
   body
 }
@@ -672,9 +691,9 @@
   /// Coadvisor(s) of the thesis.
   /// -> str | array
   coadvisor: "Prof. Name Surname",
-  /// Academic year of the thesis.
+  /// Academic year of the thesis. If empty, defaults to '#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}'.
   /// -> str
-  academic-year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()),
+  academic-year: "",
   /// Student course.
   /// -> str
   course: "Course Engineering",
@@ -695,6 +714,7 @@
     lang: language,
     size: 11pt,
     font: "New Computer Modern",
+    hyphenate: true,
   )
   show math.equation: set text(font: "New Computer Modern Math")
 
@@ -716,7 +736,7 @@
     number-align: bottom + center,
     columns: 2,
     header: context if here().page() > 1 {
-      banner("Executive Summary" + h(1fr) + author)
+      keywords-banner("Executive Summary" + h(1fr) + author)
     },
   )
   set columns(gutter: 30pt)
@@ -765,6 +785,9 @@
       } else if type(coadvisor) == array and coadvisor.len() == 2 {
         "Co-advisors: " + coadvisor.map(smallcaps).join(", ") + parbreak()
       }
+      if academic-year == "" {
+        academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+      }
       "Academic year: " + smallcaps(academic-year)
 
       line(length: 100%, stroke: 0.4pt)
@@ -783,6 +806,10 @@
     h(1em)
     it.body
   }
+
+  set figure(gap: 1.5em)
+  show figure: set block(breakable: true)
+  show: style-figures.with(colored-caption: true, heading-levels: 1)
 
   body
 }
@@ -815,7 +842,7 @@
 /// Frontmatter section. Similar to LaTeX's ```tex \frontmatter```. It sets the page numbering to `"i"` and ```typc numbering: none``` for headings.
 /// -> content
 #let frontmatter(body) = {
-  document-state.update("FRONTMATTER")
+  _document-state.update("FRONTMATTER")
   // counter(page).update(0)
   _empty-page()
   set page(numbering: "i")
@@ -828,7 +855,7 @@
 /// -> content
 #let acknowledgements(body) = {
   _blank-toc()
-  document-state.update("ACKNOWLEDGEMENTS")
+  _document-state.update("ACKNOWLEDGEMENTS")
   set heading(numbering: none)
 
   body
@@ -838,7 +865,7 @@
 /// -> content
 #let mainmatter(body) = {
   _blank-toc()
-  document-state.update("MAINMATTER")
+  _document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
   _empty-page()
   set page(numbering: "1")
@@ -851,7 +878,7 @@
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
-  document-state.update("APPENDIX")
+  _document-state.update("APPENDIX")
   counter(heading).update(0)
   set heading(numbering: "A.1")
 
@@ -862,7 +889,7 @@
 /// -> content
 #let backmatter(body) = context {
   _blank-toc()
-  document-state.update("BACKMATTER")
+  _document-state.update("BACKMATTER")
   set heading(numbering: none)
 
   body
@@ -886,7 +913,7 @@
 /// Table of contents. It's custom built upon ```typc outline()```.
 #let toc = context {
   outline(
-    title: lists(localization.at(text.lang).toc),
+    title: lists(_localization.at(text.lang).toc),
     indent: 1.2em,
     target: target,
   )
@@ -923,7 +950,7 @@
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
-  outline(title: lists(localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
+  outline(title: lists(_localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
 }
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
@@ -932,22 +959,18 @@
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
-  outline(title: lists(localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
+  outline(title: lists(_localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
 }
 
 /// Displays a simple nomenclature with keys and values.
 /// ```example
-/// #let nomenclature_ = (
-///   "Polimi": "Politecnico di Milano",
-///   "CdL": "Corso di Laurea",
-///   "CCS": "Consigli di Corsi di Studio",
-///   "CFU": "Crediti Formativi Universitari",
-/// )
 ///
-/// #nomenclature(
-///   nomenclature_,
-///   indented: false,
-/// )
+/// #nomenclature((
+///     "Polimi": "Politecnico di Milano",
+///     "CdL": "Corso di Laurea",
+///     "CCS": "Consigli di Corsi di Studio",
+///     "CFU": "Crediti Formativi Universitari",
+/// ))
 /// ```
 /// -> content
 #let nomenclature(
@@ -959,7 +982,7 @@
   indented: true,
 ) = context {
   heading(
-    lists(localization.at(text.lang).nomenclature),
+    lists(_localization.at(text.lang).nomenclature),
     outlined: false,
   )
   if (indented) {
@@ -999,7 +1022,7 @@
 /// Theorem block.
 /// -> content
 #let theorem = mathblock(
-  blocktitle: context localization.at(text.lang).theorem,
+  blocktitle: context _localization.at(text.lang).theorem,
   counter: thm-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
@@ -1008,7 +1031,7 @@
 /// Proposition block.
 /// -> content
 #let proposition = mathblock(
-  blocktitle: context localization.at(text.lang).proposition,
+  blocktitle: context _localization.at(text.lang).proposition,
   counter: prop-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
@@ -1017,7 +1040,7 @@
 /// Lemma block.
 /// -> content
 #let lemma = mathblock(
-  blocktitle: context localization.at(text.lang).lemma,
+  blocktitle: context _localization.at(text.lang).lemma,
   counter: lemma-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
@@ -1026,7 +1049,7 @@
 /// Remark block.
 /// -> content
 #let remark = mathblock(
-  blocktitle: context localization.at(text.lang).remark,
+  blocktitle: context _localization.at(text.lang).remark,
   counter: remark-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
