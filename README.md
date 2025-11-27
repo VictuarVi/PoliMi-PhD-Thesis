@@ -2,7 +2,7 @@
 
 [Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Its design has been based on the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
-See the [manual](docs/manual.pdf) and [documentation](docs/docs.pdf) for more information.
+See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
 ## Preview ✨
 

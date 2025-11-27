@@ -56,6 +56,14 @@
 // https://typst.app/universe/package/smartaref
 #import "@preview/smartaref:0.1.0": Cref, cref
 
+/// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
+/// -> content
+#let _empty-page() = {
+  [#metadata(none) <chapter-end>]
+  pagebreak(weak: true, to: "odd")
+  [#metadata(none) <chapter-start>]
+}
+
 /// Main formatting function of the template.
 /// -> content
 #let polimi-thesis(
@@ -91,7 +99,7 @@
   colored-headings: true,
   /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
-  main-logo: "img/logo_ingegneria.svg",
+  logo: "img/logo_ingegneria.svg",
   /// Frontispiece of the thesis. Can be either: `PhD`, `DEIB PhD`, `Computer Science and Engineering Master`, `Classical Master`.
   /// -> str
   frontispiece: "PhD",
@@ -115,6 +123,36 @@
     spacing: 1.7em,
   )
 
+  /// Check if a page is empty.
+  /// -> bool
+  let is-page-empty() = {
+    // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
+    let current-page = here().page()
+    query(<chapter-end>)
+      .zip(query(<chapter-start>))
+      .any(((start, end)) => {
+        (start.location().page() < current-page and current-page < end.location().page())
+      })
+  }
+
+  /// Inserts a raggiera, given a specified width
+  /// -> content
+  let raggiera-image(
+    /// Width of the raggiera.
+    /// -> length
+    width,
+  ) = (
+    image(
+      "img/raggiera.svg",
+      width: width,
+    )
+      + place(top, rect(
+        width: 100%,
+        height: 100%,
+        fill: white.transparentize(22%), // similar to the correct #DFE6EA
+      ))
+  )
+
   set page(
     paper: "a4",
     margin: (
@@ -126,11 +164,11 @@
     numbering: "i",
     header: context {
       if (
-        document-state.get() == "TITLE_PAGE"
+        is-page-empty() or document-state.get() == "TITLE_PAGE"
       ) {
-        none
+        return
       } else if (
-        document-state.get() == "FRONTMATTER" or document-state.get() == "BACKMATTER"
+        ("FRONTMATTER", "BACKMATTER").contains(document-state.get())
       ) {
         if (calc.even(here().page())) {
           counter(page).display()
@@ -140,9 +178,7 @@
           counter(page).display()
         }
       } else if (
-        document-state.get() == "MAINMATTER"
-          or document-state.get() == "APPENDIX"
-          or document-state.get() == "ACKNOWLEDGEMENTS"
+        ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(document-state.get())
       ) {
         let isThereH1 = query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page())
         let before = query(selector(heading.where(level: 1)).before(here()))
@@ -170,7 +206,13 @@
         }
       }
     },
-    footer: {},
+    footer: none,
+    background: context {
+      if is-page-empty() {
+        v(1fr)
+        place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
+      }
+    },
   )
 
   // FIGURES SETTINGS
@@ -301,24 +343,12 @@
     }
   }
 
-  let raggiera-image(width) = (
-    image(
-      "img/raggiera.svg",
-      width: width,
-    )
-      + place(top, rect(
-        width: 100%,
-        height: 100%,
-        fill: white.transparentize(22%), // similar to the correct #DFE6EA
-      ))
-  )
-
   // --------------------- [ TITLE PAGE ] ---------------------
 
   v(0.6fr)
 
   place(dx: 44%, dy: -28%, raggiera-image(90%))
-  place(dx: 1.5%, dy: -1%, image(main-logo, width: 73%))
+  place(dx: 1.5%, dy: -1%, image(logo, width: 73%))
 
   v(4.20fr)
 
@@ -372,22 +402,7 @@
   // --------------------- [ CHAPTER STYLE ] ---------------------
 
   show heading.where(level: 1): it => context {
-    // checks if the page is empty: the cursor is at the same height from the top as the top margin
-    if (calc.even(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {
-      set page(header: {})
-    } else if (calc.odd(here().page()) and here().position().y.cm() == page.margin.top.length.cm()) {} else if (
-      calc.odd(here().page())
-    ) {
-      set page(
-        header: {},
-        background: {
-          v(1fr)
-          place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
-        },
-      )
-      pagebreak(to: "odd")
-    }
-    // v(120pt)
+    _empty-page()
     v(4cm)
     set text(weight: "bold", fill: if (colored-headings) { bluepoli } else { black })
 
@@ -424,9 +439,9 @@
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
-      text(size: sizes.large, it)
+      text(size: sizes.at("12pt").large, it)
     } else if (it.level >= 3) {
-      text(size: sizes.large, it)
+      text(size: sizes.at("12pt").large, it)
     }
     v(0.5em)
   }
@@ -802,6 +817,7 @@
 #let frontmatter(body) = {
   document-state.update("FRONTMATTER")
   // counter(page).update(0)
+  _empty-page()
   set page(numbering: "i")
   set heading(numbering: none)
 
@@ -818,19 +834,20 @@
   body
 }
 
-/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```.  It sets to page numbering to `"1"`, ```typc numbering: "1.1"``` for headings and resets the page counter.
+/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```.  It sets to page numbering to `"1"`, heading numbering to ```typc "1.1"``` and resets the page counter.
 /// -> content
 #let mainmatter(body) = {
   _blank-toc()
   document-state.update("MAINMATTER")
   set heading(numbering: "1.1")
+  _empty-page()
   set page(numbering: "1")
-  counter(page).update(0)
+  counter(page).update(1)
 
   body
 }
 
-/// Appendix section. Similar to LaTeX's ```tex \appendix```.  It sets ```typc numbering: "A.1"``` for headings and resets their counter.
+/// Appendix section. Similar to LaTeX's ```tex \appendix```.  It sets heading numbering to ```"A.1"``` and resets their counter.
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
@@ -841,7 +858,7 @@
   body
 }
 
-/// Backmatter section. Similar to LaTeX's ```tex \backmatter```. It sets ```typc numbering: none``` for headings.
+/// Backmatter section. Similar to LaTeX's ```tex \backmatter```. It sets heading numbering to ```typc none```.
 /// -> content
 #let backmatter(body) = context {
   _blank-toc()
@@ -919,6 +936,19 @@
 }
 
 /// Displays a simple nomenclature with keys and values.
+/// ```example
+/// #let nomenclature_ = (
+///   "Polimi": "Politecnico di Milano",
+///   "CdL": "Corso di Laurea",
+///   "CCS": "Consigli di Corsi di Studio",
+///   "CFU": "Crediti Formativi Universitari",
+/// )
+///
+/// #nomenclature(
+///   nomenclature_,
+///   indented: false,
+/// )
+/// ```
 /// -> content
 #let nomenclature(
   /// Dictionary that hold keys and values.

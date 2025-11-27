@@ -36,7 +36,9 @@ The intended section order is as follows:
 
 The acknowledgements section can be moved in frontmatter, as one prefers (or as the advisor requests).
 
-#block(height: 5cm, columns[#outline(depth: 2, indent: 0em)])
+#let toc-block = columns[#outline(depth: 2, indent: 0em)]
+
+#context block(height: measure(toc-block).height / 2 + 1em, toc-block)
 
 #set heading(numbering: none)
 
