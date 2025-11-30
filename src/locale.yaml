@@ -5,7 +5,7 @@ it:
   tutor: Tutor
   toc: Indice
   dissertation: Tesi di laurea di
-  year: Anno
+  year: Anno Accademico
   cycle: Ciclo
   list-of-figures: Lista delle Figure
   list-of-tables: Lista delle Tabelle
@@ -16,13 +16,15 @@ it:
   lemma: Lemma
   remark: Osservazione
   figure: Figura
+  studend-id: Matricola
+  author: Autore
 en:
   advisor: Advisor
   coadvisor: Co-advisor
   coadvisors: Co-advisors
   tutor: Tutor
   dissertation: Doctoral Dissertation of
-  year: Year
+  year: Academic Year
   cycle: Cycle
   toc: Contents
   list-of-figures: List of Figures
@@ -33,3 +35,5 @@ en:
   proposition: Proposition
   lemma: Lemma
   figure: Figure
+  student-id: Student ID
+  author: Author

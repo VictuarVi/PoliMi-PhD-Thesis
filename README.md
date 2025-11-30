@@ -28,10 +28,9 @@ To get started:
 #show: polimi-thesis.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Prof. Donatella Sciuto",
-  coadvisor: "Prof. Antonio Capone",
-  tutor: "Prof. Marco Bramanti",
-  colored-headings: true,
+  advisor: "Donatella Sciuto",
+  coadvisor: "Antonio Capone",
+  tutor: "Marco Bramanti",
   frontispiece: "phd"
 )
 
@@ -124,12 +123,14 @@ The following are exclusive to `polimi-thesis`:
 
 - `tutor`: name and surname of the tutor
 - `cycle`: the cycle of the thesis
-- `language`: language of the thesis (default: `en`; other supported: `it`)
-- `colored-headings`: whether to use colored headings, captions or not
+- `chair`: the chair of the thesis
+- `student-id`: your student ID
+- `frontispiece`: the specific type of frontispiece to be used (default:`phd`; supported: `deib-phd`, `cs-eng-master` or `classical-master`)
+
+Depending on the selected frontispiece, not all these attributes may be needed.
 
 The following are exclusive to `polimi-article-format-thesis`:
 
-- `student-id`: your student ID
 - `abstract`: the abstract
 - `keywords`: keywords (that will also appear in the document metadata)
 
@@ -145,6 +146,7 @@ Useful packages for a thesis include:
 - [zebraw](https://typst.app/universe/package/zebraw), [codly](https://typst.app/universe/package/codly) for syntax highlighting in code blocks
 - [frame-it](https://typst.app/universe/package/frame-it), [showybox](https://typst.app/universe/package/showybox) to display formatted blocks
 - [alexandria](https://typst.app/universe/package/alexandria) for multiple bibliographies ([currently unsupported](https://github.com/typst/typst/issues/1097))
+- [meander](https://typst.app/universe/package/meander/) to wrap text around images and such
 
 The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https://typst.app/universe/package/hallon) packages have been integrated to provide subfigures ([currently unsupported](https://github.com/typst/typst/issues/246)), while [great-theorems](https://typst.app/universe/package/great-theorems) and [headcount](https://typst.app/universe/package/headcount) to handle theorems implementations.
 
@@ -163,8 +165,13 @@ The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https
 | [showybox](https://typst.app/universe/package/showybox) | [mdframed](https://ctan.org/pkg/mdframed) |
 | [lovelace](https://typst.app/universe/package/lovelace) |   [pseudo](https://ctan.org/pkg/pseudo)   |
 |     [algo](https://typst.app/universe/package/algo)     |   [pseudo](https://ctan.org/pkg/pseudo)   |
+| [meander](https://typst.app/universe/package/meander/)  |  [wrapfig](https://ctan.org/pkg/wrapfig)  |
 
 The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
+
+# Roadmap ✨
+
+- Support the [Digital presentation templates](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR?usp=drive_link)
 
 # Contributing 🚀
 

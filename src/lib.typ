@@ -197,32 +197,35 @@
   author: "Name Surname",
   /// Advisor of the thesis.
   /// -> str
-  advisor: "Prof. Advisor",
+  advisor: "Advisor",
   /// Coadvisor(s) of the thesis.
   /// -> str | arr
-  coadvisor: "Prof. Coadvisor",
-  /// Tutor of the thesis.
-  /// -> str
-  tutor: "Prof. Tutor",
+  coadvisor: "Coadvisor",
   /// Academic year of the thesis. If empty, defaults to '#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}'.
   /// -> str
   academic-year: "",
+  /// Tutor of the thesis.
+  /// -> str
+  tutor: "Tutor",
   /// Cycle of the thesis.
   /// -> str
   cycle: none,
   /// Chair of the thesis.
   /// -> str
   chair: none,
+  /// Student ID.
+  /// -> str
+  student-id: "00000000",
+  /// Student course.
+  /// -> str
+  course: "Course Engineering",
   /// Language of the thesis.
   /// -> str
   language: "en",
-  /// Whether to activate the colored headings and captions (such as Figure n, Table n...) or not.
-  /// -> bool
-  colored-headings: true,
   /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
   logo: "img/logo_ingegneria.svg",
-  /// Frontispiece of the thesis. Can be either: `phd`, `cs-eng-master` or `classical-master`.
+  /// Frontispiece of the thesis. Can be either: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.
   /// -> str
   frontispiece: "phd",
   body,
@@ -231,6 +234,11 @@
     title: title,
     author: author,
   )
+
+  let colored-headings = false
+  if frontispiece == "deib-phd" {
+    colored-headings = true
+  }
 
   set text(
     lang: language,
@@ -269,11 +277,11 @@
       "img/raggiera.svg",
       width: width,
     )
-      + place(top, rect(
-        width: 100%,
-        height: 100%,
-        fill: white.transparentize(22%), // similar to the correct #DFE6EA
-      ))
+    // + place(top, rect(
+    //   width: 100%,
+    //   height: 100%,
+    //   fill: white.transparentize(22%), // similar to the correct #DFE6EA
+    // ))
   )
 
   set page(
@@ -363,28 +371,26 @@
 
   // --------------------- [ TITLE PAGE ] ---------------------
 
-  v(0.6fr)
+  // import "frontispiece.typ": phd
 
-  place(dx: 44%, dy: -28%, raggiera-image(90%))
-  place(dx: 1.5%, dy: -1%, image(logo, width: 73%))
+  // let frontispieces-attributes = (
+  //   "shared": (title, author, advisor, coadvisor, academic-year),
+  //   "phd": (cycle, chair, tutor),
+  //   "deib-phd": (cycle, chair, tutor),
+  //   "cs-eng-master": (course, student-id),
+  //   "classical-master": (student-id,),
+  // )
 
-  v(4.20fr)
+  // for a in (frontispieces-attributes.shared, frontispieces-attributes.at(frontispiece)) {
+  //   assert(
+  //     a != "" and a != " ",
+  //     message: "Empty attribute for the " + frontispiece + " frontispiece.",
+  //   )
+  // }
 
-  text(
-    size: sizes.at("12pt").huge,
-    weight: 700,
-    fill: if (colored-headings) { bluepoli } else { black },
-    title,
-  )
-
-  v(1.5cm)
-
-  align(end, context {
-    set text(size: sizes.at("12pt").Large)
-    _localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
-  })
-
-  v(1fr)
+  if academic-year == "" {
+    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year().slice(0, count: 2)) // 20XX-XX
+  }
 
   // helper function to detect whether a field is present
   let isPresent(before, string, after: linebreak()) = {
@@ -395,22 +401,245 @@
     }
   }
 
-  align(start, context {
-    set text(size: sizes.at("12pt").large)
-    isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-    if type(coadvisor) == str {
-      isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
-    } else if type(coadvisor) == array and coadvisor.len() > 1 {
-      _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
-      linebreak()
+  let frontispiece-phd(
+    title,
+    author,
+    advisor,
+    coadvisor,
+    academic-year,
+    cycle,
+    chair,
+    tutor,
+    logo,
+    colored-headings: false,
+  ) = {
+    v(0.6fr)
+
+    place(dx: 44%, dy: -28%, raggiera-image(90%))
+    place(dx: 1.5%, dy: -1%, image(logo, width: 73%))
+
+    v(4.20fr)
+
+    text(
+      size: sizes.at("12pt").huge,
+      weight: 700,
+      fill: if (colored-headings) { bluepoli } else { black },
+      title,
+    )
+
+    v(1.5cm)
+
+    align(end, context {
+      set text(size: sizes.at("12pt").Large)
+      _localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
+    })
+
+    v(1fr)
+
+    align(start, context {
+      set text(size: sizes.at("12pt").large)
+      isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
+      if type(coadvisor) == str {
+        isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      } else if type(coadvisor) == array and coadvisor.len() > 1 {
+        _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+        linebreak()
+      }
+      isPresent(_localization.at(text.lang).tutor + ": Prof. ", tutor)
+      isPresent(_localization.at(text.lang).year + " ", academic-year, after: none)
+      isPresent(" - ", cycle, after: " " + _localization.at(text.lang).cycle)
+    })
+  }
+
+  let frontispiece-deib-phd(
+    title,
+    author,
+    advisor,
+    coadvisor,
+    academic-year,
+    cycle,
+    chair,
+    tutor,
+    logo,
+  ) = frontispiece-phd(
+    title,
+    author,
+    advisor,
+    coadvisor,
+    academic-year,
+    cycle,
+    chair,
+    tutor,
+    logo,
+    colored-headings: true,
+  )
+
+  let frontispiece-classical-master(
+    title,
+    author,
+    advisor,
+    coadvisor,
+    academic-year,
+    course,
+    student-id,
+    logo,
+  ) = {
+    set page(
+      margin: (top: 0cm),
+      background: context {
+        place(
+          dx: 102mm,
+          dy: -41mm,
+          raggiera-image(147mm),
+        )
+      },
+    )
+
+    v(4.7cm)
+
+    image(logo, width: 93mm)
+
+    v(4.2cm)
+
+    text(
+      fill: bluepoli,
+      size: sizes.at("12pt").huge,
+      weight: "bold",
+      title,
+    )
+
+    v(0.2cm)
+
+    text(
+      fill: bluepoli,
+      size: sizes.at("12pt").large,
+      weight: "bold",
+      {
+        smallcaps("Tesi di Laurea Magistrale In")
+        linebreak()
+        course
+      },
+    )
+
+    v(0.6cm)
+
+    context text(
+      size: sizes.at("12pt").Large,
+      _localization.at(text.lang).author + ": " + strong(author),
+    )
+
+    // v(1.1fr)
+
+    align(bottom + start, context {
+      set text(size: sizes.at("12pt").normalsize)
+      isPresent(_localization.at(text.lang).student-id + ": ", student-id)
+      isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
+      if type(coadvisor) == str {
+        isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      } else if type(coadvisor) == array and coadvisor.len() > 1 {
+        _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+        linebreak()
+      }
+      isPresent(_localization.at(text.lang).year + ": ", academic-year, after: none)
+    })
+  }
+
+  let frontispiece-cs-eng-master(
+    title,
+    author,
+    advisor,
+    coadvisor,
+    academic-year,
+    student-id,
+    logo,
+    preface: [
+      Tesi di Laurea Magistrale In\
+      Computer Science and Engineeering\
+      Ingengeria Informatica
+    ],
+  ) = {
+    set page(
+      margin: (top: 0cm),
+      background: context {
+        place(
+          dx: 102mm,
+          dy: -41mm,
+          raggiera-image(147mm),
+        )
+      },
+    )
+
+    v(4.7cm)
+
+    image(logo, width: 93mm)
+
+    v(2.1cm)
+
+    align(
+      center,
+      text(
+        fill: bluepoli,
+        size: sizes.at("12pt").large,
+        weight: "bold",
+        smallcaps(preface),
+      ),
+    )
+
+    v(0.4cm)
+
+    align(
+      center,
+      text(
+        size: sizes.at("12pt").huge,
+        weight: "bold",
+        title,
+      ),
+    )
+
+    v(0.2cm)
+
+    context {
+      _localization.at(text.lang).author + ":\n"
+      text(
+        weight: "bold",
+        size: sizes.at("12pt").large,
+        author,
+      )
+
+      parbreak()
+
+      _localization.at(text.lang).student-id + ":\n"
+      text(
+        weight: "bold",
+        size: sizes.at("12pt").large,
+        student-id,
+      )
     }
-    isPresent(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-    if academic-year == "" {
-      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
-    }
-    isPresent(_localization.at(text.lang).year + " ", academic-year, after: none)
-    isPresent(" - ", cycle, after: " " + _localization.at(text.lang).cycle)
-  })
+
+    align(bottom + start, context {
+      set text(size: sizes.at("12pt").normalsize)
+      isPresent(_localization.at(text.lang).advisor + ":\n", strong("Prof. " + advisor))
+      if type(coadvisor) == str {
+        isPresent(_localization.at(text.lang).coadvisor + ":\n", strong("Prof. " + coadvisor))
+      } else if type(coadvisor) == array and coadvisor.len() > 1 {
+        _localization.at(text.lang).coadvisors + ":\n" + strong("Proff. " + coadvisor.join(", "))
+        linebreak()
+      }
+      isPresent(_localization.at(text.lang).year + ":\n", strong(academic-year), after: none)
+    })
+  }
+
+  if frontispiece == "phd" {
+    frontispiece-phd(title, author, advisor, coadvisor, academic-year, cycle, chair, tutor, logo)
+  } else if frontispiece == "deib-phd" {
+    frontispiece-deib-phd(title, author, advisor, coadvisor, academic-year, cycle, chair, tutor, logo)
+  } else if frontispiece == "classical-master" {
+    frontispiece-classical-master(title, author, advisor, coadvisor, academic-year, course, student-id, logo)
+  } else if frontispiece == "cs-eng-master" {
+    frontispiece-cs-eng-master(title, author, advisor, coadvisor, academic-year, student-id, logo)
+  } else {
+    panic("The frontispiece must be either one of: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.")
+  }
 
   // Document
 

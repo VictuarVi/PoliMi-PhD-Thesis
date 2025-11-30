@@ -8,7 +8,7 @@
   advisor: data.advisor,
   coadvisor: data.coadvisor,
   academic-year: data.academic-year,
-  language: "en",
+  frontispiece: "phd",
 )
 
 #show: theorems-init
