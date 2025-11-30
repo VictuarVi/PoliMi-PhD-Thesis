@@ -7,11 +7,9 @@
   coadvisor: "Coadvisor",
   // coadvisor: ("Coadvisor1", "Coadvisor2"),
   tutor: "Tutor",
-  academic-year: "", // defaults to current one
+  academic-year: "2025-2026",
   cycle: "XXV",
   chair: none,
-  language: "en",
-  colored-headings: true,
 )
 
 #show: theorems-init // remove if you don't plan to use theorems, proposition, lemmas or remarks

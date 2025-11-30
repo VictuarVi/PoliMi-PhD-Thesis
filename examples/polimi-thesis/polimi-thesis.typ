@@ -7,6 +7,7 @@
   author: data.author,
   advisor: data.advisor,
   coadvisor: data.coadvisor,
+  chair: data.chair,
   academic-year: data.academic-year,
   frontispiece: "phd",
 )

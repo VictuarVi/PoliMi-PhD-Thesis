@@ -1,14 +1,14 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.1.2": polimi-executive-summary, theorems-init, subfigure, appendix, acknowledgements
 
 #let data = yaml("../shared_data.yaml")
 
 #show: polimi-executive-summary.with(
-  title: [`executive-summary` manual],
+  // title: [`executive-summary` manual],
+  title: "Title of the thesis",
   author: data.author,
   advisor: data.advisor,
   coadvisor: data.coadvisor,
   academic-year: data.academic-year,
-  language: "en",
 )
 
 #show: theorems-init

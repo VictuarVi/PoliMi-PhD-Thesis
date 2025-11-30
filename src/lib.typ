@@ -186,6 +186,19 @@
   ),
 )
 
+/// Inserts a raggiera, given a specified width
+/// -> content
+#let _raggiera-image(
+  /// Width of the raggiera.
+  /// -> length
+  width,
+) = (
+  image(
+    "img/raggiera.svg",
+    width: width,
+  )
+)
+
 /// Main formatting function of the template.
 /// -> content
 #let polimi-thesis(
@@ -209,19 +222,16 @@
   tutor: "Tutor",
   /// Cycle of the thesis.
   /// -> str
-  cycle: none,
+  cycle: "XXV",
   /// Chair of the thesis.
   /// -> str
-  chair: none,
+  chair: "Chair",
   /// Student ID.
   /// -> str
   student-id: "00000000",
   /// Student course.
   /// -> str
   course: "Course Engineering",
-  /// Language of the thesis.
-  /// -> str
-  language: "en",
   /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
   /// -> path
   logo: "img/logo_ingegneria.svg",
@@ -230,16 +240,16 @@
   frontispiece: "phd",
   body,
 ) = {
-  set document(
-    title: title,
-    author: author,
-  )
-
   let colored-headings = false
   if frontispiece == "deib-phd" {
     colored-headings = true
   }
+  let language = "en"
 
+  set document(
+    title: title,
+    author: author,
+  )
   set text(
     lang: language,
     size: 12pt,
@@ -265,24 +275,6 @@
         (start.location().page() < current-page and current-page < end.location().page())
       })
   }
-
-  /// Inserts a raggiera, given a specified width
-  /// -> content
-  let raggiera-image(
-    /// Width of the raggiera.
-    /// -> length
-    width,
-  ) = (
-    image(
-      "img/raggiera.svg",
-      width: width,
-    )
-    // + place(top, rect(
-    //   width: 100%,
-    //   height: 100%,
-    //   fill: white.transparentize(22%), // similar to the correct #DFE6EA
-    // ))
-  )
 
   set page(
     paper: "a4",
@@ -341,7 +333,7 @@
     background: context {
       if is-page-empty() {
         v(1fr)
-        place(dx: -7cm, dy: -16.25cm, raggiera-image(0.85 * 24cm))
+        place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
     },
   )
@@ -389,7 +381,7 @@
   // }
 
   if academic-year == "" {
-    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year().slice(0, count: 2)) // 20XX-XX
+    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(0, count: 2) // 20XX-XX
   }
 
   // helper function to detect whether a field is present
@@ -415,7 +407,7 @@
   ) = {
     v(0.6fr)
 
-    place(dx: 44%, dy: -28%, raggiera-image(90%))
+    place(dx: 44%, dy: -28%, _raggiera-image(90%))
     place(dx: 1.5%, dy: -1%, image(logo, width: 73%))
 
     v(4.20fr)
@@ -447,7 +439,8 @@
       }
       isPresent(_localization.at(text.lang).tutor + ": Prof. ", tutor)
       isPresent(_localization.at(text.lang).year + " ", academic-year, after: none)
-      isPresent(" - ", cycle, after: " " + _localization.at(text.lang).cycle)
+      isPresent(" -- ", cycle + " " + _localization.at(text.lang).cycle)
+      isPresent(_localization.at(text.lang).chair + ": Prof. ", chair)
     })
   }
 
@@ -490,7 +483,7 @@
         place(
           dx: 102mm,
           dy: -41mm,
-          raggiera-image(147mm),
+          _raggiera-image(147mm),
         )
       },
     )
@@ -555,7 +548,7 @@
     preface: [
       Tesi di Laurea Magistrale In\
       Computer Science and Engineeering\
-      Ingengeria Informatica
+      Ingegneria Informatica
     ],
   ) = {
     set page(
@@ -564,7 +557,7 @@
         place(
           dx: 102mm,
           dy: -41mm,
-          raggiera-image(147mm),
+          _raggiera-image(147mm),
         )
       },
     )
@@ -772,10 +765,7 @@
   student-id: "00000000",
   /// Student course.
   /// -> str
-  course: "Course Engineering",
-  /// Language of the thesis.
-  /// -> str
-  language: "en",
+  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
   /// Abstract.
   /// -> content
   abstract: [],
@@ -787,6 +777,8 @@
   logo: "img/logo_ingegneria.svg",
   body,
 ) = {
+  let language = "en"
+
   set document(
     title: title,
     author: author,
@@ -817,34 +809,42 @@
     ),
     numbering: "1",
     number-align: bottom + center,
+    background: context if here().page() == 1 {
+      place(
+        dx: 135mm,
+        dy: -30mm,
+        _raggiera-image(105mm),
+      )
+    },
   )
 
   {
     // Title
-
     set text(size: 0.3cm, weight: "bold")
     set par(spacing: 0.5cm)
 
-    move(
-      dx: -0.6cm,
-      image(
-        width: 60%,
-        logo,
-      ),
+    v(0.8cm)
+
+    image(
+      width: 83mm,
+      logo,
     )
+
+    v(0.7cm)
+
     {
       set text(fill: bluepoli)
 
-      text(size: sizes.at("11pt").large, title)
+      text(size: sizes.at("11pt").Large, title)
 
-      parbreak()
+      v(0.25cm)
 
       smallcaps(
         "Tesi di Laurea Magistrale in" + linebreak() + course,
       )
     }
 
-    parbreak()
+    v(0.15cm)
 
     (author, student-id).map(e => text(size: sizes.at("11pt").large, e)).join(", ")
   }
@@ -862,15 +862,15 @@
         #set text(size: sizes.at("11pt").scriptsize)
         #set par(justify: false)
 
-        #text(weight: "bold", "Advisor:") \
+        #text(weight: "bold", "Advisor: Prof. ") \
         #advisor
 
         #if type(coadvisor) == str {
-          text(weight: "bold", "Co-advisor:") + linebreak()
+          text(weight: "bold", "Co-advisor: Prof. ") + linebreak()
           coadvisor
         } else if type(coadvisor) == array and coadvisor.len() == 2 {
-          text(weight: "bold", "Co-advisors:") + linebreak()
-          coadvisor.map(smallcaps).join(", ")
+          text(weight: "bold", "Co-advisors: Proff. ") + linebreak()
+          coadvisor.join(", ")
         }
 
         #text(weight: "bold", "Academic year:") \
@@ -892,9 +892,8 @@
 
   set heading(numbering: "1.1.")
   show heading: it => {
-    set text(fill: bluepoli) // fix sizing
-    counter(heading).display()
-    h(1em)
+    set text(fill: bluepoli)
+    if it.numbering != none { counter(heading).display() + h(1em) }
     it.body
   }
 
@@ -925,15 +924,14 @@
   academic-year: "",
   /// Student course.
   /// -> str
-  course: "Course Engineering",
-  /// Language of the thesis.
-  /// -> str
-  language: "en",
+  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
   /// Logo of the thesis.
   /// -> path
   logo: "img/logo_ingegneria.svg",
   body,
 ) = {
+  let language = "en"
+
   set document(
     title: title,
     author: author,
@@ -967,61 +965,71 @@
     header: context if here().page() > 1 {
       keywords-banner("Executive Summary" + h(1fr) + author)
     },
+    background: context if here().page() == 1 {
+      place(
+        dx: 135mm,
+        dy: -30mm,
+        _raggiera-image(105mm),
+      )
+    },
   )
   set columns(gutter: 30pt)
 
   // Title
-
-  place(
-    top + left,
-    float: true,
-    scope: "parent",
-    {
-      set text(weight: "bold", size: 0.3cm)
-      set par(spacing: 0.5cm)
-
-      move(
-        dx: -0.6cm,
-        image(
-          width: 60%,
-          logo,
-        ),
-      )
+  {
+    place(
+      top + left,
+      float: true,
+      scope: "parent",
       {
-        set text(fill: bluepoli)
+        set text(weight: "bold", size: 0.3cm)
+        set par(spacing: 0.5cm)
 
-        smallcaps(
-          "Executive Summary of the Thesis",
+        v(0.8cm)
+
+        image(
+          width: 83mm,
+          logo,
         )
 
-        parbreak()
+        v(0.7cm)
 
-        text(size: sizes.at("11pt").large, title)
+        {
+          set text(fill: bluepoli)
 
-        parbreak()
+          smallcaps(
+            "Executive Summary of the Thesis",
+          )
 
-        smallcaps(
-          "Laurea Magistrale in " + course,
-        )
-      }
+          v(0.1cm)
 
-      parbreak()
+          text(size: sizes.at("11pt").Large, title)
 
-      "Author: " + smallcaps(author) + parbreak()
-      "Advisor: " + smallcaps(advisor) + parbreak()
-      if type(coadvisor) == str {
-        "Co-advisor: " + smallcaps(coadvisor) + parbreak()
-      } else if type(coadvisor) == array and coadvisor.len() == 2 {
-        "Co-advisors: " + coadvisor.map(smallcaps).join(", ") + parbreak()
-      }
-      if academic-year == "" {
-        academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
-      }
-      "Academic year: " + smallcaps(academic-year)
+          v(0.25cm)
 
-      line(length: 100%, stroke: 0.4pt)
-    },
-  )
+          smallcaps(
+            "Laurea Magistrale in " + course,
+          )
+        }
+
+        v(0.1cm)
+
+        "Author: " + smallcaps(author) + parbreak()
+        "Advisor: Prof. " + smallcaps(advisor) + parbreak()
+        if type(coadvisor) == str {
+          "Co-advisor: Prof. " + smallcaps(coadvisor) + parbreak()
+        } else if type(coadvisor) == array and coadvisor.len() == 2 {
+          "Co-advisors: Proff. " + coadvisor.map(smallcaps).join(", ") + parbreak()
+        }
+        if academic-year == "" {
+          academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+        }
+        "Academic year: " + smallcaps(academic-year)
+
+        line(length: 100%, stroke: 0.4pt)
+      },
+    )
+  }
 
   // Mainmatter
 
@@ -1031,8 +1039,7 @@
   set heading(numbering: "1.1.")
   show heading: it => {
     set text(fill: bluepoli)
-    counter(heading).display()
-    h(1em)
+    if it.numbering != none { counter(heading).display() + h(1em) }
     it.body
   }
 
@@ -1109,7 +1116,7 @@
   _blank-toc()
   _document-state.update("APPENDIX")
   counter(heading).update(0)
-  set heading(numbering: "A.1")
+  set heading(numbering: "A.1.")
 
   body
 }

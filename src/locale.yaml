@@ -18,6 +18,7 @@ it:
   figure: Figura
   studend-id: Matricola
   author: Autore
+  chair: Il Presidente del Dottorato
 en:
   advisor: Advisor
   coadvisor: Co-advisor
@@ -37,3 +38,4 @@ en:
   figure: Figure
   student-id: Student ID
   author: Author
+  chair: The Chair of the Doctoral Program

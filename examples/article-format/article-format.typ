@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, keywords-banner, subfigure, appendix, acknowledgements
 
 #let data = yaml("../shared_data.yaml")
 
@@ -8,7 +8,6 @@
   advisor: data.advisor,
   coadvisor: data.coadvisor,
   academic-year: data.academic-year,
-  language: "en",
   abstract: [
     Here goes the Abstract in English of your thesis (in article format)
     followed by a list of keywords. The Abstract is a concise summary of the content

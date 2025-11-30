@@ -114,7 +114,6 @@ The template are **three distinct documents**, however they share _most_ of the 
 - `coadvisor`: name and surname of the coadvisor(s) (can be empty)
 - `tutor`: name and surname of the tutor
 - `academic-year`: the corresponding academic year
-- `language`: language of the thesis (default: `en`; other supported: `it`)
 - `logo`: logo of the thesis
 
 I recommend to import all the library anyway in order to access all the functions (`*matter`, theorems-related among others).
