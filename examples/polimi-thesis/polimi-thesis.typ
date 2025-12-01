@@ -7,6 +7,7 @@
   author: data.author,
   advisor: data.advisor,
   coadvisor: data.coadvisor,
+  tutor: "Minto Zelante",
   chair: data.chair,
   academic-year: data.academic-year,
   frontispiece: "phd",

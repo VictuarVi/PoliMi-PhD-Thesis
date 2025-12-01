@@ -1,57 +1,4 @@
-// LaTeX sizes to match original templates
-// https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
-#let sizes = (
-  "10pt": (
-    tiny: 5pt,
-    scriptsize: 7pt,
-    footnotesize: 8pt,
-    small: 9pt,
-    normalsize: 10pt,
-    large: 12pt,
-    Large: 14.4pt,
-    LARGE: 17.28pt,
-    huge: 20.74pt,
-    Huge: 24.88pt,
-  ),
-  "11pt": (
-    tiny: 6pt,
-    scriptsize: 8pt,
-    footnotesize: 9pt,
-    small: 10pt,
-    normalsize: 10.95pt,
-    large: 12pt,
-    Large: 14.4pt,
-    LARGE: 17.28pt,
-    huge: 20.74pt,
-    Huge: 24.88pt,
-  ),
-  "12pt": (
-    tiny: 6pt,
-    scriptsize: 8pt,
-    footnotesize: 10pt,
-    small: 10.95pt,
-    normalsize: 12pt,
-    large: 14.4pt,
-    Large: 17.28pt,
-    LARGE: 20.74pt,
-    huge: 24.88pt,
-    Huge: 24.88pt,
-  ),
-)
-
-/// The current state (title page, front-,main-,backmatter...)
-/// -> state
-#let _document-state = state("init", "TITLE_PAGE")
-
-/// The current type of document:
-/// -> state
-#let _document-type = state("init", "PhD")
-
-#let _localization = yaml("locale.yaml")
-
-/// Signature PoliMi colour (#box(baseline: 0.1em, rect(height: 0.7em, width: 0.7em, fill: rgb("#5f859f")))), used in headings and labels.
-/// -> color
-#let bluepoli = rgb("#5f859f")
+#import "utils.typ": *
 
 // https://typst.app/universe/package/smartaref
 #import "@preview/smartaref:0.1.0": Cref, cref
@@ -169,37 +116,7 @@
   [#metadata(none) <chapter-start>]
 }
 
-/// Draw the keywords banner.
-/// -> content
-#let keywords-banner(
-  /// Body of the banner.
-  /// -> content
-  body,
-) = rect(
-  width: 100%,
-  fill: bluepoli.lighten(40%),
-  inset: (rest: 1em, x: 1.7em),
-  text(
-    fill: white,
-    weight: "bold",
-    body,
-  ),
-)
-
-/// Inserts a raggiera, given a specified width
-/// -> content
-#let _raggiera-image(
-  /// Width of the raggiera.
-  /// -> length
-  width,
-) = (
-  image(
-    "img/raggiera.svg",
-    width: width,
-  )
-)
-
-/// Main formatting function of the template.
+/// The main thesis formatting function.
 /// -> content
 #let polimi-thesis(
   /// Title of the thesis.
@@ -250,6 +167,7 @@
     title: title,
     author: author,
   )
+
   set text(
     lang: language,
     size: 12pt,
@@ -266,7 +184,7 @@
 
   /// Check if a page is empty.
   /// -> bool
-  let is-page-empty() = {
+  let _is-page-empty() = {
     // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
     let current-page = here().page()
     query(<chapter-end>)
@@ -287,26 +205,28 @@
     numbering: "i",
     header: context {
       if (
-        is-page-empty() or _document-state.get() == "TITLE_PAGE"
+        _is-page-empty() or _document-state.get() == "TITLE_PAGE"
       ) {
         return
       } else if (
         ("FRONTMATTER", "BACKMATTER").contains(_document-state.get())
       ) {
+        let page-counter = counter(page).display()
         if (calc.even(here().page())) {
-          counter(page).display()
-          h(1fr)
+          page-counter + h(1fr)
         } else {
-          h(1fr)
-          counter(page).display()
+          h(1fr) + page-counter
         }
       } else if (
         ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(_document-state.get())
       ) {
-        let isThereH1 = query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page())
-        let before = query(selector(heading.where(level: 1)).before(here()))
+        let h1-current-page = (
+          query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page()).len() != 0
+        )
+        let last-h1 = query(selector(heading.where(level: 1)).before(here())).last().body
+        let page-counter = counter(page).display()
 
-        let output = if not (isThereH1.len() != 0) {
+        let chapter-info = if not (h1-current-page) {
           set text(weight: "bold")
           let heading-num = if (heading.numbering != none) {
             str(counter(heading).display()).split(".").at(0) + "| "
@@ -315,23 +235,19 @@
             fill: if (colored-headings) { bluepoli } else { black },
             heading-num,
           )
-          before.last().body
+          last-h1
         }
 
         if (calc.even(here().page())) {
-          counter(page).display()
-          h(1fr)
-          output
+          page-counter + h(1fr) + chapter-info
         } else {
-          output
-          h(1fr)
-          counter(page).display()
+          chapter-info + h(1fr) + page-counter
         }
       }
     },
     footer: none,
     background: context {
-      if is-page-empty() {
+      if _is-page-empty() {
         v(1fr)
         place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
@@ -363,273 +279,23 @@
 
   // --------------------- [ TITLE PAGE ] ---------------------
 
-  // import "frontispiece.typ": phd
-
-  // let frontispieces-attributes = (
-  //   "shared": (title, author, advisor, coadvisor, academic-year),
-  //   "phd": (cycle, chair, tutor),
-  //   "deib-phd": (cycle, chair, tutor),
-  //   "cs-eng-master": (course, student-id),
-  //   "classical-master": (student-id,),
-  // )
-
-  // for a in (frontispieces-attributes.shared, frontispieces-attributes.at(frontispiece)) {
-  //   assert(
-  //     a != "" and a != " ",
-  //     message: "Empty attribute for the " + frontispiece + " frontispiece.",
-  //   )
-  // }
+  import "frontispiece.typ": *
 
   if academic-year == "" {
-    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(0, count: 2) // 20XX-XX
+    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
   }
 
-  // helper function to detect whether a field is present
-  let isPresent(before, string, after: linebreak()) = {
-    if (string != none and string != "") {
-      return before + string + after
-    } else {
-      return none
-    }
-  }
+  let shared-attributes = (title, author, advisor, coadvisor, academic-year, logo)
 
-  let frontispiece-phd(
-    title,
-    author,
-    advisor,
-    coadvisor,
-    academic-year,
-    cycle,
-    chair,
-    tutor,
-    logo,
-    colored-headings: false,
-  ) = {
-    v(0.6fr)
-
-    place(dx: 44%, dy: -28%, _raggiera-image(90%))
-    place(dx: 1.5%, dy: -1%, image(logo, width: 73%))
-
-    v(4.20fr)
-
-    text(
-      size: sizes.at("12pt").huge,
-      weight: 700,
-      fill: if (colored-headings) { bluepoli } else { black },
-      title,
-    )
-
-    v(1.5cm)
-
-    align(end, context {
-      set text(size: sizes.at("12pt").Large)
-      _localization.at(text.lang).dissertation + ":\n" + text(weight: "bold", author)
-    })
-
-    v(1fr)
-
-    align(start, context {
-      set text(size: sizes.at("12pt").large)
-      isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-      if type(coadvisor) == str {
-        isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
-      } else if type(coadvisor) == array and coadvisor.len() > 1 {
-        _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
-        linebreak()
-      }
-      isPresent(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-      isPresent(_localization.at(text.lang).year + " ", academic-year, after: none)
-      isPresent(" -- ", cycle + " " + _localization.at(text.lang).cycle)
-      isPresent(_localization.at(text.lang).chair + ": Prof. ", chair)
-    })
-  }
-
-  let frontispiece-deib-phd(
-    title,
-    author,
-    advisor,
-    coadvisor,
-    academic-year,
-    cycle,
-    chair,
-    tutor,
-    logo,
-  ) = frontispiece-phd(
-    title,
-    author,
-    advisor,
-    coadvisor,
-    academic-year,
-    cycle,
-    chair,
-    tutor,
-    logo,
-    colored-headings: true,
+  let frontispieces = (
+    "phd": frontispiece-phd(..shared-attributes, cycle, chair, tutor),
+    "deib-phd": frontispiece-deib-phd(..shared-attributes, cycle, chair, tutor),
+    "classical-master": frontispiece-classical-master(..shared-attributes, course, student-id),
+    "cs-eng-master": frontispiece-cs-eng-master(..shared-attributes, student-id),
   )
 
-  let frontispiece-classical-master(
-    title,
-    author,
-    advisor,
-    coadvisor,
-    academic-year,
-    course,
-    student-id,
-    logo,
-  ) = {
-    set page(
-      margin: (top: 0cm),
-      background: context {
-        place(
-          dx: 102mm,
-          dy: -41mm,
-          _raggiera-image(147mm),
-        )
-      },
-    )
-
-    v(4.7cm)
-
-    image(logo, width: 93mm)
-
-    v(4.2cm)
-
-    text(
-      fill: bluepoli,
-      size: sizes.at("12pt").huge,
-      weight: "bold",
-      title,
-    )
-
-    v(0.2cm)
-
-    text(
-      fill: bluepoli,
-      size: sizes.at("12pt").large,
-      weight: "bold",
-      {
-        smallcaps("Tesi di Laurea Magistrale In")
-        linebreak()
-        course
-      },
-    )
-
-    v(0.6cm)
-
-    context text(
-      size: sizes.at("12pt").Large,
-      _localization.at(text.lang).author + ": " + strong(author),
-    )
-
-    // v(1.1fr)
-
-    align(bottom + start, context {
-      set text(size: sizes.at("12pt").normalsize)
-      isPresent(_localization.at(text.lang).student-id + ": ", student-id)
-      isPresent(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-      if type(coadvisor) == str {
-        isPresent(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
-      } else if type(coadvisor) == array and coadvisor.len() > 1 {
-        _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
-        linebreak()
-      }
-      isPresent(_localization.at(text.lang).year + ": ", academic-year, after: none)
-    })
-  }
-
-  let frontispiece-cs-eng-master(
-    title,
-    author,
-    advisor,
-    coadvisor,
-    academic-year,
-    student-id,
-    logo,
-    preface: [
-      Tesi di Laurea Magistrale In\
-      Computer Science and Engineeering\
-      Ingegneria Informatica
-    ],
-  ) = {
-    set page(
-      margin: (top: 0cm),
-      background: context {
-        place(
-          dx: 102mm,
-          dy: -41mm,
-          _raggiera-image(147mm),
-        )
-      },
-    )
-
-    v(4.7cm)
-
-    image(logo, width: 93mm)
-
-    v(2.1cm)
-
-    align(
-      center,
-      text(
-        fill: bluepoli,
-        size: sizes.at("12pt").large,
-        weight: "bold",
-        smallcaps(preface),
-      ),
-    )
-
-    v(0.4cm)
-
-    align(
-      center,
-      text(
-        size: sizes.at("12pt").huge,
-        weight: "bold",
-        title,
-      ),
-    )
-
-    v(0.2cm)
-
-    context {
-      _localization.at(text.lang).author + ":\n"
-      text(
-        weight: "bold",
-        size: sizes.at("12pt").large,
-        author,
-      )
-
-      parbreak()
-
-      _localization.at(text.lang).student-id + ":\n"
-      text(
-        weight: "bold",
-        size: sizes.at("12pt").large,
-        student-id,
-      )
-    }
-
-    align(bottom + start, context {
-      set text(size: sizes.at("12pt").normalsize)
-      isPresent(_localization.at(text.lang).advisor + ":\n", strong("Prof. " + advisor))
-      if type(coadvisor) == str {
-        isPresent(_localization.at(text.lang).coadvisor + ":\n", strong("Prof. " + coadvisor))
-      } else if type(coadvisor) == array and coadvisor.len() > 1 {
-        _localization.at(text.lang).coadvisors + ":\n" + strong("Proff. " + coadvisor.join(", "))
-        linebreak()
-      }
-      isPresent(_localization.at(text.lang).year + ":\n", strong(academic-year), after: none)
-    })
-  }
-
-  if frontispiece == "phd" {
-    frontispiece-phd(title, author, advisor, coadvisor, academic-year, cycle, chair, tutor, logo)
-  } else if frontispiece == "deib-phd" {
-    frontispiece-deib-phd(title, author, advisor, coadvisor, academic-year, cycle, chair, tutor, logo)
-  } else if frontispiece == "classical-master" {
-    frontispiece-classical-master(title, author, advisor, coadvisor, academic-year, course, student-id, logo)
-  } else if frontispiece == "cs-eng-master" {
-    frontispiece-cs-eng-master(title, author, advisor, coadvisor, academic-year, student-id, logo)
+  if frontispieces.keys().contains(frontispiece) {
+    frontispieces.at(frontispiece)
   } else {
     panic("The frontispiece must be either one of: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.")
   }
@@ -682,9 +348,9 @@
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
-      text(size: sizes.at("12pt").large, it)
+      text(size: _sizes.at("12pt").large, it)
     } else if (it.level >= 3) {
-      text(size: sizes.at("12pt").large, it)
+      text(size: _sizes.at("12pt").large, it)
     }
     v(0.5em)
   }
@@ -835,7 +501,7 @@
     {
       set text(fill: bluepoli)
 
-      text(size: sizes.at("11pt").Large, title)
+      text(size: _sizes.at("11pt").Large, title)
 
       v(0.25cm)
 
@@ -846,7 +512,7 @@
 
     v(0.15cm)
 
-    (author, student-id).map(e => text(size: sizes.at("11pt").large, e)).join(", ")
+    (author, student-id).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
   }
 
   line(length: 100%, stroke: 0.4pt)
@@ -859,18 +525,18 @@
     grid.cell(
       inset: 5%,
       [
-        #set text(size: sizes.at("11pt").scriptsize)
+        #set text(size: _sizes.at("11pt").scriptsize)
         #set par(justify: false)
 
-        #text(weight: "bold", "Advisor: Prof. ") \
-        #advisor
+        #text(weight: "bold", "Advisor:") \
+        Prof. #advisor
 
-        #if type(coadvisor) == str {
-          text(weight: "bold", "Co-advisor: Prof. ") + linebreak()
-          coadvisor
-        } else if type(coadvisor) == array and coadvisor.len() == 2 {
-          text(weight: "bold", "Co-advisors: Proff. ") + linebreak()
-          coadvisor.join(", ")
+        #if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+          text(weight: "bold", "Co-advisor:") + linebreak()
+          "Prof. " + coadvisor
+        } else {
+          text(weight: "bold", "Co-advisors:") + linebreak()
+          "Proff. " + coadvisor.join(", ")
         }
 
         #text(weight: "bold", "Academic year:") \
@@ -1003,7 +669,7 @@
 
           v(0.1cm)
 
-          text(size: sizes.at("11pt").Large, title)
+          text(size: _sizes.at("11pt").Large, title)
 
           v(0.25cm)
 
@@ -1016,9 +682,9 @@
 
         "Author: " + smallcaps(author) + parbreak()
         "Advisor: Prof. " + smallcaps(advisor) + parbreak()
-        if type(coadvisor) == str {
+        if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
           "Co-advisor: Prof. " + smallcaps(coadvisor) + parbreak()
-        } else if type(coadvisor) == array and coadvisor.len() == 2 {
+        } else {
           "Co-advisors: Proff. " + coadvisor.map(smallcaps).join(", ") + parbreak()
         }
         if academic-year == "" {
@@ -1147,6 +813,7 @@
 #let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
 /// Table of contents. It's custom built upon ```typc outline()```.
+/// -> content
 #let toc = context {
   outline(
     title: lists(_localization.at(text.lang).toc),

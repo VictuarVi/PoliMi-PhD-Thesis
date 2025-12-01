@@ -1,13 +1,7 @@
 #import "@preview/tidy:0.4.3": *
 #import "../src/lib.typ"
+#import "../src/utils.typ"
 #import "@preview/metalogo:1.2.0": LaTeX, TeX
-
-#let docs = parse-module(
-  read("../src/lib.typ"),
-  name: "elegant-polimi-thesis",
-  scope: (lib: lib),
-  preamble: "#import lib: *\n",
-)
 
 #show "LaTeX": LaTeX
 
@@ -27,22 +21,6 @@
 
 This chapter is the result of the documentation generated from the source code. Since it's not strictly needed to use the template -- most of the functions that are to be used are straightforward -- it's quite barebones.
 
-The intended section order is as follows:
-
-#block(height: 2.4cm, columns[
-  + frontmatter
-    + toc
-    + list-of-figures
-    + list-of-tables
-    + nomenclature
-  + mainmatter
-  + backmatter
-  + acknowledgements
-  + appendix
-])
-
-The acknowledgements section can be moved in frontmatter, as one prefers (or as the advisor requests).
-
 #set heading(numbering: none)
 
 #let toc-block = columns[
@@ -53,7 +31,30 @@ The acknowledgements section can be moved in frontmatter, as one prefers (or as 
 #context block(height: measure(toc-block).height / 2 + 1em, toc-block)
 
 #show-module(
-  docs,
+  parse-module(
+    read("../src/lib.typ"),
+    name: "elegant-polimi-thesis",
+    scope: (lib: lib),
+    preamble: "#import lib: *\n",
+  ),
+  style: styles.default,
+  first-heading-level: 1,
+  show-outline: false,
+  show-module-name: false,
+  omit-private-definitions: true,
+  omit-private-parameters: true,
+  sort-functions: none,
+)
+
+#v(1cm)
+
+#show-module(
+  parse-module(
+    read("../src/utils.typ"),
+    name: "elegant-polimi-thesis",
+    scope: (utils: utils),
+    preamble: "#import utils: *\n",
+  ),
   style: styles.default,
   first-heading-level: 1,
   show-outline: false,
