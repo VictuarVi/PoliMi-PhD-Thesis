@@ -6,42 +6,81 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
 
 ## Preview ✨
 
-All the various documents the template can generate:
+<table width=100% align="center">
+  <tr>
+    <td>
+      <img alt="PhD frontispiece" src="thumbnails/phd.png" height=550px>
+      <br />
+      <div align="center"><em>PhD</em></div>
+    </td>
+    <td>
+      <img alt="DEIB PhD frontispiece" src="thumbnails/deib-phd.png" height=550px>
+      <br />
+      <div align="center"><em>DEIB PhD</em></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img alt="Computer Science and Engineering frontispiece" src="thumbnails/cs-eng-master.png" height=550px>
+      <br>
+      <div align="center"><em>Computer Science and Engineering</em></div>
+    </td>
+    <td>
+      <img alt="Classical Master frontispiece" src="thumbnails/classical-master.png" height=550px>
+      <br>
+      <div align="center"><em>Classical Master</em></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img alt="Executive Summary frontispiece" src="thumbnails/executive-summary.png" height=550px>
+      <br>
+      <div align="center"><em>Executive Summary</em></div>
+    </td>
+    <td>
+      <img alt="Article Format frontispiece" src="thumbnails/article-format.png" height=550px>
+      <br>
+      <div align="center"><em>Article Format</em></div>
+    </td>
+  <tr>
+</table>
 
-<!-- <table>
+<!-- <table width=100% align="center">
   <tr>
-    <td align=center><img alt="Frontispiece" src="thumbnails/phd.png" width=100%></td>
-    <td align=center><img alt="Frontispiece" src="thumbnails/deib-phd.png" width=100%></td>
+    <td>
+      <img alt="PhD frontispiece" src="thumbnails/phd.png" height=350px>
+      <br />
+      <div align="center"><em>PhD</em></div>
+    </td>
+    <td>
+      <img alt="DEIB PhD frontispiece" src="thumbnails/deib-phd.png" height=350px>
+      <br />
+      <div align="center"><em>DEIB PhD</em></div>
+    </td>
+    <td>
+      <img alt="Computer Science and Engineering frontispiece" src="thumbnails/cs-eng-master.png" height=350px>
+      <br>
+      <div align="center"><em>Computer Science and Engineering</em></div>
+    </td>
   </tr>
   <tr>
-    <td align=center><em>PhD</em></td>
-    <td align=center><em>DEIB Phd</em></td>
-  </tr>
+    <td>
+      <img alt="Classical Master frontispiece" src="thumbnails/classical-master.png" height=350px>
+      <br>
+      <div align="center"><em>Classical Master</em></div>
+    </td>
+    <td>
+      <img alt="Executive Summary frontispiece" src="thumbnails/executive-summary.png" height=350px>
+      <br>
+      <div align="center"><em>Executive Summary</em></div>
+    </td>
+    <td>
+      <img alt="Article Format frontispiece" src="thumbnails/article-format.png" height=350px>
+      <br>
+      <div align="center"><em>Article Format</em></div>
+    </td>
   <tr>
-    <td align=center><img alt="Frontispiece" src="thumbnails/cs-eng-master.png" width=100%></td>
-    <td align=center><img alt="Frontispiece" src="thumbnails/classical-master.png" width=100%></td>
-  </tr>
-  <tr>
-    <td align=center><em>Computer Science<br>and Engineering</em></td>
-    <td align=center><em>Classical Master</em></td>
-  </tr>
-  <tr>
-    <td align=center><img alt="Frontispiece" src="thumbnails/executive-summary.png" width=100%></td>
-    <td align=center><img alt="Frontispiece" src="thumbnails/article-format.png" width=100%></td>
-  <tr>
-  </tr>
-    <td align=center><em>Executive Summary</em></td>
-    <td align=center><em>Article Format</em></td>
-  </tr>
 </table> -->
-
-|           _PhD_            |              _DEIB Phd_              |                  _Computer Science and Engineering_                  |
-| :------------------------: | :----------------------------------: | :------------------------------------------------------------------: |
-| ![phd](thumbnails/phd.png) | ![deib phd](thumbnails/deib-phd.png) | ![computer science engineering master](thumbnails/cs-eng-master.png) |
-
-|                  _Classical Master_                  |                  _Executive Summary_                   |                 _Article Format_                 |
-| :--------------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------: |
-| ![classical master](thumbnails/classical-master.png) | ![executive summary](thumbnails/executive-summary.png) | ![article format](thumbnails/article-format.png) |
 
 ## Usage 🖋
 
@@ -202,7 +241,7 @@ The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https
 
 The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
 
-# Roadmap ✨
+# Roadmap 📝
 
 - Support the [Digital presentation templates](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR?usp=drive_link)
 

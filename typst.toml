@@ -15,4 +15,4 @@ exclude = ["*.sh", "*.pdf"]
 [template]
 path = "template"
 entrypoint = "main.typ"
-thumbnail = "thumbnail.png"
+thumbnail = "thumbnails/classical-master.png"
