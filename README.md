@@ -1,34 +1,47 @@
 # elegant-polimi-thesis 🎓
 
-[Typst](https://typst.app/) thesis template for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
+[Typst](https://typst.app/) thesises and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
 ## Preview ✨
 
-<table style="text-align: center;">
+All the various documents the template can generate:
+
+<!-- <table>
   <tr>
-    <td><img alt="Frontispiece" src="thumbnails/phd.png" width="80%%"></td>
-    <td><img alt="Frontispiece" src="thumbnails/deib-phd.png" width="80%%"></td>
-    <td><img alt="Frontispiece" src="thumbnails/cs-eng-master.png" width="80%%"></td>
+    <td align=center><img alt="Frontispiece" src="thumbnails/phd.png" width=100%></td>
+    <td align=center><img alt="Frontispiece" src="thumbnails/deib-phd.png" width=100%></td>
   </tr>
   <tr>
-    <td>PhD</td>
-    <td>DEIB Phd</td>
-    <td>Computer Science<br> and Engineering</td>
+    <td align=center><em>PhD</em></td>
+    <td align=center><em>DEIB Phd</em></td>
   </tr>
   <tr>
-    <td><img alt="Frontispiece" src="thumbnails/classical-master.png" width="80%%"></td>
-    <td><img alt="Frontispiece" src="thumbnails/executive-summary.png" width="80%%"></td>
-    <td><img alt="Frontispiece" src="thumbnails/article-format.png" width="80%%"></td>
+    <td align=center><img alt="Frontispiece" src="thumbnails/cs-eng-master.png" width=100%></td>
+    <td align=center><img alt="Frontispiece" src="thumbnails/classical-master.png" width=100%></td>
   </tr>
   <tr>
-    <td>DEIB Phd</td>
-    <td>Executive Summary</td>
-    <td>Article Format</td>
+    <td align=center><em>Computer Science<br>and Engineering</em></td>
+    <td align=center><em>Classical Master</em></td>
   </tr>
-  <!-- <caption style="caption-side: bottom"> All the various documents the template can generate. </caption> -->
-</table>
+  <tr>
+    <td align=center><img alt="Frontispiece" src="thumbnails/executive-summary.png" width=100%></td>
+    <td align=center><img alt="Frontispiece" src="thumbnails/article-format.png" width=100%></td>
+  <tr>
+  </tr>
+    <td align=center><em>Executive Summary</em></td>
+    <td align=center><em>Article Format</em></td>
+  </tr>
+</table> -->
+
+|           _PhD_            |              _DEIB Phd_              |                  _Computer Science and Engineering_                  |
+| :------------------------: | :----------------------------------: | :------------------------------------------------------------------: |
+| ![phd](thumbnails/phd.png) | ![deib phd](thumbnails/deib-phd.png) | ![computer science engineering master](thumbnails/cs-eng-master.png) |
+
+|                  _Classical Master_                  |                  _Executive Summary_                   |                 _Article Format_                 |
+| :--------------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------: |
+| ![classical master](thumbnails/classical-master.png) | ![executive summary](thumbnails/executive-summary.png) | ![article format](thumbnails/article-format.png) |
 
 ## Usage 🖋
 
@@ -38,7 +51,7 @@ You can either use this template in the webapp by clicking on "Create project in
 typst init @preview/elegant-polimi-thesis:0.1.2
 ```
 
-I'd also recommend to use the `--pdf-standard a-3u` flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
+I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
 
 To get started:
 
