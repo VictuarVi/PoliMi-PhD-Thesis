@@ -21,7 +21,7 @@
   ref(label)
 }
 
-// Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headins` parameter.
+// Subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headings` parameter.
 #let subfigure-caption(it, colored-caption: true, parent: none) = context {
   align(
     center,
@@ -153,7 +153,7 @@
   /// -> path
   logo: "img/logo_ingegneria.svg",
   /// Frontispiece of the thesis. Can be either: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.
-  /// -> str
+  /// -> "phd" | "deib-phd" | "cs-eng-master" | "classical-master"
   frontispiece: "phd",
   body,
 ) = {
@@ -437,7 +437,7 @@
   abstract: [],
   /// Keywords, that appear below the abstract (and in the PDF metadata).
   /// -> str
-  keywords: "",
+  keywords: "word, word, word",
   /// Logo of the thesis.
   /// -> path
   logo: "img/logo_ingegneria.svg",
@@ -549,7 +549,7 @@
     text(fill: bluepoli, "Abstract: ") + abstract,
   )
 
-  keywords-banner("Keywords:" + keywords)
+  banner(strong("Keywords: ") + keywords)
 
   // Mainmatter
 
@@ -629,7 +629,7 @@
     number-align: bottom + center,
     columns: 2,
     header: context if here().page() > 1 {
-      keywords-banner("Executive Summary" + h(1fr) + author)
+      banner(strong("Executive Summary" + h(1fr) + author))
     },
     background: context if here().page() == 1 {
       place(

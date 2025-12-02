@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, keywords-banner, subfigure, appendix, acknowledgements
+#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, banner, subfigure, appendix, acknowledgements
 
 #let data = yaml("../shared_data.yaml")
 
@@ -323,7 +323,7 @@ It may be necessary to include another appendix to better organize the presentat
 
 Qui va l'Abstract in lingua italiana della tesi seguito dalla lista di parole chiave.
 
-#keywords-banner[*Parole chiave*: qui, le parole chiave, della tesi, in italiano]
+#banner[*Parole chiave*: qui, le parole chiave, della tesi, in italiano]
 
 #show: acknowledgements
 

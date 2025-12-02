@@ -73,7 +73,7 @@
       linebreak()
     }
     _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-    _show-field(_localization.at(text.lang).academic-year + " ", academic-year, separator: none)
+    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: none)
     _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
     _show-field(_localization.at(text.lang).chair + ": Prof. ", chair)
   })
@@ -136,7 +136,7 @@
       linebreak()
     }
     _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-    _show-field(_localization.at(text.lang).academic-year + " ", academic-year, separator: none)
+    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: none)
     _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
     _show-field(_localization.at(text.lang).chair + ": Prof. ", chair)
   })

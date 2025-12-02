@@ -6,9 +6,29 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
 
 ## Preview ✨
 
-<p align="center">
-  <img alt="Frontispiece" src="thumbnail.png" width="45%">
-</p>
+<table style="text-align: center;">
+  <tr>
+    <td><img alt="Frontispiece" src="thumbnails/phd.png" width="80%%"></td>
+    <td><img alt="Frontispiece" src="thumbnails/deib-phd.png" width="80%%"></td>
+    <td><img alt="Frontispiece" src="thumbnails/cs-eng-master.png" width="80%%"></td>
+  </tr>
+  <tr>
+    <td>PhD</td>
+    <td>DEIB Phd</td>
+    <td>Computer Science<br> and Engineering</td>
+  </tr>
+  <tr>
+    <td><img alt="Frontispiece" src="thumbnails/classical-master.png" width="80%%"></td>
+    <td><img alt="Frontispiece" src="thumbnails/executive-summary.png" width="80%%"></td>
+    <td><img alt="Frontispiece" src="thumbnails/article-format.png" width="80%%"></td>
+  </tr>
+  <tr>
+    <td>DEIB Phd</td>
+    <td>Executive Summary</td>
+    <td>Article Format</td>
+  </tr>
+  <!-- <caption style="caption-side: bottom"> All the various documents the template can generate. </caption> -->
+</table>
 
 ## Usage 🖋
 
@@ -79,9 +99,10 @@ To get started:
 
 Depending on the **thesis template** you need to use, change the `frontispiece` argument:
 
-- "PhD Thesis Template", "DEIB PhD Thesis" are mapped to `phd`
-- "Classical Format Thesis" is mapped to `classical-format`
-- "Computer Science and Engineering" is mapped to `cs-eng-master`
+- `phd` for "PhD Thesis Template"
+- `deib-phd` for "DEIB PhD Thesis"
+- `classical-format` for "Classical Format Thesis"
+- `cs-eng-master` for "Computer Science and Engineering"
 
 The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
 
@@ -106,7 +127,7 @@ The template also offers the Executive Summary and the Article Format; in order 
 )
 ```
 
-The template are **three distinct documents**, however they share _most_ of the features:
+The templates are **three distinct documents**, however they share _most_ of the arguments:
 
 - `title`: title of the document
 - `author`: name and surname of the author
@@ -124,7 +145,7 @@ The following are exclusive to `polimi-thesis`:
 - `cycle`: the cycle of the thesis
 - `chair`: the chair of the thesis
 - `student-id`: your student ID
-- `frontispiece`: the specific type of frontispiece to be used (default:`phd`; supported: `deib-phd`, `cs-eng-master` or `classical-master`)
+- `frontispiece`: the specific type of frontispiece to be used (default: `phd`; supported: `deib-phd`, `cs-eng-master` or `classical-master`)
 
 Depending on the selected frontispiece, not all these attributes may be needed.
 

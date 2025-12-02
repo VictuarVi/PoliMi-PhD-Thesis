@@ -68,9 +68,9 @@
   )
 )
 
-/// Draw the keywords banner. Used only in `article-format` thesis.
+/// Draw a banner.
 /// -> content
-#let keywords-banner(
+#let banner(
   /// Body of the banner.
   /// -> content
   body,
@@ -80,7 +80,6 @@
   inset: (rest: 1em, x: 1.7em),
   text(
     fill: white,
-    weight: "bold",
     body,
   ),
 )

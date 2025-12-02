@@ -6,6 +6,7 @@ it:
   toc: Indice
   dissertation: Tesi di laurea di
   academic-year: Anno Accademico
+  year: Anno
   cycle: Ciclo
   list-of-figures: Lista delle Figure
   list-of-tables: Lista delle Tabelle
@@ -26,6 +27,7 @@ en:
   tutor: Tutor
   dissertation: Doctoral Dissertation of
   academic-year: Academic Year
+  year: Year
   cycle: Cycle
   toc: Contents
   list-of-figures: List of Figures
