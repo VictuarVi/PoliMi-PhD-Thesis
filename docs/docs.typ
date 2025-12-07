@@ -1,5 +1,5 @@
 #import "@preview/tidy:0.4.3": *
-#import "../src/lib.typ"
+#import "../src/polimi-phd-thesis.typ"
 #import "../src/utils.typ"
 #import "@preview/metalogo:1.2.0": LaTeX, TeX
 
@@ -19,7 +19,7 @@
 
 #v(1em)
 
-This chapter is the result of the documentation generated from the source code. Since it's not strictly needed to use the template -- most of the functions that are to be used are straightforward -- it's quite barebones.
+This chapter is the result of the documentation generated from the source code. Since it's not strictly needed to use the template -- most of the functions are straightforward -- it's quite barebones.
 
 #set heading(numbering: none)
 
@@ -32,10 +32,10 @@ This chapter is the result of the documentation generated from the source code. 
 
 #show-module(
   parse-module(
-    read("../src/lib.typ"),
+    read("../src/polimi-phd-thesis.typ"),
     name: "elegant-polimi-thesis",
-    scope: (lib: lib),
-    preamble: "#import lib: *\n",
+    scope: (polimi-phd-thesis: polimi-phd-thesis),
+    preamble: "#import polimi-phd-thesis: *\n",
   ),
   style: styles.default,
   first-heading-level: 1,

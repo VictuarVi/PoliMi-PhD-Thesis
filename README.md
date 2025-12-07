@@ -1,6 +1,6 @@
 # elegant-polimi-thesis 🎓
 
-[Typst](https://typst.app/) thesises and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
+[Typst](https://typst.app/) theses and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 

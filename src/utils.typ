@@ -83,3 +83,32 @@
     body,
   ),
 )
+
+#let shared-formatting(title, author, language, body, text-size: 11pt, keywords: "") = {
+  set document(
+    title: title,
+    author: author,
+    keywords: keywords,
+  )
+
+  set text(
+    lang: language,
+    size: text-size,
+    font: "New Computer Modern",
+    hyphenate: true,
+  )
+  show math.equation: set text(font: "New Computer Modern Math")
+
+  set par(
+    justify: true,
+    linebreaks: "optimized",
+    spacing: 0.7em,
+    first-line-indent: 0pt,
+  )
+
+  set figure(gap: 1.5em)
+  show figure: set block(breakable: true)
+  show: _style-figures.with(colored-caption: true, heading-levels: 1)
+
+  body
+}
