@@ -163,6 +163,7 @@
   if frontispiece == "deib-phd" {
     colored-headings = true
   }
+  _document-type.update(frontispiece)
 
   set document(
     title: title,
@@ -200,8 +201,8 @@
     margin: (
       top: 2.5cm,
       bottom: 2.5cm,
-      inside: 3.0cm,
-      outside: 2.0cm,
+      inside: 3cm,
+      outside: 2cm,
     ),
     numbering: "i",
     header: context {
@@ -284,6 +285,10 @@
 
   if academic-year == "" {
     academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
+  }
+
+  if frontispiece == "deib-phd" {
+    logo = "img/logo_deib.svg"
   }
 
   let shared-attributes = (title, author, advisor, coadvisor, academic-year, logo)
@@ -449,6 +454,7 @@
     author: author,
     keywords: keywords,
   )
+  _document-type.update("article-format")
 
   set text(
     lang: language,
@@ -467,10 +473,10 @@
 
   set page(
     margin: (
-      top: 2.0cm,
-      right: 2.0cm,
-      bottom: 2.0cm,
-      left: 2.0cm,
+      top: 2cm,
+      right: 2cm,
+      bottom: 2cm,
+      left: 2cm,
     ),
     numbering: "1",
     number-align: bottom + center,
@@ -597,10 +603,11 @@
     title: title,
     author: author,
   )
+  _document-type.update("executive-summary")
 
   set text(
     lang: language,
-    size: 11pt,
+    size: 10.5pt, // it should be 11pt, though due to how LaTeX originally handles it this size seems to be best for an adaptation
     font: "New Computer Modern",
     hyphenate: true,
   )
@@ -616,8 +623,8 @@
   set page(
     margin: (
       top: 3cm,
-      left: 2.0cm,
-      right: 2.0cm,
+      left: 2cm,
+      right: 2cm,
       bottom: 2cm,
     ),
     numbering: "1",
@@ -675,17 +682,22 @@
 
         v(0.1cm)
 
-        "Author: " + smallcaps(author) + parbreak()
-        "Advisor: Prof. " + smallcaps(advisor) + parbreak()
-        if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-          "Co-advisor: Prof. " + smallcaps(coadvisor) + parbreak()
-        } else {
-          "Co-advisors: Proff. " + coadvisor.map(smallcaps).join(", ") + parbreak()
-        }
+        "Author: " + smallcaps(author) + v(-0.3em)
+        "Advisor: Prof. " + smallcaps(advisor) + v(-0.3em)
+        (
+          if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+            "Co-advisor: Prof. " + smallcaps(coadvisor)
+          } else {
+            "Co-advisors: Proff. " + coadvisor.map(smallcaps).join(", ")
+          }
+            + v(-0.3em)
+        )
         if academic-year == "" {
           academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
         }
         "Academic year: " + smallcaps(academic-year)
+
+        v(0.25cm)
 
         line(length: 100%, stroke: 0.4pt)
       },
@@ -698,8 +710,10 @@
   set heading(numbering: "1.1.")
   show heading: it => {
     set text(fill: bluepoli)
+    v(1em, weak: true)
     if it.numbering != none { counter(heading).display() + h(1em) }
     it.body
+    v(0.75em, weak: true)
   }
 
   set figure(gap: 1.5em)
@@ -919,41 +933,79 @@
 /// -> content
 #let theorem = mathblock(
   blocktitle: context _localization.at(text.lang).theorem,
+  prefix: count => [
+    #context {
+      set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
+        bluepoli
+      })
+      _localization.at(text.lang).theorem + " " + count + "."
+    }
+  ],
   counter: thm-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
+  suffix: context { if _document-type.get() == "executive-summary" { v(0.2cm) } },
 )
 
 /// Proposition block.
 /// -> content
 #let proposition = mathblock(
   blocktitle: context _localization.at(text.lang).proposition,
+  prefix: count => [
+    #context {
+      set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
+        bluepoli
+      })
+      _localization.at(text.lang).proposition + " " + count + "."
+    }
+  ],
   counter: prop-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
+  suffix: context { if _document-type.get() == "executive-summary" { v(0.2cm) } },
 )
 
 /// Lemma block.
 /// -> content
 #let lemma = mathblock(
   blocktitle: context _localization.at(text.lang).lemma,
+  prefix: count => [
+    #context {
+      set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
+        bluepoli
+      })
+      _localization.at(text.lang).lemma + " " + count + "."
+    }
+  ],
   counter: lemma-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
+  suffix: context { if _document-type.get() == "executive-summary" { v(0.2cm) } },
 )
 
 /// Remark block.
 /// -> content
 #let remark = mathblock(
   blocktitle: context _localization.at(text.lang).remark,
+  prefix: count => [
+    #context {
+      set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
+        bluepoli
+      })
+      _localization.at(text.lang).remark + " " + count + "."
+    }
+  ],
   counter: remark-cnt,
   bodyfmt: text.with(style: "italic"),
   numbering: dependent-numbering("1.1", levels: 1),
+  suffix: context { if _document-type.get() == "executive-summary" { v(0.2cm) } },
 )
 
 /// Proof block.
 /// -> content
-#let proof = proofblock()
+#let proof = proofblock(
+  suffix: context { if _document-type.get() == "executive-summary" { v(0.2cm) } },
+)
 
 /// Utility function to initialize the theorem environments#footnote[Provided by #link("https://typst.app/universe/package/great-theorems", "great-theorems") package.]:
 /// - theorem

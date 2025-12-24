@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 frontispieces=(phd deib-phd cs-eng-master classical-master)
 

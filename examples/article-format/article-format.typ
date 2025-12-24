@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, banner, subfigure, appendix, acknowledgements
+#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, banner, subfigure, appendix, acknowledgements, theorem, proposition, proof
 
 #let data = yaml("../shared_data.yaml")
 
@@ -273,7 +273,19 @@ See @first-algorithm.
 
 = Some further useful recommendations
 
-// theorems and such
+#theorem[
+  Write here your theorem.
+]
+
+#proposition[
+  Write here your proposition.
+]
+
+#proof[
+  If useful you can report here the proof.
+]
+
+Powered by @typst-great-theorems.
 
 How to insert itemized lists:
 - first item;
