@@ -165,8 +165,8 @@ The template also offers the Executive Summary and the Article Format; in order 
 #show: polimi-article-format.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Prof. Donatella Sciuto",
-  coadvisor: "Prof. Antonio Capone",
+  advisor: "Donatella Sciuto",
+  coadvisor: "Antonio Capone",
   abstract: include "../sections/abstract.typ"
 )
 
@@ -174,8 +174,8 @@ The template also offers the Executive Summary and the Article Format; in order 
 #show: polimi-executive-summary.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Prof. Donatella Sciuto",
-  coadvisor: "Prof. Antonio Capone",
+  advisor: "Donatella Sciuto",
+  coadvisor: "Antonio Capone",
 )
 ```
 
@@ -185,7 +185,7 @@ The templates are **three distinct documents**, however they share _most_ of the
 - `author`: name and surname of the author
 - `advisor`: name and surname of the advisor
 - `coadvisor`: name and surname of the coadvisor(s) (can be empty)
-- `tutor`: name and surname of the tutor
+- `course`: the course you are graduating in
 - `academic-year`: the corresponding academic year
 - `logo`: logo of the thesis
 
@@ -205,8 +205,6 @@ The following are exclusive to `polimi-article-format-thesis`:
 
 - `abstract`: the abstract
 - `keywords`: keywords (that will also appear in the document metadata)
-
-Both the `polimi-article-format-thesis` and `polimi-executive-summary` share the `course` option.
 
 ## Recommended packages
 
