@@ -458,7 +458,7 @@
 
   set text(
     lang: language,
-    size: 11pt,
+    size: 10.5pt,
     font: "New Computer Modern",
     hyphenate: true,
   )
@@ -523,6 +523,10 @@
   line(length: 100%, stroke: 0.4pt)
 
   // Abstract
+  set par(
+    leading: 0.5em,
+    // spacing: 0.7em,
+  )
 
   grid(
     columns: (24%, 1fr),
@@ -748,7 +752,7 @@
 
 // Document sections
 
-/// Frontmatter section. Similar to LaTeX's ```tex \frontmatter```. It sets the page numbering to `"i"` and ```typc numbering: none``` for headings.
+/// Frontmatter section. Similar to LaTeX's ```tex \frontmatter```, it is meant to be only used in the thesis. It sets the page numbering to `"i"` and ```typc numbering: none``` for headings.
 /// -> content
 #let frontmatter(body) = {
   _document-state.update("FRONTMATTER")
@@ -770,7 +774,7 @@
   body
 }
 
-/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```.  It sets to page numbering to `"1"`, heading numbering to ```typc "1.1"``` and resets the page counter.
+/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```, it is meant to be only used in the thesis. It sets to page numbering to `"1"`, heading numbering to ```typc "1.1"``` and resets the page counter.
 /// -> content
 #let mainmatter(body) = {
   _blank-toc()
@@ -783,7 +787,7 @@
   body
 }
 
-/// Appendix section. Similar to LaTeX's ```tex \appendix```.  It sets heading numbering to ```"A.1"``` and resets their counter.
+/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```"A.1"``` and resets their counter.
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
@@ -794,7 +798,7 @@
   body
 }
 
-/// Backmatter section. Similar to LaTeX's ```tex \backmatter```. It sets heading numbering to ```typc none```.
+/// Backmatter section. Similar to LaTeX's ```tex \backmatter```, it is meant to be only used in the thesis. It sets heading numbering to ```typc none```.
 /// -> content
 #let backmatter(body) = context {
   _blank-toc()
@@ -819,7 +823,7 @@
 // lists figure to make the list of tables, list of figures to appear in the table of contents
 #let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
-/// Table of contents. It's custom built upon ```typc outline()```.
+/// Custom-built ```typc outline()```.
 /// -> content
 #let toc = context {
   outline(
@@ -937,7 +941,7 @@
     #context {
       set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
         bluepoli
-      })
+      } else { black })
       _localization.at(text.lang).theorem + " " + count + "."
     }
   ],
@@ -955,7 +959,7 @@
     #context {
       set text(weight: "bold", fill: if ("executive-summary", "article-format").contains(_document-type.get()) {
         bluepoli
-      })
+      } else { black })
       _localization.at(text.lang).proposition + " " + count + "."
     }
   ],

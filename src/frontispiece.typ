@@ -9,7 +9,7 @@
   /// Exact field to check (e.g. title).
   /// -> variable
   field,
-  /// Separator betwween fields.
+  /// Separator between fields.
   /// -> func | content
   separator: linebreak(),
 ) = {
@@ -222,7 +222,7 @@
   student-id,
   preface: [
     Tesi di Laurea Magistrale In\
-    Computer Science and Engineeering\
+    Computer Science and Engineering\
     Ingegneria Informatica
   ],
 ) = {

@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.2.0": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
@@ -10,6 +10,7 @@
   academic-year: "2025-2026",
   cycle: "XXV",
   chair: none,
+  frontispiece: "phd",
 )
 
 #show: theorems-init // remove if you don't plan to use theorems, proposition, lemmas or remarks

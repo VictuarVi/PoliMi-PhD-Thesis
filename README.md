@@ -87,7 +87,7 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
 You can either use this template in the webapp by clicking on "Create project in webapp" or, from the CLI, run:
 
 ```shell
-typst init @preview/elegant-polimi-thesis:0.1.2
+typst init @preview/elegant-polimi-thesis:0.2.0
 ```
 
 I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
@@ -95,7 +95,7 @@ I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https
 To get started:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.2.0": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
@@ -146,7 +146,7 @@ To get started:
 
 #show: acknowledgements
 
-// acknowlegements
+// acknowledgements
 ```
 
 Depending on the **thesis template** you need to use, change the `frontispiece` argument:
@@ -159,7 +159,7 @@ Depending on the **thesis template** you need to use, change the `frontispiece` 
 The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.2.0": *
 
 // For the article format
 #show: polimi-article-format.with(

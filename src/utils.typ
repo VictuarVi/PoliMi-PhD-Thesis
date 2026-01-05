@@ -76,7 +76,7 @@
   body,
 ) = rect(
   width: 100%,
-  fill: bluepoli.lighten(40%),
+  fill: rgb("#97B6C8"),
   inset: (rest: 1em, x: 1.7em),
   text(
     fill: white,
