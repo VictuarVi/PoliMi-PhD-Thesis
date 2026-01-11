@@ -1,4 +1,7 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": polimi-article-format-thesis, theorems-init, banner, subfigure, appendix, acknowledgements, theorem, proposition, proof
+#import "@preview/elegant-polimi-thesis:0.2.0": (
+  acknowledgements, appendix, banner, polimi-article-format-thesis, proof, proposition, subfigure, theorem,
+  theorems-init,
+)
 
 #let data = yaml("../shared_data.yaml")
 
@@ -23,11 +26,24 @@
     a list of four to six keywords. Keywords are a tool to help indexers and search
     engines to find relevant documents. To be relevant and effective, keywords must
     be chosen carefully. They should represent the content of your work and be specific
-    to your field or sub-field. Keywords may be a single word or two to four words
+    to your field or sub-field. Keywords may be a single word or two to four words.
   ],
 )
 
 #show: theorems-init
+
+#import "@preview/metalogo:1.2.0": LaTeX, TeX
+#show "LaTeX": LaTeX
+
+#let Typst = {
+  text(
+    fill: eastern,
+    font: "Libertinus Serif",
+    weight: "semibold",
+    "Typst",
+  )
+}
+#show "Typst": Typst
 
 = Introduction
 
@@ -41,7 +57,7 @@ Be sure to select a title that is meaningful. It should contain important keywor
 
 It is convenient to break the article format of your thesis (in article format) into sections and subsections.  If necessary, subsubsections, paragraphs and subparagraphs can be used.
 
-A new section is created by the command
+A new section is created by the command:
 ```typ
 = Title of the section
 ```
@@ -60,24 +76,7 @@ and similarly the numbering can be turned off as earlier, but changing the level
 #heading(numbering: none, level: 2 "Title of the section")
 ```
 
-It is recommended to give a label to each section by using the command
-```typ
-= Title of the section<section-name>
-```
-where the argument is just a text string that you'll use to reference that part
-as follows: ```typ @section-name```.
-
-= Sections and subsections
-
-It is convenient to organize the Executive Summary of your thesis into sections and subsections.
-If necessary, subsubsections, paragraphs and subparagraphs can be also used.
-A new section or subsection can be included  with the commands
-```typ
-= Title of the section
-== Title of the subsection
-```
-
-It is recommended to give a label to each section by using the command
+It is recommended to give a label to each section by using the command:
 ```typ
 = Title of the section<section-name>
 ```
@@ -137,6 +136,8 @@ By default, the equations are *not* numbered -- however if you need to:
 And to reference it just type @maxwell-equation.
 
 = Figures, Tables and Algorithms
+
+Figures, Tables and Algorithms have to contain a Caption that describes their content, and have to be properly referred in the text.
 
 == Figures
 
@@ -273,13 +274,20 @@ See @first-algorithm.
 
 = Some further useful recommendations
 
+Theorems have to be formatted as follows:
 #theorem[
   Write here your theorem.
 ]
+#proof[
+  If useful you can report here the proof.
+]
+#v(0.3cm)
 
+Propositions have to be formatted as follows:
 #proposition[
   Write here your proposition.
 ]
+#v(0.3cm)
 
 #proof[
   If useful you can report here the proof.
@@ -331,9 +339,13 @@ If you need to include an appendix to support the research in your thesis, you c
 
 It may be necessary to include another appendix to better organize the presentation of supplementary material.
 
+#pagebreak()
+
 #heading(numbering: none, "Abstract in lingua italiana")
 
 Qui va l'Abstract in lingua italiana della tesi seguito dalla lista di parole chiave.
+
+#v(15pt)
 
 #banner[*Parole chiave*: qui, le parole chiave, della tesi, in italiano]
 

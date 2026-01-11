@@ -458,7 +458,7 @@
 
   set text(
     lang: language,
-    size: 10.5pt,
+    size: 11pt,
     font: "New Computer Modern",
     hyphenate: true,
   )
@@ -467,7 +467,7 @@
   set par(
     justify: true,
     linebreaks: "optimized",
-    spacing: 1.7em,
+    spacing: 0.65em,
     first-line-indent: 0pt,
   )
 
@@ -489,90 +489,100 @@
     },
   )
 
-  {
-    // Title
-    set text(size: 0.3cm, weight: "bold")
-    set par(spacing: 0.5cm)
-
-    v(0.8cm)
-
-    image(
-      width: 83mm,
-      logo,
-    )
-
-    v(0.7cm)
-
-    {
-      set text(fill: bluepoli)
-
-      text(size: _sizes.at("11pt").Large, title)
-
-      v(0.25cm)
-
-      smallcaps(
-        "Tesi di Laurea Magistrale in" + linebreak() + course,
-      )
-    }
-
-    v(0.15cm)
-
-    (author, student-id).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
-  }
-
-  line(length: 100%, stroke: 0.4pt)
-
-  // Abstract
-  set par(
-    leading: 0.5em,
-    // spacing: 0.7em,
-  )
-
-  grid(
-    columns: (24%, 1fr),
-    align: (horizon + left, left),
-    grid.cell(
-      inset: 5%,
-      [
-        #set text(size: _sizes.at("11pt").scriptsize)
-        #set par(justify: false)
-
-        #text(weight: "bold", "Advisor:") \
-        Prof. #advisor
-
-        #if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-          text(weight: "bold", "Co-advisor:") + linebreak()
-          "Prof. " + coadvisor
-        } else {
-          text(weight: "bold", "Co-advisors:") + linebreak()
-          "Proff. " + coadvisor.join(", ")
-        }
-
-        #text(weight: "bold", "Academic year:") \
-        #if academic-year == "" {
-          academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
-        }
-        #academic-year
-      ],
-    ),
-    text(fill: bluepoli, "Abstract: ") + abstract,
-  )
-
-  banner(strong("Keywords: ") + keywords)
-
   set list(indent: 1.2em, tight: true, marker: ($bullet$, $circle$, $-$))
   set enum(indent: 1.2em, tight: true)
 
   set heading(numbering: "1.1.")
   show heading: it => {
     set text(fill: bluepoli)
+    v(0.45cm)
     if it.numbering != none { counter(heading).display() + h(1em) }
     it.body
+    v(0.45cm)
   }
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
   show: _style-figures.with(colored-caption: true, heading-levels: 1)
+
+  {
+    set text(size: _sizes.at("11pt").small)
+    {
+      // Title
+      set text(size: 0.3cm, weight: "bold")
+      set par(spacing: 0.5cm)
+
+      v(0.8cm)
+
+      image(
+        width: 83mm,
+        logo,
+      )
+
+      v(0.7cm)
+
+      {
+        set text(fill: bluepoli)
+
+        text(size: _sizes.at("11pt").Large, title)
+
+        v(0.25cm)
+
+        smallcaps(
+          "Tesi di Laurea Magistrale in" + linebreak() + course,
+        )
+      }
+
+      v(0.15cm)
+
+      (author, student-id).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
+    }
+
+    v(0.25cm)
+
+    line(length: 100%, stroke: 0.4pt)
+
+    v(0.25cm)
+
+    grid(
+      columns: (22%, 1fr),
+      align: (horizon + left, left),
+      grid.cell(
+        inset: 5%,
+        [
+          #set text(size: _sizes.at("11pt").scriptsize)
+          #set par(justify: false, spacing: 1.7em)
+
+          #text(weight: "bold", "Advisor:") \
+          Prof. #advisor
+
+          #if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+            text(weight: "bold", "Co-advisor:") + linebreak()
+            coadvisor
+          } else {
+            text(weight: "bold", "Co-advisors:") + linebreak()
+            coadvisor.join("\n")
+          }
+
+          #text(weight: "bold", "Academic year:") \
+          #if academic-year == "" {
+            academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+          }
+          #academic-year
+        ],
+      ),
+      text(fill: bluepoli, "Abstract: ") + abstract,
+    )
+
+    v(1em)
+
+    banner(strong("Keywords: ") + keywords)
+  }
+
+  // this must be an error from the original template...
+  // set text(size: _sizes.at("11pt").small)
+
+  v(0.4cm)
 
   body
 }
