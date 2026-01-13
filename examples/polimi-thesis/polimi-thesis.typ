@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.2.0": *
 
 #let data = yaml("../shared_data.yaml")
 
@@ -54,14 +54,7 @@ In this section there will be useful information about how to style chapters, se
 
 == Sections and subsection
 
-In LaTeX, the canonical sections division is as follows:
-```tex
-\chapter{}
-\section{}
-\subsection{}
-\subsubsection{}
-```
-in Typst, there are just headings @typst-headings (similar to Markdown) -- so the LaTeX system maps to:
+In LaTeX, there are specific function dedicated to chapters, sections and so on -- in Typst, there are just headings @typst-headings (similar to Markdown) -- so, for what concers this package, the LaTeX system maps to:
 ```typ
 = Chapter           // Heading level 1
 == Section          // Heading level 2
@@ -76,29 +69,7 @@ If you need to turn off the numbering you will call the ```Typst heading``` func
 
 == Equations
 
-In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
-
-- Inline math, same as LaTeX:
-#columns[
-  #set align(center)
-  ```Typst
-  $a^2 + b^2 = c^2$
-  ```
-  #colbreak()
-  $a^2 + b^2 = c^2$
-]
-
-- Block math, by adding whitespaces before and after the content:
-#columns[
-  #set align(center)
-  ```Typst
-  $ a^2 + b^2 = c^2 $
-  ```
-  #colbreak()
-  $ a^2 + b^2 = c^2 $
-]
-
-Now a more complex equation:
+In LaTeX, there are many equation environments (```tex equation, equation*, aligned```) -- in Typst there is just one, invoked with dollars @typst-equation:
 
 $
   cases(
@@ -203,7 +174,7 @@ You can reference either the main @full; or a single subfigure: @a, or @b.
   table(
     columns: 4,
     stroke: frame(black),
-    fill: shading(aqua.darken(20%)),
+    fill: shading(rgb("#B7CDDA")),
     table.header([], [Column 1], [Column 2], [Column 3]),
     [row 1], [1], [2], [3],
     [row 2], $alpha$, $beta$, $gamma$,
@@ -263,19 +234,29 @@ See @first-algorithm.
 
 == Theorems, propositions and lists
 
+== Theorems
+
+Theorems have to be formatted as:
+
 #theorem[
   Write here your theorem.
-]
-
-#proposition[
-  Write here your proposition.
 ]
 
 #proof[
   If useful you can report here the proof.
 ]
 
+== Propositions
+
+Propositions have to be formatted as:
+
+#proposition[
+  Write here your proposition.
+]
+
 Powered by @typst-great-theorems.
+
+== Lists
 
 Normal list:
 - First item

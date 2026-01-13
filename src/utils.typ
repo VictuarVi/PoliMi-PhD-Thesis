@@ -55,6 +55,44 @@
 /// -> color
 #let bluepoli = rgb("#5f859f")
 
+/// Check if a page is empty.
+/// -> bool
+#let _is-page-empty() = {
+  // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
+  let current-page = here().page()
+  query(<chapter-end>)
+    .zip(query(<chapter-start>))
+    .any(((start, end)) => {
+      (start.location().page() < current-page and current-page < end.location().page())
+    })
+}
+
+/// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
+/// -> content
+#let _empty-page() = {
+  [#metadata(none) <chapter-end>]
+  pagebreak(weak: true, to: "odd")
+  [#metadata(none) <chapter-start>]
+}
+
+/// It displays a reference using section name (instead of numbering). From Hallon 0.1.3
+/// -> content
+#let _nameref(label) = {
+  show ref: it => {
+    if it.element == none {
+      it
+    } else if it.element.func() != heading {
+      it
+    } else {
+      let l = it.target // label
+      let h = it.element // heading
+      link(l, h.body)
+    }
+  }
+  ref(label)
+}
+
+
 /// Inserts a raggiera, given a specified width.
 /// -> content
 #let _raggiera-image(
@@ -83,6 +121,35 @@
     body,
   ),
 )
+
+// Numbering functions
+
+/// Alternative numbering: ```typc"1.1." + h-space```.
+/// -> content
+#let tab-numbering(
+  /// Horizontal space.
+  /// -> length
+  h-space: 0.7em,
+  /// Numbers.
+  /// -> arguments
+  ..n,
+) = n.pos().map(str).join(".") + "." + h(h-space)
+
+/// Chapter numbering.
+/// -> content
+#let chapter-numbering(
+  /// Numbers.
+  /// -> arguments
+  ..n,
+) = text(weight: "bold", str(n.pos().first())) + "|" + h(2mm)
+
+/// Numbering used in the theses header.
+/// -> content
+#let header-number(
+  /// Numbers.
+  /// -> arguments
+  ..n,
+) = return str(n.pos().first()) + "| "
 
 #let shared-formatting(title, author, language, body, text-size: 11pt, keywords: "") = {
   set document(

@@ -1,122 +1,10 @@
 #import "utils.typ": *
+#import "figures.typ": *
 
 #let language = "en"
 
 // https://typst.app/universe/package/smartaref
 #import "@preview/smartaref:0.1.0": Cref, cref
-
-// From Hallon 0.1.3 (https://typst.app/universe/package/hallon)
-
-// _nameref displays a reference using section name (instead of numbering).
-#let _nameref(label) = {
-  show ref: it => {
-    if it.element == none {
-      it
-    } else if it.element.func() != heading {
-      it
-    } else {
-      let l = it.target // label
-      let h = it.element // heading
-      link(l, h.body)
-    }
-  }
-  ref(label)
-}
-
-// _subfigure-caption displays the caption of subfigures. Use "(a)" that will be colored based on `colored-headings` parameter.
-#let _subfigure-caption(it, colored-caption: true, parent: none) = context {
-  align(
-    center,
-    block({
-      set align(left)
-      text(
-        fill: if (colored-caption) { bluepoli } else { black },
-        it.counter.display("(a)"),
-      )
-      [ ]
-      it.body
-    }),
-  )
-}
-
-// Style-figures handles (optional heading-dependent) numbering of figures and subfigures.
-#let _style-figures(body, colored-caption: true, heading-levels: 0) = context {
-  // Numbering patterns for figures and subfigures.
-  let fig-numbering = "1." * heading-levels + "1" // e.g. "1.1"
-  let subfig-numbering = "1." * heading-levels + "1a" // e.g. "1.1a"
-
-  // Set default supplement for subfigures.
-  show figure.where(kind: "subfigure"): set figure(
-    supplement: _localization.at(text.lang).figure,
-  )
-
-  // removed styling function because the one used is the template global one
-
-  show heading: outer => {
-    if outer.level <= heading-levels {
-      // reset figure counter.
-      counter(figure.where(kind: image)).update(0)
-      counter(figure.where(kind: table)).update(0)
-      counter(figure.where(kind: raw)).update(0)
-    }
-    outer
-  }
-
-  set figure(numbering: (..nums) => {
-    // TODO: check if we need to provide more context (i.e. using `at` instead
-    // of `get`)?
-    //
-    // ref: https://github.com/typst/typst/issues/3930
-    let heading-nums = counter(heading).get()
-    if heading-nums.len() > heading-levels {
-      // truncate if needed.
-      heading-nums = heading-nums.slice(0, heading-levels)
-    } else if heading-nums.len() < heading-levels {
-      // zero pad if needed.
-      for i in range(heading-nums.len(), heading-levels) {
-        heading-nums.push(0)
-      }
-    }
-    std.numbering(fig-numbering, ..heading-nums, ..nums)
-  })
-
-  show figure.where(kind: image): outer => {
-    // reset subfigure counter
-    counter(figure.where(kind: "subfigure")).update(0)
-
-    // use nesting level of figure to infer numbering of subfigures.
-    set figure(numbering: (..nums) => {
-      let heading-nums = counter(heading).at(outer.location())
-      if heading-nums.len() > heading-levels {
-        // truncate if needed.
-        heading-nums = heading-nums.slice(0, heading-levels)
-      } else if heading-nums.len() < heading-levels {
-        // zero pad if needed.
-        for i in range(heading-nums.len(), heading-levels) {
-          heading-nums.push(0)
-        }
-      }
-      let outer-nums = counter(figure.where(kind: image)).at(outer.location())
-      std.numbering(subfig-numbering, ..heading-nums, ..outer-nums, ..nums)
-    })
-
-    show figure.where(kind: "subfigure"): inner => {
-      show figure.caption: _subfigure-caption.with(colored-caption: colored-caption, parent: outer)
-      inner
-    }
-    outer
-  }
-
-  body
-}
-
-/// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
-/// -> content
-#let _empty-page() = {
-  [#metadata(none) <chapter-end>]
-  pagebreak(weak: true, to: "odd")
-  [#metadata(none) <chapter-start>]
-}
 
 /// The main thesis formatting function.
 /// -> content
@@ -184,18 +72,6 @@
     spacing: 1.7em,
   )
 
-  /// Check if a page is empty.
-  /// -> bool
-  let _is-page-empty() = {
-    // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
-    let current-page = here().page()
-    query(<chapter-end>)
-      .zip(query(<chapter-start>))
-      .any(((start, end)) => {
-        (start.location().page() < current-page and current-page < end.location().page())
-      })
-  }
-
   set page(
     paper: "a4",
     margin: (
@@ -231,7 +107,7 @@
         let chapter-info = if not (h1-current-page) {
           set text(weight: "bold")
           let heading-num = if (heading.numbering != none) {
-            str(counter(heading).display()).split(".").at(0) + "| "
+            counter(heading.where(level: 1)).display(header-number)
           }
           text(
             fill: if (colored-headings) { bluepoli } else { black },
@@ -260,24 +136,10 @@
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
-  show: _style-figures.with(colored-caption: colored-headings, heading-levels: 1)
-
-  show figure.caption: it => context {
-    if (it.kind != "lists" and it.kind != "_blank-toc") {
-      text(
-        fill: if (colored-headings) { bluepoli } else { black },
-        {
-          it.supplement
-          " "
-          it.counter.display(it.numbering)
-          it.separator
-        },
-      )
-      it.body
-    } else {
-      it
-    }
-  }
+  show: _style-figures.with(
+    colored-caption: colored-headings,
+    heading-levels: if frontispiece == "phd" { 0 } else { 1 },
+  )
 
   // --------------------- [ TITLE PAGE ] ---------------------
 
@@ -311,6 +173,8 @@
   show heading: it => {
     if (colored-headings) {
       text(fill: bluepoli, it)
+    } else {
+      it
     }
   }
 
@@ -321,7 +185,7 @@
     v(4cm)
     set text(weight: "bold", fill: if (colored-headings) { bluepoli } else { black })
 
-    let heading-num = counter(selector(heading)).display()
+    let heading-num = counter(selector(heading)).display(chapter-numbering)
     if (
       it.numbering != none and (_document-state.get() == "MAINMATTER" or _document-state.get() == "APPENDIX")
     ) {
@@ -329,11 +193,9 @@
         size: 50pt,
         weight: "regular",
         text(
-          weight: "bold",
+          // weight: "bold",
           heading-num,
-        )
-          + h(2mm)
-          + "| ",
+        ),
       )
     }
     text(
@@ -354,11 +216,17 @@
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
-      text(size: _sizes.at("12pt").large, it)
+      text(
+        size: _sizes.at("12pt").Large,
+        counter(heading).display(tab-numbering) + it.body,
+      )
     } else if (it.level >= 3) {
-      text(size: _sizes.at("12pt").large, it)
+      text(
+        size: _sizes.at("12pt").large,
+        counter(heading).display(tab-numbering) + it.body,
+      )
     }
-    v(0.5em)
+    // v(0.5em)
   }
 
   // ----------- [ TABLE OF CONTENTS ] -----------
@@ -503,7 +371,7 @@
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
-  show: _style-figures.with(colored-caption: true, heading-levels: 1)
+  show: _style-figures.with(colored-caption: true)
 
   {
     set text(size: _sizes.at("11pt").small)
@@ -721,18 +589,19 @@
   set list(indent: 1.2em, tight: true, marker: ($bullet$, $circle$, $-$))
   set enum(indent: 1.2em, tight: true)
 
-  set heading(numbering: "1.1.")
+  set heading(numbering: tab-numbering)
   show heading: it => {
     set text(fill: bluepoli)
     v(1em, weak: true)
-    if it.numbering != none { counter(heading).display() + h(1em) }
-    it.body
+    // if it.numbering != none { counter(heading).display() + h(1em) }
+    // it.body
+    it
     v(0.75em, weak: true)
   }
 
   set figure(gap: 1.5em)
   show figure: set block(breakable: true)
-  show: _style-figures.with(colored-caption: true, heading-levels: 1)
+  show: _style-figures.with(colored-caption: true)
 
   body
 }
@@ -784,12 +653,12 @@
   body
 }
 
-/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```, it is meant to be only used in the thesis. It sets to page numbering to `"1"`, heading numbering to ```typc "1.1"``` and resets the page counter.
+/// Mainmatter section. Similar to LaTeX's ```tex \mainmatter```, it is meant to be only used in the thesis. It sets to page numbering to `"1"`, heading numbering to ```typc "1.1" + h()``` and resets the page counter.
 /// -> content
 #let mainmatter(body) = {
   _blank-toc()
   _document-state.update("MAINMATTER")
-  set heading(numbering: "1.1")
+  set heading(numbering: "1.1.")
   _empty-page()
   set page(numbering: "1")
   counter(page).update(1)
@@ -797,7 +666,7 @@
   body
 }
 
-/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```"A.1"``` and resets their counter.
+/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```typc"A.1"``` and resets their counter.
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
@@ -830,14 +699,16 @@
     .or(heading.where(outlined: true))
 )
 
-// lists figure to make the list of tables, list of figures to appear in the table of contents
-#let lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
+/// Lists figure to make the list of tables, list of figures to appear in the table of
+/// contents.
+/// -> content
+#let _lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
 
 /// Custom-built ```typc outline()```.
 /// -> content
 #let toc = context {
   outline(
-    title: lists(_localization.at(text.lang).toc),
+    title: _lists(_localization.at(text.lang).toc),
     indent: 1.2em,
     target: target,
   )
@@ -874,7 +745,7 @@
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
-  outline(title: lists(_localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
+  outline(title: _lists(_localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
 }
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
@@ -883,7 +754,7 @@
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
-  outline(title: lists(_localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
+  outline(title: _lists(_localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
 }
 
 /// Displays a simple nomenclature with keys and values.
@@ -906,7 +777,7 @@
   indented: true,
 ) = context {
   heading(
-    lists(_localization.at(text.lang).nomenclature),
+    _lists(_localization.at(text.lang).nomenclature),
     outlined: false,
   )
   if (indented) {

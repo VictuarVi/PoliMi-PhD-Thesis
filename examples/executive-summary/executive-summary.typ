@@ -1,4 +1,6 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": polimi-executive-summary, theorems-init, subfigure, appendix, acknowledgements, theorem, proof, proposition
+#import "@preview/elegant-polimi-thesis:0.2.0": (
+  acknowledgements, appendix, polimi-executive-summary, proof, proposition, subfigure, theorem, theorems-init,
+)
 
 #let data = yaml("../shared_data.yaml")
 
@@ -61,31 +63,11 @@ as follows: ```typ @section-name```.
 
 = Equations, Figures, Tables and Algorithms
 
+All Figures, Tables and Algorithms have to be properly referred in the text. Equations have to be numbered only if they are referred in the text.
+
 == Equations
 
 In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
-
-- Inline math, same as LaTeX:
-#columns[
-  #set align(center)
-  ```Typst
-  $a^2 + b^2 = c^2$
-  ```
-  #colbreak()
-  $a^2 + b^2 = c^2$
-]
-
-- Block math, by adding whitespaces before and after the content:
-#columns[
-  #set align(center)
-  ```Typst
-  $ a^2 + b^2 = c^2 $
-  ```
-  #colbreak()
-  $ a^2 + b^2 = c^2 $
-]
-
-Now a more complex equation:
 
 $
   cases(
@@ -116,34 +98,11 @@ And to reference it just type @maxwell-equation.
 == Figures
 
 Via the ```Typst figure``` environment @typst-figure, as you would do in LaTeX:
-#figure(image("../../src/img/logo_ingegneria.svg"), caption: [Caption in the List of Figures.])
-
-However, since Typst does not _natively_ support subfigures (see #link("https://github.com/typst/typst/issues/246", "related issue")), the packages smartaref @typst-smartaref and hallon @typst-hallon have been integrated:
 
 #figure(
-  grid(
-    columns: (1fr, 1fr),
-    align: horizon,
-    subfigure(
-      image("../../src/img/logo_ingegneria.svg", width: 50%),
-      caption: [
-        Left Polimi logo.
-      ],
-      label: <a>,
-    ),
-
-    subfigure(
-      image("../../src/img/logo_ingegneria.svg", width: 50%),
-      caption: [
-        Right Polimi logo.
-      ],
-      label: <b>,
-    ),
-  ),
-  caption: [A figure composed of two sub figures, similar to ```latex \subfloat{}```.],
-)<full>
-
-You can reference either the main @full; or a single subfigure: @a, or @b.
+  image("../../src/img/logo_ingegneria.svg", width: 70%),
+  caption: [Caption in the List of Figures.],
+)
 
 == Tables
 
@@ -188,7 +147,7 @@ You can reference either the main @full; or a single subfigure: @a, or @b.
   table(
     columns: 4,
     stroke: frame(black),
-    fill: shading(aqua.darken(20%)),
+    fill: shading(rgb("#B7CDDA")),
     table.header([], [Column 1], [Column 2], [Column 3]),
     [row 1], [1], [2], [3],
     [row 2], $alpha$, $beta$, $gamma$,

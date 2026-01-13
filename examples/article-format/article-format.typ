@@ -87,28 +87,6 @@ as follows: ```typ @section-name```.
 
 In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
 
-- Inline math, same as LaTeX:
-#columns[
-  #set align(center)
-  ```Typst
-  $a^2 + b^2 = c^2$
-  ```
-  #colbreak()
-  $a^2 + b^2 = c^2$
-]
-
-- Block math, by adding whitespaces before and after the content:
-#columns[
-  #set align(center)
-  ```Typst
-  $ a^2 + b^2 = c^2 $
-  ```
-  #colbreak()
-  $ a^2 + b^2 = c^2 $
-]
-
-Now a more complex equation:
-
 $
   cases(
     Delta dot bold(D) & = rho\,,
@@ -214,7 +192,7 @@ You can reference either the main @full; or a single subfigure: @a, or @b.
   table(
     columns: 4,
     stroke: frame(black),
-    fill: shading(aqua.darken(20%)),
+    fill: shading(rgb("#B7CDDA")),
     table.header([], [Column 1], [Column 2], [Column 3]),
     [row 1], [1], [2], [3],
     [row 2], $alpha$, $beta$, $gamma$,
@@ -224,6 +202,33 @@ You can reference either the main @full; or a single subfigure: @a, or @b.
 )
 
 As you can see, it could be useful to implement a default style for every table @typst-tables.
+
+#let frame(color) = (
+  (x, y) => (
+    left: color,
+    right: color,
+    top: if y < 2 {
+      color
+    } else {
+      0pt
+    },
+    bottom: color,
+  )
+)
+
+#figure(
+  table(
+    columns: 7,
+    stroke: frame(black + 0.5pt),
+    inset: 5pt,
+    table.header("", ..range(1, 7).map(n => "column" + str(n))),
+    "row1", ..range(1, 7).map(str),
+    "row2", ..range(1, 7).map(n => numbering("a", n)).map(str),
+    "row3", ..range(1, 7).map(n => numbering("α", n)).map(str),
+    "row4", "alpha", "beta", "gamma", "delta", "phi", "omega",
+  ),
+  caption: "Highlighting the columns.",
+)
 
 == Algorithms
 
