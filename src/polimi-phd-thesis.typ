@@ -568,9 +568,9 @@
         "Advisor: Prof. " + smallcaps(advisor) + v(-0.3em)
         (
           if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            "Co-advisor: Prof. " + smallcaps(coadvisor)
+            "Co-advisor: " + smallcaps(coadvisor)
           } else {
-            "Co-advisors: Proff. " + coadvisor.map(smallcaps).join(", ")
+            "Co-advisors: " + coadvisor.map(smallcaps).join(", ")
           }
             + v(-0.3em)
         )

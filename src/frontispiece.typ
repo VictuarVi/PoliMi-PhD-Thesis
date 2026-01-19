@@ -67,9 +67,9 @@
     set text(size: _sizes.at("12pt").large)
     _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
     if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
     } else {
-      _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
       linebreak()
     }
     _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
@@ -130,9 +130,9 @@
     set text(size: _sizes.at("12pt").large)
     _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
     if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
     } else {
-      _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
       linebreak()
     }
     _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
@@ -203,9 +203,9 @@
     _show-field(_localization.at(text.lang).student-id + ": ", student-id)
     _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
     if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": Prof. ", coadvisor)
+      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
     } else {
-      _localization.at(text.lang).coadvisors + ": Proff. " + coadvisor.join(", ")
+      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
       linebreak()
     }
     _show-field(_localization.at(text.lang).academic-year + ": ", academic-year, separator: none)
@@ -288,9 +288,9 @@
     set text(size: _sizes.at("12pt").normalsize)
     _show-field(_localization.at(text.lang).advisor + ":\n", strong("Prof. " + advisor))
     if type(coadvisor) == str {
-      _show-field(_localization.at(text.lang).coadvisor + ":\n", strong("Prof. " + coadvisor))
+      _show-field(_localization.at(text.lang).coadvisor + ":\n", strong(coadvisor))
     } else if type(coadvisor) == array and coadvisor.len() > 1 {
-      _localization.at(text.lang).coadvisors + ":\n" + strong("Proff. " + coadvisor.join(", "))
+      _localization.at(text.lang).coadvisors + ":\n" + strong(coadvisor.join(", "))
       linebreak()
     }
     _show-field(_localization.at(text.lang).academic-year + ":\n", strong(academic-year), separator: none)
