@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.1.2": *
+#import "@preview/elegant-polimi-thesis:0.2.0": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
