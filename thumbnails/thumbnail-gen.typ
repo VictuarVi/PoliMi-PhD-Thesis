@@ -5,16 +5,14 @@
   author: "Name Surname",
   advisor: "Advisor",
   coadvisor: "Coadvisor",
-  // coadvisor: ("Coadvisor1", "Coadvisor2"),
   tutor: "Tutor",
   academic-year: "2025-2026",
   cycle: "XXV",
   chair: none,
-  frontispiece: "phd",
+  frontispiece: sys.inputs.at("frontispiece"),
 )
 
-#show: theorems-init // remove if you don't plan to use theorems, proposition, lemmas or remarks
-
+#show: theorems-init
 #show: frontmatter
 
 = Abstract
@@ -51,8 +49,6 @@
 #lorem(100)
 
 #show: backmatter
-
-// bibliography
 
 #show: appendix
 
