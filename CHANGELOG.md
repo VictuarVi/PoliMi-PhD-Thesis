@@ -2,13 +2,13 @@
 
 ## 0.2.0 (TBA)
 
-- Removed phdcycle
+- Added executive summary, article format and other theses types
 - Fixed figure numbering
-- Added executive summary, article format and other thesis types
-- Removed localization (now only ENG)
 - Added examples, thumbnails
-- Reorganized docs
+- Removed localization (now only ENG)
 - Added DEIB logo
+- Removed `phdcycle`
+- Reorganized docs
 
 # 0.1.1 (2025-09-12)
 
