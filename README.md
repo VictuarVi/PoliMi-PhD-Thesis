@@ -1,6 +1,6 @@
 # elegant-polimi-thesis 🎓
 
-[Typst](https://typst.app/) theses and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). Although a single library, the project actually supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
+[Typst](https://typst.app/) theses and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). The package supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
@@ -44,43 +44,6 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
     </td>
   <tr>
 </table>
-
-<!-- <table width=100% align="center">
-  <tr>
-    <td>
-      <img alt="PhD frontispiece" src="thumbnails/phd.png" height=350px>
-      <br />
-      <div align="center"><em>PhD</em></div>
-    </td>
-    <td>
-      <img alt="DEIB PhD frontispiece" src="thumbnails/deib-phd.png" height=350px>
-      <br />
-      <div align="center"><em>DEIB PhD</em></div>
-    </td>
-    <td>
-      <img alt="Computer Science and Engineering frontispiece" src="thumbnails/cs-eng-master.png" height=350px>
-      <br>
-      <div align="center"><em>Computer Science and Engineering</em></div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img alt="Classical Master frontispiece" src="thumbnails/classical-master.png" height=350px>
-      <br>
-      <div align="center"><em>Classical Master</em></div>
-    </td>
-    <td>
-      <img alt="Executive Summary frontispiece" src="thumbnails/executive-summary.png" height=350px>
-      <br>
-      <div align="center"><em>Executive Summary</em></div>
-    </td>
-    <td>
-      <img alt="Article Format frontispiece" src="thumbnails/article-format.png" height=350px>
-      <br>
-      <div align="center"><em>Article Format</em></div>
-    </td>
-  <tr>
-</table> -->
 
 ## Usage 🖋
 
@@ -149,11 +112,11 @@ To get started:
 // acknowledgements
 ```
 
-Depending on the **thesis template** you need to use, change the `frontispiece` argument:
+Depending on the **thesis template** you need change the `frontispiece` argument accordingly:
 
 - `phd` for "PhD Thesis Template"
 - `deib-phd` for "DEIB PhD Thesis"
-- `classical-format` for "Classical Format Thesis"
+- `classical-master` for "Classical Format Thesis"
 - `cs-eng-master` for "Computer Science and Engineering"
 
 The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
@@ -197,7 +160,7 @@ The following are exclusive to `polimi-thesis`:
 - `cycle`: the cycle of the thesis
 - `chair`: the chair of the thesis
 - `student-id`: your student ID
-- `frontispiece`: the specific type of frontispiece to be used (default: `phd`; supported: `deib-phd`, `cs-eng-master` or `classical-master`)
+- `frontispiece`: the specific type of frontispiece to be used (default: `phd`; supported: `deib-phd`, `cs-eng-master`, `classical-master`)
 
 Depending on the selected frontispiece, not all these attributes may be needed.
 
