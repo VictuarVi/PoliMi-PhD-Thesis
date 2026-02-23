@@ -39,12 +39,12 @@
   /// Student course.
   /// -> str
   course: "Course Engineering",
-  /// Path of the main logo of the thesis (default: "Scuola di Ingegneria Industriale e dell'Informazione").
-  /// -> path
-  logo: "img/logo_ingegneria.svg",
   /// Frontispiece of the thesis. Can be either: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.
   /// -> "phd" | "deib-phd" | "cs-eng-master" | "classical-master"
   frontispiece: "phd",
+  /// Custom logo of the thesis.
+  /// -> image
+  custom-logo: none,
   body,
 ) = {
   let colored-headings = false
@@ -149,17 +149,25 @@
     academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
   }
 
-  if frontispiece == "deib-phd" {
-    logo = "img/logo_deib.svg"
+  let shared-attributes = (title, author, advisor, coadvisor, academic-year)
+
+  let logos = ()
+  if custom-logo == none {
+    logos = (
+      image("img/logo_ingegneria.svg", width: 112mm),
+      image("img/logo_deib.svg", height: 38mm),
+      image("img/logo_ingegneria.svg", width: 93mm),
+      image("img/logo_ingegneria.svg", width: 93mm),
+    )
+  } else {
+    logos = (custom-logo,) * 4
   }
 
-  let shared-attributes = (title, author, advisor, coadvisor, academic-year, logo)
-
   let frontispieces = (
-    "phd": frontispiece-phd(..shared-attributes, cycle, chair, tutor),
-    "deib-phd": frontispiece-deib-phd(..shared-attributes, cycle, chair, tutor),
-    "classical-master": frontispiece-classical-master(..shared-attributes, course, student-id),
-    "cs-eng-master": frontispiece-cs-eng-master(..shared-attributes, student-id),
+    "phd": frontispiece-phd(..shared-attributes, logos.at(0), cycle, chair, tutor),
+    "deib-phd": frontispiece-deib-phd(..shared-attributes, logos.at(1), cycle, chair, tutor),
+    "classical-master": frontispiece-classical-master(..shared-attributes, logos.at(2), course, student-id),
+    "cs-eng-master": frontispiece-cs-eng-master(..shared-attributes, logos.at(3), student-id),
   )
 
   if frontispieces.keys().contains(frontispiece) {
@@ -314,7 +322,7 @@
   keywords: "word, word, word",
   /// Logo of the thesis.
   /// -> path
-  logo: "img/logo_ingegneria.svg",
+  logo: image("img/logo_ingegneria.svg", width: 83mm),
   body,
 ) = {
   set document(
@@ -382,10 +390,7 @@
 
       v(0.8cm)
 
-      image(
-        width: 83mm,
-        logo,
-      )
+      logo
 
       v(0.7cm)
 
@@ -478,7 +483,7 @@
   course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
   /// Logo of the thesis.
   /// -> path
-  logo: "img/logo_ingegneria.svg",
+  logo: image("img/logo_ingegneria.svg", width: 83mm),
   body,
 ) = {
   set document(
@@ -537,10 +542,7 @@
 
         v(0.8cm)
 
-        image(
-          width: 83mm,
-          logo,
-        )
+        logo
 
         v(0.7cm)
 

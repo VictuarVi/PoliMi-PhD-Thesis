@@ -150,7 +150,7 @@ The templates are **three distinct documents**, however they share _most_ of the
 - `coadvisor`: name and surname of the coadvisor(s) (can be empty)
 - `course`: the course you are graduating in
 - `academic-year`: the corresponding academic year
-- `logo`: logo of the thesis
+- `custom-logo`: logo of the thesis (the logos provided by the template are distributed with NC-BY 4.0 license)
 
 I recommend to import all the library anyway in order to access all the functions (`*matter`, theorems-related among others).
 

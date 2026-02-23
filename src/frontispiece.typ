@@ -43,7 +43,7 @@
 
   v(4.85cm)
 
-  image(logo, width: 112mm)
+  logo
 
   v(4.4cm)
 
@@ -104,7 +104,7 @@
 
   v(3.8cm)
 
-  image(logo, height: 38mm)
+  logo
 
   // v(4.4cm)
   v(3cm)
@@ -165,7 +165,7 @@
 
   v(4.7cm)
 
-  image(logo, width: 93mm)
+  logo
 
   v(4.2cm)
 
@@ -239,7 +239,7 @@
 
   v(4.7cm)
 
-  image(logo, width: 93mm)
+  logo
 
   v(2.1cm)
 
