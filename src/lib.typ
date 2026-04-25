@@ -3,3 +3,8 @@
   acknowledgements, appendix, backmatter, frontmatter, mainmatter, proposition, toc, list-of-figures, list-of-tables,
   banner, subfigure, nomenclature,
 )
+#import "polimi-digital-presentation.typ": (
+  background-slide, emphasis-text-slide, exact-split-slide, focus-slide, image-slide, make-outline, plot-slide,
+  polimi-digital-presentation, poli-slide, split-slide, title-slide,
+)
+#import "@preview/touying:0.6.1": *

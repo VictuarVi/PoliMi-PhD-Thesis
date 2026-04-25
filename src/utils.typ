@@ -179,3 +179,162 @@
 
   body
 }
+
+// presentation
+
+#import "@preview/touying:0.6.1": *
+
+/// The background panes used in some scenarios.
+/// -> dict
+#let _pane = (
+  left: 15.86cm,
+  right: 51.86cm,
+)
+
+/// (1..20) -> (01,02,03,...,20)
+/// -> numbering
+#let _custom-numbering = (..args) => {
+  let numbers = args.pos()
+  let output = numbering(
+    "1",
+    ..numbers,
+  )
+  if (str(numbers.first()).len() == 1) {
+    output = "0" + output
+  }
+  return output
+}
+
+/// Empty block.
+/// -> content
+#let _spacer(width, height) = block(
+  width: width,
+  height: height,
+)
+
+/// Internal stroke.
+/// -> stroke
+#let _stroke-no-border(color) = (x, y) => (
+  top: if (y > 0) { (paint: color, thickness: 0.1pt) },
+  left: if (x > 0) { (paint: color, thickness: 0.1pt) },
+)
+
+/// Custom made header.
+/// -> content
+#let _poli-header(
+  /// The text arguments for the title.
+  /// -> dict
+  text-args: (size: 15pt, weight: "regular", fill: rgb("#5e5e5e")),
+  self,
+) = context {
+  set text(..text-args)
+  let svg-bytes = read("img/9-cerchi.svg")
+  svg-bytes = svg-bytes.replace(
+    "#aaaaaa",
+    text-args.fill.to-hex(),
+  )
+  let toc-label = query(<_polimi-digital-presentation-toc>)
+  show: pad.with(left: 2cm, right: 1.25cm)
+  grid(
+    columns: (_pane.left, 1fr),
+    {
+      _custom-numbering(counter(heading.where(level: 1)).at(here()).at(0))
+      ". "
+      utils.display-current-heading(level: 1, numbered: false)
+    },
+    {
+      self.info.title
+      " | "
+      self.info.date
+      h(1fr)
+      if toc-label.len() != 0 {
+        link(
+          (page: toc-label.first().location().page(), x: 0pt, y: 0pt),
+          box(
+            image(bytes(svg-bytes), height: 1em),
+            baseline: 10%,
+          ),
+        )
+      }
+      h(1cm)
+      context utils.slide-counter.display()
+    },
+  )
+}
+
+/// Apply a fill colour to the panes.
+/// -> content
+#let _poli-bg-split() = {
+  set rect(stroke: none, height: 100%)
+  stack(
+    dir: ltr,
+    rect(width: _pane.left, fill: rgb("#fdfdfd")),
+    rect(width: _pane.right, fill: rgb("#f3f3f3")),
+  )
+}
+
+// DIVIDER
+
+/// New section body, that is title, lettering and chapter number.
+/// -> content
+#let _divider-body(title, lettering, number, text-fill) = {
+  if title != none {
+    pad(
+      top: 7.54cm,
+      left: 15.93cm,
+      text(
+        size: 54pt,
+        weight: "bold",
+        fill: text-fill,
+        title,
+      ),
+    )
+  }
+  if lettering != none {
+    place(
+      bottom,
+      pad(
+        bottom: 0.32cm, // forse da sistemare
+        left: 15.93cm,
+        text(
+          fill: text-fill,
+          lettering,
+        ),
+      ),
+    )
+  }
+  if number != none {
+    place(
+      right + bottom,
+      pad(
+        right: 2.71cm,
+        bottom: 2cm,
+        text(
+          size: 200pt,
+          weight: "light",
+          fill: text-fill,
+          number,
+        ),
+      ),
+    )
+  }
+}
+
+/// Style the new section background.
+/// -> content
+#let _divider-bg(fill, stroke) = {
+  return (
+    fill: fill,
+    background: {
+      place(top + left, grid(
+        columns: (auto, 1fr),
+        stroke: _stroke-no-border(stroke),
+        inset: (right: 0.1cm),
+        align: horizon,
+        [], _spacer(100%, 20%),
+        circle(radius: 72mm / 2, stroke: stroke), [],
+        _spacer(auto, 1fr),
+      ))
+    },
+  )
+}

@@ -2,6 +2,7 @@
 #import "../src/polimi-phd-thesis.typ"
 #import "../src/utils.typ"
 #import "../src/figures.typ"
+#import "../src/polimi-digital-presentation.typ"
 #import "@preview/metalogo:1.2.0": LaTeX, TeX
 
 #show "LaTeX": LaTeX
@@ -38,7 +39,7 @@ This document contains them all, even those that are not exposed to the user, wh
 #show-module(
   parse-module(
     read("../src/polimi-phd-thesis.typ"),
-    name: "User designated functions",
+    name: "Theses templates",
     scope: (polimi-phd-thesis: polimi-phd-thesis),
     preamble: "#import polimi-phd-thesis: *\n",
   ),
@@ -77,6 +78,24 @@ This document contains them all, even those that are not exposed to the user, wh
     name: "Figures styling",
     scope: (figures: figures),
     preamble: "#import figures: *\n",
+  ),
+  style: styles.default,
+  first-heading-level: 1,
+  show-outline: false,
+  show-module-name: true,
+  omit-private-definitions: false,
+  omit-private-parameters: false,
+  sort-functions: none,
+)
+
+#pagebreak()
+
+#show-module(
+  parse-module(
+    read("../src/polimi-digital-presentation.typ"),
+    name: "Presentation",
+    scope: (polimi-digital-presentation: polimi-digital-presentation),
+    preamble: "#import polimi-digital-presentation: *\n",
   ),
   style: styles.default,
   first-heading-level: 1,

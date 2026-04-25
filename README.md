@@ -2,6 +2,8 @@
 
 [Typst](https://typst.app/) theses and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). The package supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
 
+It also supports the presentation. It is loosely based on the templates that can be found [here](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR) while also taking into account the [Digital Brand Manual](https://www.polimi.it/en/the-politecnico/communication/brand-identity-manual).
+
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
 ## Preview ✨
@@ -43,6 +45,15 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
       <div align="center"><em>Article Format</em></div>
     </td>
   <tr>
+  <tr>
+    <td colspan=2>
+      <center>
+        <img alt="Title page of presentation" src="thumbnails/presentation.png" height=400px>
+      </center>
+      <br>
+      <div align="center"><em>Title page of presentation</em></div>
+    </td>
+  <tr>
 </table>
 
 ## Usage 🖋
@@ -50,7 +61,7 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
 You can either use this template in the webapp by clicking on "Create project in webapp" or, from the CLI, run:
 
 ```shell
-typst init @preview/elegant-polimi-thesis:0.2.0
+typst init @preview/elegant-polimi-thesis:0.2.1
 ```
 
 I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
@@ -58,7 +69,7 @@ I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https
 To get started:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
@@ -83,11 +94,11 @@ To get started:
 #list-of-figures
 #list-of-tables
 
-#let nomenclature_ = (
+#let _nomenclature = (
   "key" : "value"
 )
 #nomenclature(
-  nomenclature_,
+  _nomenclature,
   indented: true
 )
 
@@ -122,7 +133,7 @@ Depending on the **thesis template** you need change the `frontispiece` argument
 The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 // For the article format
 #show: polimi-article-format.with(
@@ -169,6 +180,73 @@ The following are exclusive to `polimi-article-format-thesis`:
 - `abstract`: the abstract
 - `keywords`: keywords (that will also appear in the document metadata)
 
+### Presentation
+
+In regards to the presentation, **you'll have to download on your own**:
+
+- [Manrope](https://fonts.google.com/specimen/Manrope)
+- [Frank Ruhl Libre](https://fonts.google.com/specimen/Frank+Ruhl+Libre)
+
+Built on [Touying](https://typst.app/universe/package/touying/), the structure is quite standard:
+
+```typ
+#import "@preview/elegant-polimi-thesis:0.2.1": *
+
+#show: polimi-digital-presentation.with(
+  divider-style: "dark",
+  config-info(
+    title: "Title of the Presentation",
+    author: "Name Surname",
+    // theme: "Theme",
+    date: "25. 04. 2026",
+  ),
+  // ..args
+)
+
+#title-slide()
+
+#make-outline()
+
+= First Section
+
+== Slide in first section
+
+#lorem(50)
+
+#lorem(40)
+
+== Split slide
+
+#split-slide(
+  left: [
+    #lorem(30)
+
+    #lorem(30)
+  ],
+  right: [
+    === Paragraph title
+    #lorem(120)
+
+    === Paragraph title
+    #lorem(120)
+  ],
+)
+
+= Second Section
+
+== Slide in second section
+
+#lorem(20)
+
+#lorem(20)
+
+#lorem(20)
+
+#focus-slide[Thanks for listening]
+```
+
+Do note `..args` are all valid Touying arguments, as can be seen in all Touying-based presentation templates.
+
 ## Recommended packages
 
 Useful packages for a thesis include:
@@ -201,10 +279,6 @@ The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https
 | [meander](https://typst.app/universe/package/meander/)  |  [wrapfig](https://ctan.org/pkg/wrapfig)  |
 
 The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
-
-# Roadmap 📝
-
-- Support the [Digital presentation templates](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR?usp=drive_link)
 
 # Contributing 🚀
 

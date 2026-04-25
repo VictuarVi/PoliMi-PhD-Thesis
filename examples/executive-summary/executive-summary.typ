@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": (
+#import "@preview/elegant-polimi-thesis:0.2.1": (
   acknowledgements, appendix, polimi-executive-summary, proof, proposition, subfigure, theorem, theorems-init,
 )
 

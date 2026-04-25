@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #let data = yaml("../shared_data.yaml")
 
@@ -21,7 +21,7 @@
 #list-of-figures
 #list-of-tables
 
-#let nomenclature_ = (
+#let _nomenclature = (
   "Polimi": "Politecnico di Milano",
   "CdL": "Corso di Laurea",
   "CCS": "Consigli di Corsi di Studio",
@@ -29,7 +29,7 @@
 )
 
 #nomenclature(
-  nomenclature_,
+  _nomenclature,
   indented: false,
 )
 
