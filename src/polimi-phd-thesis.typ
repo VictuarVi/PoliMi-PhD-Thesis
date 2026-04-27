@@ -636,9 +636,17 @@
 /// Frontmatter section. Similar to LaTeX's ```tex \frontmatter```, it is meant to be only used in the thesis. It sets the page numbering to `"i"` and ```typc numbering: none``` for headings.
 /// -> content
 #let frontmatter(body) = {
+  page(
+    background: {
+      v(1fr)
+      place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
+    },
+    [],
+  )
+
   _document-state.update("FRONTMATTER")
-  // counter(page).update(0)
-  _empty-page()
+  counter(page).update(1)
+
   set page(numbering: "i")
   set heading(numbering: none)
 
