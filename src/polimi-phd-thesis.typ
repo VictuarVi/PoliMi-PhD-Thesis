@@ -121,11 +121,13 @@
         } else {
           chapter-info + h(1fr) + page-counter
         }
+      } else {
+        _document-state.update("FIRST_RAGGIERA")
       }
     },
     footer: none,
     background: context {
-      if _is-page-empty() {
+      if _is-page-empty() or _document-state.get() == "FIRST_RAGGIERA" {
         v(1fr)
         place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
@@ -286,6 +288,8 @@
   set list(indent: 1.2em)
 
   set enum(indent: 1.2em)
+
+  _empty-page()
 
   body
 }
@@ -638,7 +642,7 @@
 #let frontmatter(body) = {
   _document-state.update("FRONTMATTER")
   // counter(page).update(0)
-  _empty-page()
+  // _empty-page()
   set page(numbering: "i")
   set heading(numbering: none)
 
