@@ -48,7 +48,7 @@
   body,
 ) = {
   let colored-headings = false
-  if frontispiece == "deib-phd" {
+  if frontispiece in ("deib-phd", "classical-master") {
     colored-headings = true
   }
   _document-type.update(frontispiece)
@@ -223,17 +223,20 @@
   }
 
   show heading: it => context {
+    let section-fill = if (colored-headings) { bluepoli } else { black }
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
       text(
         size: _sizes.at("12pt").Large,
         counter(heading).display(tab-numbering) + it.body,
+        fill: section-fill,
       )
     } else if (it.level >= 3) {
       text(
         size: _sizes.at("12pt").large,
         counter(heading).display(tab-numbering) + it.body,
+        fill: section-fill,
       )
     }
     // v(0.5em)
