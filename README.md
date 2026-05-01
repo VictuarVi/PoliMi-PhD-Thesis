@@ -197,6 +197,7 @@ Built on [Touying](https://typst.app/universe/package/touying/), the structure i
     theme: "Theme",
     date: datetime.today(),
   ),
+  ..args
 )
 
 #title-slide()
@@ -276,6 +277,6 @@ The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https
 
 The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
 
-# Contributing 🚀
+## Contributing 🚀
 
 If you happen to have suggestions, ideas or anything else feel free to open issues and pull requests or contact me.
