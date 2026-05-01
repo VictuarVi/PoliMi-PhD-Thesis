@@ -3,6 +3,8 @@
 ## 0.2.1
 
 - Added presentation template
+- Fixed thesis second page numbering
+- Fixed thesis lvl.1 headings colour
 
 ## 0.2.0
 

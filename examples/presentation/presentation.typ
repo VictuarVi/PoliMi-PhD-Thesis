@@ -5,9 +5,9 @@
   config-info(
     title: "Title of the Presentation",
     author: "Name Surname",
-    subtitle: "Subtitle",
+    subtitle: "01.01.2024\n#STEMintheCity2024",
     theme: "Theme",
-    date: "00. 00. 0000",
+    date: datetime.today(),
   ),
 )
 
@@ -27,14 +27,11 @@
 #title-slide(
   style: "background",
   background: image("img/background-style-image.svg"),
-  subtitle: "#STEMintheCity2024",
 )
 
 #make-outline()
 
 = Chapter
-
-== Title
 
 == Title of a page\ only text
 
@@ -94,7 +91,7 @@
 
 #slide(
   config: utils.merge-dicts(
-    config-common(slide-preamble: none),
+    config-common(subslide-preamble: none),
     config-page(background: {
       set align(horizon)
       block(
@@ -118,7 +115,9 @@
 
 #slide(
   config: utils.merge-dicts(
-    config-common(slide-preamble: none),
+    config-common(
+      subslide-preamble: none,
+    ),
     config-page(background: {
       image("img/lab.png")
       place(
@@ -157,10 +156,10 @@
 
 #align(center + horizon, table(
   columns: 5,
-  table.header([], [Value A], [Value B], [Value C], [Value D]),
-  [Riga A], [1], [2], [3], [4],
-  [Riga B], [5], [6], [7], [8],
-  [Riga C], [9], [10], [11], [12],
+  table.header([], [Column A], [Column B], [Column C], [Column D]),
+  [Row 1], [1], [2], [3], [4],
+  [Row 2], [5], [6], [7], [8],
+  [Row 3], [9], [10], [11], [12],
 ))
 
 == Table title
@@ -174,10 +173,10 @@
   right: [
     #align(center + horizon, table(
       columns: 5,
-      table.header([], [Value A], [Value B], [Value C], [Value D]),
-      [Riga A], [1], [2], [3], [4],
-      [Riga B], [5], [6], [7], [8],
-      [Riga C], [9], [10], [11], [12],
+      table.header([], [Column A], [Column B], [Column C], [Column D]),
+      [Row 1], [1], [2], [3], [4],
+      [Row 2], [5], [6], [7], [8],
+      [Row 3], [9], [10], [11], [12],
     ))
   ],
 )
@@ -259,7 +258,7 @@
   per il loro sviluppo.
 ]
 
-== Titolo\ su più righe
+== Title\ on multiple rows
 
 #split-slide(
   left: place(
@@ -298,14 +297,14 @@
   config: config-common(subslide-preamble: none),
 )
 
-#background-slide(image: image("img/image_background.png"), "")
+#background-slide(image: image("img/image_background.png"))
 
 = Title of the divider
 
 = Title of the divider
 
 #focus-slide(
-  lettering: "Here would be written a lettering if needed.",
+  lettering: "Here would be written the optional lettering.",
 )[
-  Thanks
+  Thanks for listening.
 ]

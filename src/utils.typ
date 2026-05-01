@@ -180,9 +180,11 @@
   body
 }
 
-// presentation
+// =====================
+// PRESENTATION
+// =====================
 
-#import "@preview/touying:0.6.1": *
+#import "@preview/touying:0.7.3": *
 
 /// The background panes used in some scenarios.
 /// -> dict
@@ -243,9 +245,14 @@
       utils.display-current-heading(level: 1, numbered: false)
     },
     {
-      self.info.title
-      " | "
-      self.info.date
+      let arr = ()
+      if (self.info.title != none) {
+        arr.push(self.info.title)
+      }
+      if (self.info.date != none) {
+        arr.push(utils.display-info-date(self))
+      }
+      arr.join(" | ")
       h(1fr)
       if toc-label.len() != 0 {
         link(
@@ -322,7 +329,7 @@
 
 /// Style the new section background.
 /// -> content
-#let _divider-bg(fill, stroke) = {
+#let _divider-bg-args(fill, stroke) = {
   return (
     fill: fill,
     background: {
@@ -336,5 +343,25 @@
         _spacer(auto, 1fr),
       ))
     },
+  )
+}
+
+/// Standard subslide preamble.
+/// -> content
+#let _basic-subslide-preamble(
+  self,
+  inset: (top: 4.6cm),
+  text-args: (
+    size: 42pt,
+  ),
+) = {
+  return block(
+    inset: inset,
+    text(
+      ..text-args,
+      weight: "light",
+      fill: self.colors.primary,
+      utils.display-current-heading(level: self.slide-level),
+    ),
   )
 }

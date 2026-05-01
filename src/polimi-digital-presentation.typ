@@ -1,4 +1,4 @@
-#import "@preview/touying:0.6.1": *
+#import "@preview/touying:0.7.3": *
 #import "utils.typ": *
 #import "colors.typ": *
 
@@ -20,15 +20,7 @@
     self,
     config-page(header: _poli-header),
     config-common(
-      slide-preamble: block(
-        inset: (top: 4.6cm),
-        text(
-          size: 42pt,
-          weight: "light",
-          fill: self.colors.primary,
-          utils.display-current-heading(level: 2),
-        ),
-      ),
+      subslide-preamble: _basic-subslide-preamble(self),
     ),
   )
   touying-slide(
@@ -44,19 +36,17 @@
 
 // TITLE SLIDE
 
-/// The title slide. The style can be specified via the corresponding argument.
+/// The title slide. The style can be specified via the corresponding argument. For the
+/// background and logos style you must also specify a background and logos.
 /// -> content
 #let title-slide(
   /// Style of the title slide.
   /// -> "default" | "white" | "logos" | "background"
   style: "default",
-  /// Subtitle content.
-  /// -> content
-  subtitle: none,
-  /// Supplied background for the "background" style; otherwise ignored.
+  /// Required background for the "background" style; otherwise ignored.
   /// -> image
   background: none,
-  /// Supplied Logos for the "logos" style; otherwise ignored.
+  /// Required logos for the "logos" style; otherwise ignored.
   /// -> array
   logos: (),
   /// Touying overrides for this slide.
@@ -106,7 +96,6 @@
   }
   self = utils.merge-dicts(
     self,
-    config,
     config-page(
       // foreground: title-style.at(style).at("foreground", default: none),
       fill: title-style.at(style).at("fill", default: none),
@@ -123,10 +112,26 @@
             columns: (42cm, 22.28cm, 1fr),
             align: (top + left, center, center),
             stroke: _stroke-no-border(title-style.at(style).stroke),
-            block(
-              inset: (left: 3cm, top: 3cm),
-              if style != "logos" { title-style.at(style).logo },
-            ),
+            {
+              block(
+                inset: (left: 3cm, top: 3cm),
+                if style != "logos" { title-style.at(style).logo },
+              )
+              if self.info.subtitle != none and (self.store.subtitle-every-style or style == "background") {
+                place(
+                  bottom,
+                  pad(
+                    left: 2cm,
+                    bottom: 1.4cm,
+                    text(
+                      ..title-style.at(style).at("text", default: none),
+                      size: 1.7em,
+                      self.info.subtitle,
+                    ),
+                  ),
+                )
+              }
+            },
             title-style.at(style).at("circle-above", default: image("img/title/above.svg")),
             [],
 
@@ -170,7 +175,7 @@
         v(title-style.at(style).at("height-subtitle", default: 1fr))
         text(
           size: 18pt,
-          weight: "light", // o extralight
+          weight: "light", // extralight
           ..title-style.at(style).at("text", default: none),
           {
             let arr = (info.author,)
@@ -178,7 +183,7 @@
             if tmp != none {
               arr.push(tmp)
             }
-            arr.join(" / ") + " | " + info.date
+            arr.join(" / ") + " | " + utils.display-info-date(self)
           },
         )
         v(1cm)
@@ -190,10 +195,13 @@
 
 /// Generate the outline based on headings.
 /// -> content
-#let make-outline(config: (:), ..args) = touying-slide-wrapper(self => {
+#let make-outline(
+  /// Touying overrides for this slide.
+  /// -> dictionary
+  config: (:),
+) = touying-slide-wrapper(self => {
   let self = utils.merge-dicts(
     self,
-    config,
     config-page(
       fill: rgb("#f3f3f3"),
     ),
@@ -272,7 +280,6 @@
         ))
     )
 
-
     [#metadata(none) <_polimi-digital-presentation-toc>]
     grid(
       columns: (1fr,) * _max-columns,
@@ -283,35 +290,6 @@
   }
   touying-slide(self: self, config: config, body)
 })
-
-// TEXT SLIDES
-
-// Slide di solo testo enfatizzato, cioè una frase incredibile
-#let emphasis-text-slide(
-  /// Touying overrides for this slide.
-  /// -> dictionary
-  config: (:),
-  body,
-) = touying-slide-wrapper(self => {
-  let self = utils.merge-dicts(
-    self,
-    config-page(
-      header: _poli-header,
-    ),
-  )
-  touying-slide(self: self, config: config, body)
-})
-
-// Slide di SOLO testo -- cioè la slide normale
-// #let text-slide(config: (:), body) = touying-slide-wrapper(self => {
-//   let self = utils.merge-dicts(
-//     self,
-//     config-page(
-//       header: _poli-header,
-//     ),
-//   )
-//   touying-slide(self: self, config: config, body)
-// })
 
 // SPLIT SLIDES
 
@@ -326,18 +304,13 @@
   config: (:),
 ) = touying-slide-wrapper(self => {
   let splits-num = splits.len()
-  self = utils.merge-dicts(
+  let self = utils.merge-dicts(
     self,
-    config,
     config-common(
-      subslide-preamble: block(
-        inset: (top: 3cm),
-        text(
-          size: 42pt,
-          weight: "light",
-          fill: self.colors.primary,
-          utils.display-current-heading(level: 2),
-        ),
+      subslide-preamble: _basic-subslide-preamble(
+        self,
+        inset: (top: 3cm, bottom: 1.8cm),
+        text-args: (size: 42pt),
       ),
     ),
     config-page(
@@ -397,18 +370,13 @@
   /// -> dictionary
   config: (:),
 ) = touying-slide-wrapper(self => {
-  self = utils.merge-dicts(
+  let self = utils.merge-dicts(
     self,
-    config,
     config-common(
-      subslide-preamble: block(
+      subslide-preamble: _basic-subslide-preamble(
+        self,
         inset: (top: 4.6cm, bottom: 1.8cm),
-        text(
-          size: 42pt,
-          weight: "light",
-          fill: self.colors.primary,
-          utils.display-current-heading(level: 2),
-        ),
+        text-args: (size: 42pt),
       ),
     ),
     config-page(
@@ -465,10 +433,9 @@
   config: (:),
   body,
 ) = touying-slide-wrapper(self => {
-  panic("Deprecated!")
+  panic("Deprecated! Use `background-slide()`.")
   let self = utils.merge-dicts(
     self,
-    config,
     config-page(
       header: _poli-header(
         self,
@@ -486,9 +453,6 @@
       },
     ),
   )
-  let body = {
-    body
-  }
   touying-slide(self: self, config: config, body)
 })
 
@@ -501,11 +465,9 @@
   /// Touying overrides for this slide.
   /// -> dictionary
   config: (:),
-  body,
 ) = touying-slide-wrapper(self => {
   let self = utils.merge-dicts(
     self,
-    config,
     config-page(
       header: _poli-header(
         self,
@@ -521,16 +483,13 @@
       },
     ),
   )
-  let body = {
-    body
-  }
-  touying-slide(self: self, config: config, body)
+  touying-slide(self: self, config: config)
 })
 
 
 // FOCUS SLIDE
 
-/// Acknowledgements slide. Usually with "Thanks for watching!" or similar phrases.
+/// Last slide. Usually it contains "Thanks for listening!" or similar phrases.
 /// -> content
 #let focus-slide(
   /// Bottom lettering.
@@ -539,13 +498,13 @@
   config: (:),
   body,
 ) = touying-slide-wrapper(self => {
-  self = utils.merge-dicts(
+  let self = utils.merge-dicts(
     self,
     config,
     config-page(
-      // OPINIONATED CHOICE non ha senso che in questa slide ci sia un header
+      // OPINIONATED CHOICE: it doesn't make sense to have an header in this slide
       // header: _poli-header(self, text-args: (size: 15pt, weight: "regular", fill: white)),
-      .._divider-bg(self.colors.primary, self.colors.divider.dark),
+      .._divider-bg-args(self.colors.primary, self.colors.divider.dark),
     ),
   )
   let body = _divider-body(body, lettering, none, white)
@@ -565,7 +524,7 @@
   let self = utils.merge-dicts(
     self,
     config-page(
-      .._divider-bg(..config-divisorio),
+      .._divider-bg-args(..config-divisorio),
     ),
   )
   let body = _divider-body(
@@ -589,9 +548,8 @@
 #let _new-subsection-slide(config: (:), ..args) = touying-slide-wrapper(self => {
   let self = utils.merge-dicts(
     self,
-    config,
     config-page(
-      .._divider-bg(rgb("#e2e6eb"), rgb("#7a8aa0")),
+      .._divider-bg-args(rgb("#e2e6eb"), rgb("#7a8aa0")),
     ),
   )
   let body = _divider-body(
@@ -623,11 +581,14 @@
   /// The style of the divider.
   /// -> "dark" | "light"
   divider-style: "dark",
+  /// Whether to use the subtitle on all title styles.
+  /// -> bool
+  subtitle-every-style: false,
   ..args,
   body,
 ) = {
   set text(size: 24pt, font: "Manrope")
-  show heading.where(level: 1): set heading(numbering: "1")
+  show heading.where(level: 1): set heading(numbering: "1") // needed for the dividers
   // show heading.where(level: 2): set heading(numbering: "1")
 
   show table.cell: it => {
@@ -670,6 +631,7 @@
       slide-fn: poli-slide,
       new-section-slide-fn: _new-section-slide,
       // new-subsection-slide-fn: new-subsection-slide,
+      datetime-format: "[day]. [month]. [year]",
     ),
     config-colors(
       primary: _poli-palette.main,
@@ -681,6 +643,7 @@
     ),
     config-store(
       divider-style: divider-style,
+      subtitle-every-style: subtitle-every-style,
     ),
     ..args,
   )

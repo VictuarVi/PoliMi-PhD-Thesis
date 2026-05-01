@@ -47,9 +47,9 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
   <tr>
   <tr>
     <td colspan=2>
-      <center>
+      <p align="center">
         <img alt="Title page of presentation" src="thumbnails/presentation.png" height=400px>
-      </center>
+      </p>
       <br>
       <div align="center"><em>Title page of presentation</em></div>
     </td>
@@ -182,10 +182,7 @@ The following are exclusive to `polimi-article-format-thesis`:
 
 ### Presentation
 
-In regards to the presentation, **you'll have to download on your own**:
-
-- [Manrope](https://fonts.google.com/specimen/Manrope)
-- [Frank Ruhl Libre](https://fonts.google.com/specimen/Frank+Ruhl+Libre)
+In regards to the presentation, **you'll have to download on your own** the [Manrope](https://fonts.google.com/specimen/Manrope) font.
 
 Built on [Touying](https://typst.app/universe/package/touying/), the structure is quite standard:
 
@@ -193,14 +190,13 @@ Built on [Touying](https://typst.app/universe/package/touying/), the structure i
 #import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-digital-presentation.with(
-  divider-style: "dark",
   config-info(
     title: "Title of the Presentation",
     author: "Name Surname",
-    // theme: "Theme",
-    date: "25. 04. 2026",
+    subtitle: "Subtitle",
+    theme: "Theme",
+    date: datetime.today(),
   ),
-  // ..args
 )
 
 #title-slide()

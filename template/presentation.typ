@@ -1,12 +1,12 @@
 #import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-digital-presentation.with(
-  divider-style: "dark",
   config-info(
     title: "Title of the Presentation",
     author: "Name Surname",
-    // theme: "Theme",
-    date: "25. 04. 2026",
+    subtitle: "Subtitle",
+    theme: "Theme",
+    date: datetime.today(),
   ),
 )
 
