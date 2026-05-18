@@ -47,7 +47,7 @@
 /// -> state
 #let _document-type = state("init", "phd")
 
-/// Localization dictionary. It could be deprecated since thesises are written exclusively in English.
+/// Localization dictionary. It could be deprecated since theses are written exclusively in English.
 /// -> dict
 #let _localization = yaml("locale.yaml")
 
