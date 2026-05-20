@@ -14,31 +14,31 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
+  author: none,
   /// Advisor of the thesis.
   /// -> str
-  advisor: "Advisor",
+  advisor: none,
   /// Coadvisor(s) of the thesis.
   /// -> str | arr
-  coadvisor: "Coadvisor",
+  coadvisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Tutor of the thesis.
   /// -> str
-  tutor: "Tutor",
+  tutor: none,
   /// Cycle of the thesis.
   /// -> str
-  cycle: "XXV",
+  cycle: none,
   /// Chair of the thesis.
   /// -> str
-  chair: "Chair",
+  chair: none,
   /// Student ID.
   /// -> str
-  student-id: "00000000",
+  student-id: none,
   /// Student course.
   /// -> str
-  course: "Course Engineering",
+  course: none,
   /// Frontispiece of the thesis. Can be either: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.
   /// -> "phd" | "deib-phd" | "cs-eng-master" | "classical-master"
   frontispiece: "phd",
@@ -87,7 +87,7 @@
       ) {
         return
       } else if (
-        ("FRONTMATTER", "BACKMATTER").contains(_document-state.get())
+        _document-state.get() in ("FRONTMATTER", "BACKMATTER")
       ) {
         let page-counter = counter(page).display()
         if (calc.even(here().page())) {
@@ -96,7 +96,7 @@
           h(1fr) + page-counter
         }
       } else if (
-        ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(_document-state.get())
+        _document-state.get() in ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS")
       ) {
         let h1-current-page = (
           query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page()).len() != 0
@@ -166,10 +166,10 @@
   }
 
   let frontispieces = (
-    "phd": frontispiece-phd(..shared-attributes, logos.at(0), cycle, chair, tutor),
-    "deib-phd": frontispiece-deib-phd(..shared-attributes, logos.at(1), cycle, chair, tutor),
-    "classical-master": frontispiece-classical-master(..shared-attributes, logos.at(2), course, student-id),
-    "cs-eng-master": frontispiece-cs-eng-master(..shared-attributes, logos.at(3), student-id),
+    "phd": _frontispiece-phd(..shared-attributes, logos.at(0), cycle, chair, tutor),
+    "deib-phd": _frontispiece-deib-phd(..shared-attributes, logos.at(1), cycle, chair, tutor),
+    "classical-master": _frontispiece-classical-master(..shared-attributes, logos.at(2), course, student-id),
+    "cs-eng-master": _frontispiece-cs-eng-master(..shared-attributes, logos.at(3), student-id),
   )
 
   if frontispieces.keys().contains(frontispiece) {
@@ -239,6 +239,7 @@
         fill: section-fill,
       )
     }
+    parbreak()
     // v(0.5em)
   }
 
@@ -305,28 +306,28 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
+  author: none,
   /// Advisor of the thesis.
   /// -> str
-  advisor: "Prof. Name Surname",
+  advisor: none,
   /// Coadvisor(s) of the thesis.
   /// -> str | array
-  coadvisor: "Prof. Name Surname",
+  coadvisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Student ID.
   /// -> str
-  student-id: "00000000",
+  student-id: none,
   /// Student course.
   /// -> str
-  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
+  course: none,
   /// Abstract.
   /// -> content
   abstract: [],
   /// Keywords, that appear below the abstract (and in the PDF metadata).
   /// -> str
-  keywords: "word, word, word",
+  keywords: none,
   /// Logo of the thesis.
   /// -> path
   logo: image("img/logo_ingegneria.svg", width: 83mm),
@@ -335,8 +336,12 @@
   set document(
     title: title,
     author: author,
-    keywords: keywords,
   )
+  if keywords != none {
+    set document(
+      keywords: keywords,
+    )
+  }
   _document-type.update("article-format")
 
   set text(
@@ -415,7 +420,7 @@
 
       v(0.15cm)
 
-      (author, student-id).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
+      (author, student-id).filter(e => e != none).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
     }
 
     v(0.25cm)
@@ -424,39 +429,50 @@
 
     v(0.25cm)
 
+    if academic-year == "" {
+      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+    }
+
     grid(
       columns: (22%, 1fr),
       align: (horizon + left, left),
       grid.cell(
         inset: 5%,
-        [
-          #set text(size: _sizes.at("11pt").scriptsize)
-          #set par(justify: false, spacing: 1.7em)
+        context {
+          set text(size: _sizes.at("11pt").scriptsize)
+          set par(justify: false, spacing: 1.7em)
 
-          #text(weight: "bold", "Advisor:") \
-          Prof. #advisor
-
-          #if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            text(weight: "bold", "Co-advisor:") + linebreak()
-            coadvisor
-          } else {
-            text(weight: "bold", "Co-advisors:") + linebreak()
-            coadvisor.join("\n")
+          if advisor != none {
+            text(weight: "bold", "Advisor:") + linebreak() + advisor
           }
 
-          #text(weight: "bold", "Academic year:") \
-          #if academic-year == "" {
-            academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+          if (coadvisor != none) {
+            parbreak()
+            if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+              strong(_localization.at(text.lang).coadvisor + ":\n") + coadvisor
+            } else if type(coadvisor) == array and coadvisor.len() > 1 {
+              strong(_localization.at(text.lang).coadvisors + ":\n") + coadvisor.join("\n")
+            } else {
+              panic("Pass the coadvisor as as string or as an array.")
+            }
+            linebreak()
           }
-          #academic-year
-        ],
+
+          parbreak()
+
+          text(weight: "bold", "Academic year:")
+          linebreak()
+          academic-year
+        },
       ),
       text(fill: bluepoli, "Abstract: ") + abstract,
     )
 
     v(1em)
 
-    banner(strong("Keywords: ") + keywords)
+    if keywords != none {
+      banner[#strong("Keywords:") #keywords]
+    }
   }
 
   // this must be an error from the original template...
@@ -475,19 +491,19 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
+  author: none,
   /// Advisor of the thesis.
   /// -> str
-  advisor: "Prof. Name Surname",
+  advisor: none,
   /// Coadvisor(s) of the thesis.
   /// -> str | array
-  coadvisor: "Prof. Name Surname",
+  coadvisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Student course.
   /// -> str
-  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
+  course: none,
   /// Logo of the thesis.
   /// -> path
   logo: image("img/logo_ingegneria.svg", width: 83mm),
@@ -539,11 +555,15 @@
 
   // Title
   {
+    if academic-year == "" {
+      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+    }
+
     place(
       top + left,
       float: true,
       scope: "parent",
-      {
+      context {
         set text(weight: "bold", size: 0.3cm)
         set par(spacing: 0.5cm)
 
@@ -574,18 +594,23 @@
         v(0.1cm)
 
         "Author: " + smallcaps(author) + v(-0.3em)
-        "Advisor: Prof. " + smallcaps(advisor) + v(-0.3em)
-        (
-          if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            "Co-advisor: " + smallcaps(coadvisor)
-          } else {
-            "Co-advisors: " + coadvisor.map(smallcaps).join(", ")
-          }
-            + v(-0.3em)
-        )
-        if academic-year == "" {
-          academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+
+        if advisor != none {
+          _localization.at(text.lang).advisor + ": " + smallcaps(advisor) + v(-0.3em)
         }
+
+        if (coadvisor != none) {
+          parbreak()
+          if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+            _localization.at(text.lang).coadvisor + ": " + smallcaps(coadvisor)
+          } else if type(coadvisor) == array and coadvisor.len() > 1 {
+            _localization.at(text.lang).coadvisors + ": " + coadvisor.map(smallcaps).join(", ")
+          } else {
+            panic("Pass the coadvisor as as string or as an array.")
+          }
+          v(-0.3em)
+        }
+        
         "Academic year: " + smallcaps(academic-year)
 
         v(0.25cm)

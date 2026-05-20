@@ -221,6 +221,45 @@
   left: if (x > 0) { (paint: color, thickness: 0.1pt) },
 )
 
+/// Helper function to detect whether a field is present and, if true, show it.
+/// -> content
+#let _show-field(
+  /// Prefix (e.g. "Prof: "),
+  /// -> str
+  prefix,
+  /// Exact field to check (e.g. title).
+  /// -> variable
+  field,
+  /// Separator between fields.
+  /// -> func | content
+  separator: linebreak(),
+) = {
+  if (field != none and field != "") {
+    return prefix + field + separator
+  }
+}
+
+/// Helper function to handle coadvisor(s).
+/// -> content
+#let _show-coadvisor(
+  /// Coadvisor(s) of the thesis.
+  /// -> str | arr
+  coadvisor,
+) = context {
+  if (coadvisor != none) {
+    if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
+      _localization.at(text.lang).coadvisor + ": " + coadvisor
+    } else if type(coadvisor) == array and coadvisor.len() > 1 {
+      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
+    } else {
+      panic("Pass the coadvisor as as string or as an array.")
+    }
+    linebreak()
+  }
+}
+
+// DIGITAL PRESENTATION
+
 /// Custom made header.
 /// -> content
 #let _poli-header(

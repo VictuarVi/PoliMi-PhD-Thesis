@@ -5,12 +5,13 @@
 #show: polimi-thesis.with(
   title: [`polimi-thesis` manual],
   author: data.author,
+  student-id: data.student-id,
   advisor: data.advisor,
   coadvisor: data.coadvisor,
-  tutor: "Minto Zelante",
-  chair: data.chair,
+  tutor: "Prof. Minto Zelante",
+  course: data.course,
   academic-year: data.academic-year,
-  frontispiece: "phd",
+  frontispiece: "classical-master",
 )
 
 #show: theorems-init

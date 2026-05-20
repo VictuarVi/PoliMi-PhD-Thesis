@@ -11,6 +11,8 @@
   advisor: data.advisor,
   coadvisor: data.coadvisor,
   academic-year: data.academic-year,
+  student-id: data.student-id,
+  course: data.course,
   abstract: [
     Here goes the Abstract in English of your thesis (in article format)
     followed by a list of keywords. The Abstract is a concise summary of the content

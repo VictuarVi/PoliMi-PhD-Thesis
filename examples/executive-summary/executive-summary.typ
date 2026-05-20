@@ -5,12 +5,12 @@
 #let data = yaml("../shared_data.yaml")
 
 #show: polimi-executive-summary.with(
-  // title: [`executive-summary` manual],
-  title: "Title of the thesis",
+  title: [`executive-summary` manual],
   author: data.author,
   advisor: data.advisor,
   coadvisor: data.coadvisor,
   academic-year: data.academic-year,
+  course: data.course,
 )
 
 #show: theorems-init
