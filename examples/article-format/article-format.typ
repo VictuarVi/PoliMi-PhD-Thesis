@@ -8,8 +8,8 @@
 #show: polimi-article-format-thesis.with(
   title: [`article-format` manual],
   author: data.author,
-  advisor: data.advisor,
-  coadvisor: data.coadvisor,
+  supervisor: data.supervisor,
+  cosupervisor: data.cosupervisor,
   academic-year: data.academic-year,
   student-id: data.student-id,
   course: data.course,

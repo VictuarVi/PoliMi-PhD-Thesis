@@ -7,8 +7,8 @@
 #show: polimi-executive-summary.with(
   title: [`executive-summary` manual],
   author: data.author,
-  advisor: data.advisor,
-  coadvisor: data.coadvisor,
+  supervisor: data.supervisor,
+  cosupervisor: data.cosupervisor,
   academic-year: data.academic-year,
   course: data.course,
 )

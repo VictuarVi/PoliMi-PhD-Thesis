@@ -79,10 +79,11 @@ To get started:
 #show: polimi-thesis.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
-  tutor: "Marco Bramanti",
-  frontispiece: "phd"
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  tutor: "Prof. Marco Bramanti",
+  academic-year: [2026 --- 2027],
+  frontispiece: "phd",
 )
 
 #show: frontmatter
@@ -144,8 +145,9 @@ The template also offers the Executive Summary and the Article Format; in order 
 #show: polimi-article-format.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  academic-year: [2026 --- 2027],
   abstract: include "../sections/abstract.typ"
 )
 
@@ -153,8 +155,9 @@ The template also offers the Executive Summary and the Article Format; in order 
 #show: polimi-executive-summary.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  academic-year: [2026 --- 2027],
 )
 ```
 
@@ -162,8 +165,8 @@ The templates are **three distinct documents**, however they share _most_ of the
 
 - `title`: title of the document
 - `author`: name and surname of the author
-- `advisor`: name and surname of the advisor
-- `coadvisor`: name and surname of the coadvisor(s) (can be empty)
+- `supervisor`: name and surname of the supervisor
+- `cosupervisor`: name and surname of the cosupervisor(s) (can be empty)
 - `course`: the course you are graduating in
 - `academic-year`: the corresponding academic year
 - `custom-logo`: logo of the thesis (the logos provided by the template are distributed with NC-BY 4.0 license)

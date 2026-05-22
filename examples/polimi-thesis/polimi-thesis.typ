@@ -6,12 +6,12 @@
   title: [`polimi-thesis` manual],
   author: data.author,
   student-id: data.student-id,
-  advisor: data.advisor,
-  coadvisor: data.coadvisor,
+  supervisor: data.supervisor,
+  cosupervisor: data.cosupervisor,
   tutor: "Prof. Minto Zelante",
   course: data.course,
   academic-year: data.academic-year,
-  frontispiece: "classical-master",
+  frontispiece: "phd",
 )
 
 #show: theorems-init

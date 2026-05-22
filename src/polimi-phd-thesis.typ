@@ -15,12 +15,12 @@
   /// Author of the thesis.
   /// -> str
   author: none,
-  /// Advisor of the thesis.
-  /// -> str
-  advisor: none,
-  /// Coadvisor(s) of the thesis.
-  /// -> str | arr
-  coadvisor: none,
+  /// Supervisor(s) of the thesis.
+  /// -> str | array
+  supervisor: none,
+  /// Cosupervisor(s) of the thesis.
+  /// -> str | array
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
@@ -151,7 +151,7 @@
     academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
   }
 
-  let shared-attributes = (title, author, advisor, coadvisor, academic-year)
+  let shared-attributes = (title, author, supervisor, cosupervisor, academic-year)
 
   let logos = ()
   if custom-logo == none {
@@ -307,12 +307,12 @@
   /// Author of the thesis.
   /// -> str
   author: none,
-  /// Advisor of the thesis.
+  /// supervisor of the thesis.
   /// -> str
-  advisor: none,
-  /// Coadvisor(s) of the thesis.
+  supervisor: none,
+  /// cosupervisor(s) of the thesis.
   /// -> str | array
-  coadvisor: none,
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
@@ -442,36 +442,26 @@
           set text(size: _sizes.at("11pt").scriptsize)
           set par(justify: false, spacing: 1.7em)
 
-          if advisor != none {
-            text(weight: "bold", "Advisor:") + linebreak() + advisor
-          }
+          _show-starvisor(supervisor, "supervisor", separator: ":\n", key: strong)
+          
+          parbreak()
 
-          if (coadvisor != none) {
-            parbreak()
-            if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-              strong(_localization.at(text.lang).coadvisor + ":\n") + coadvisor
-            } else if type(coadvisor) == array and coadvisor.len() > 1 {
-              strong(_localization.at(text.lang).coadvisors + ":\n") + coadvisor.join("\n")
-            } else {
-              panic("Pass the coadvisor as as string or as an array.")
-            }
-            linebreak()
-          }
+          _show-starvisor(cosupervisor, "cosupervisor", separator: ":\n", key: strong)
 
           parbreak()
 
-          text(weight: "bold", "Academic year:")
+          strong(_show-academic-year())
           linebreak()
           academic-year
         },
       ),
-      text(fill: bluepoli, "Abstract: ") + abstract,
+      context text(fill: bluepoli, _localization.at(text.lang).abstract + ": ") + abstract,
     )
 
     v(1em)
 
     if keywords != none {
-      banner[#strong("Keywords:") #keywords]
+      banner[#strong(_localization.at(text.lang).keywords + ": ") #keywords]
     }
   }
 
@@ -492,12 +482,12 @@
   /// Author of the thesis.
   /// -> str
   author: none,
-  /// Advisor of the thesis.
+  /// supervisor of the thesis.
   /// -> str
-  advisor: none,
-  /// Coadvisor(s) of the thesis.
+  supervisor: none,
+  /// cosupervisor(s) of the thesis.
   /// -> str | array
-  coadvisor: none,
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
@@ -593,25 +583,17 @@
 
         v(0.1cm)
 
-        "Author: " + smallcaps(author) + v(-0.3em)
+        _show-author() + smallcaps(author) + v(-0.3em)
 
-        if advisor != none {
-          _localization.at(text.lang).advisor + ": " + smallcaps(advisor) + v(-0.3em)
-        }
+        _show-starvisor(supervisor, "supervisor", separator: ": ", out: smallcaps)
 
-        if (coadvisor != none) {
-          parbreak()
-          if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            _localization.at(text.lang).coadvisor + ": " + smallcaps(coadvisor)
-          } else if type(coadvisor) == array and coadvisor.len() > 1 {
-            _localization.at(text.lang).coadvisors + ": " + coadvisor.map(smallcaps).join(", ")
-          } else {
-            panic("Pass the coadvisor as as string or as an array.")
-          }
-          v(-0.3em)
-        }
+        parbreak()
+    
+        _show-starvisor(cosupervisor, "cosupervisor", separator: ": ", out: smallcaps)
         
-        "Academic year: " + smallcaps(academic-year)
+        parbreak()
+
+        _show-academic-year() + smallcaps(academic-year)
 
         v(0.25cm)
 

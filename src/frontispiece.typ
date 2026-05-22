@@ -3,8 +3,8 @@
 #let _frontispiece-phd(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   cycle,
@@ -47,14 +47,11 @@
 
   align(start, context {
     set text(size: _sizes.at("12pt").large)
-    _show-field(_localization.at(text.lang).advisor + ": ", advisor)
-    _show-coadvisor(coadvisor)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
     _show-field(_localization.at(text.lang).tutor + ": ", tutor)
-    _show-field(_localization.at(text.lang).year + " ", academic-year)
-    if (cycle != none) {
-      _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
-    }
-    _show-field(_localization.at(text.lang).cycle + ": ", cycle)
+    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: "")
+    _show-cycle(cycle)
     _show-field(_localization.at(text.lang).chair + ": ", chair)
   })
 }
@@ -62,8 +59,8 @@
 #let _frontispiece-deib-phd(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   cycle,
@@ -108,13 +105,11 @@
 
   align(start, context {
     set text(size: _sizes.at("12pt").large)
-    _show-field(_localization.at(text.lang).advisor + ": ", advisor)
-    _show-coadvisor(coadvisor)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
     _show-field(_localization.at(text.lang).tutor + ": ", tutor)
-    _show-field(_localization.at(text.lang).year + " ", academic-year)
-    if (cycle != none) {
-      _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
-    }
+    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: "")
+    _show-cycle(cycle)
     _show-field(_localization.at(text.lang).chair + ": ", chair)
   })
 }
@@ -122,8 +117,8 @@
 #let _frontispiece-classical-master(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   course,
@@ -183,8 +178,8 @@
   align(bottom + start, context {
     set text(size: _sizes.at("12pt").normalsize)
     _show-field(_localization.at(text.lang).student-id + ": ", student-id)
-    _show-field(_localization.at(text.lang).advisor + ": ", advisor)
-    _show-coadvisor(advisor)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
     _show-field(
       _localization.at(text.lang).academic-year + ": ",
       academic-year,
@@ -196,8 +191,8 @@
 #let _frontispiece-cs-eng-master(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   student-id,
@@ -267,19 +262,8 @@
 
   align(bottom + start, context {
     set text(size: _sizes.at("12pt").normalsize)
-    if advisor != none {
-      _localization.at(text.lang).advisor + ":\n" + strong(advisor) + linebreak()
-    }
-    if (coadvisor != none) {
-      if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-        _localization.at(text.lang).coadvisor + ":\n" + strong(coadvisor)
-      } else if type(coadvisor) == array and coadvisor.len() > 1 {
-        _localization.at(text.lang).coadvisors + ":\n" + coadvisor.map(strong).join(", ")
-      } else {
-        panic("Pass the coadvisor as as string or as an array.")
-      }
-      linebreak()
-    }
+    _show-starvisor(supervisor, "supervisor", separator: ":\n", out: strong)
+    _show-starvisor(cosupervisor, "cosupervisor", separator: ":\n", out: strong)
     _localization.at(text.lang).academic-year + ":\n" + strong(academic-year)
   })
 }

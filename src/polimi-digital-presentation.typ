@@ -297,7 +297,7 @@
 /// -> content
 #let exact-split-slide(
   /// Content of each split. Usually a title with a small description.
-  /// -> arr
+  /// -> array
   splits: (),
   /// Touying overrides for this slide.
   /// -> dictionary
