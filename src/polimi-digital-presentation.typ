@@ -94,7 +94,7 @@
       message: "You need to specify logos if you want to use logos title style.",
     )
   }
-  self = utils.merge-dicts(
+  let self = utils.merge-dicts(
     self,
     config-page(
       // foreground: title-style.at(style).at("foreground", default: none),
@@ -159,6 +159,9 @@
         )
       },
     ),
+    config-common(
+      freeze-slide-counter: true,
+    ),
   )
   let body = {
     show: pad.with(top: title-style.at(style).at("height", default: 15.47cm))
@@ -208,12 +211,13 @@
     config-common(
       subslide-preamble: block(
         inset: (top: 40pt, bottom: 45pt),
-        text(
+        context text(
           size: 42pt,
           fill: self.colors.primary,
-          "Table of Contents",
+          _localization.at(text.lang).toc,
         ),
       ),
+      freeze-slide-counter: true,
     ),
   )
   let body = context {
@@ -495,6 +499,8 @@
   /// Bottom lettering.
   /// -> content
   lettering: none,
+  /// Touying overrides for this slide.
+  /// -> dictionary
   config: (:),
   body,
 ) = touying-slide-wrapper(self => {
@@ -505,6 +511,9 @@
       // OPINIONATED CHOICE: it doesn't make sense to have an header in this slide
       // header: _poli-header(self, text-args: (size: 15pt, weight: "regular", fill: white)),
       .._divider-bg-args(self.colors.primary, self.colors.divider.dark),
+    ),
+    config-common(
+      freeze-slide-counter: true,
     ),
   )
   let body = _divider-body(body, lettering, none, white)
@@ -525,6 +534,9 @@
     self,
     config-page(
       .._divider-bg-args(..config-divisorio),
+    ),
+    config-common(
+      freeze-slide-counter: true,
     ),
   )
   let body = _divider-body(
@@ -550,6 +562,9 @@
     self,
     config-page(
       .._divider-bg-args(rgb("#e2e6eb"), rgb("#7a8aa0")),
+    ),
+    config-common(
+      freeze-slide-counter: true,
     ),
   )
   let body = _divider-body(
@@ -622,7 +637,7 @@
       width: 677mm,
       height: 381mm,
       margin: (
-        top: 3cm, // SISTEMARE
+        top: 3cm,
         x: 2cm,
         bottom: 2.5cm,
       ),

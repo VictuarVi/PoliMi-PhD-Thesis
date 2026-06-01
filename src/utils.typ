@@ -238,12 +238,11 @@
 #let _show-author() = context {
   return _localization.at(text.lang).author + ": "
 }
-}
 
 /// Helper function to show localized academic year.
 /// -> content
-#let _show-academic-year() = context {
-  return _localization.at(text.lang).academic-year + ": "
+#let _show-academic-year(year) = context {
+  return _localization.at(text.lang).academic-year + ": " + year
 }
 
 /// Helper function to show the thesis cycle.

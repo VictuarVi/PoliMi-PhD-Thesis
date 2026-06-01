@@ -27,11 +27,11 @@ en:
   cosupervisor: Co-supervisor
   cosupervisors: Co-supervisors
   tutor: Tutor
+  toc: Table of Contents
   dissertation: Doctoral Dissertation of
   academic-year: Academic Year
   year: Year
   cycle: Cycle
-  toc: Contents
   list-of-figures: List of Figures
   list-of-tables: List of Tables
   nomenclature: Nomenclature
@@ -39,6 +39,7 @@ en:
   proof: Proof
   proposition: Proposition
   lemma: Lemma
+  remark: Remark
   figure: Figure
   student-id: Student ID
   author: Author

@@ -148,7 +148,9 @@
   import "frontispiece.typ": *
 
   if academic-year == "" {
-    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
+    academic-year = _show-academic-year(
+      str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2),
+    ) // 20XX-XX)
   }
 
   let shared-attributes = (title, author, supervisor, cosupervisor, academic-year)
@@ -229,14 +231,14 @@
     } else if (it.level == 2) {
       text(
         size: _sizes.at("12pt").Large,
-        counter(heading).display(tab-numbering) + it.body,
         fill: section-fill,
+        if it.numbering != none { counter(heading).display(tab-numbering) } + it.body,
       )
     } else if (it.level >= 3) {
       text(
         size: _sizes.at("12pt").large,
-        counter(heading).display(tab-numbering) + it.body,
         fill: section-fill,
+        if it.numbering != none { counter(heading).display(tab-numbering) } + it.body,
       )
     }
     parbreak()
@@ -275,7 +277,6 @@
 
   // custom figure alignment
   show figure
-    .where(kind: "lists")
     .or(figure.where(kind: "_blank-toc"))
     .or(figure.where(kind: "theorem"))
     .or(figure.where(kind: "proposition")): it => {
@@ -443,7 +444,7 @@
           set par(justify: false, spacing: 1.7em)
 
           _show-starvisor(supervisor, "supervisor", separator: ":\n", key: strong)
-          
+
           parbreak()
 
           _show-starvisor(cosupervisor, "cosupervisor", separator: ":\n", key: strong)
@@ -588,9 +589,9 @@
         _show-starvisor(supervisor, "supervisor", separator: ": ", out: smallcaps)
 
         parbreak()
-    
+
         _show-starvisor(cosupervisor, "cosupervisor", separator: ": ", out: smallcaps)
-        
+
         parbreak()
 
         _show-academic-year() + smallcaps(academic-year)
@@ -715,11 +716,6 @@
     .or(heading.where(outlined: true))
 )
 
-/// Lists figure to make the list of tables, list of figures to appear in the table of
-/// contents.
-/// -> content
-#let _lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
-
 /// Custom-built ```typc outline()```.
 /// -> content
 #let toc = context {
@@ -740,6 +736,8 @@
   /// -> function
   kind,
 ) = {
+  // don't print figures without caption
+  if outline-entry.element.at("caption") == none { return }
   let count = (
     str(counter(heading.where(level: 1)).at(outline-entry.element.location()).at(0))
       + "."
@@ -761,7 +759,14 @@
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
-  outline(title: _lists(_localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
+  outline(
+    title: heading(
+      outlined: true,
+      bookmarked: true,
+      _localization.at(text.lang).list-of-figures,
+    ),
+    target: figure.where(kind: image),
+  )
 }
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
@@ -770,7 +775,14 @@
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
-  outline(title: _lists(_localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
+  outline(
+    title: heading(
+      outlined: true,
+      bookmarked: true,
+      _localization.at(text.lang).list-of-tables,
+    ),
+    target: figure.where(kind: table),
+  )
 }
 
 /// Displays a simple nomenclature with keys and values.
