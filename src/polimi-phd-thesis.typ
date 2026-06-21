@@ -82,6 +82,7 @@
     ),
     numbering: "i",
     header: context {
+      let page-counter = counter(page).display()
       if (
         _is-page-empty() or _document-state.get() == "TITLE_PAGE"
       ) {
@@ -89,7 +90,6 @@
       } else if (
         _document-state.get() in ("FRONTMATTER", "BACKMATTER")
       ) {
-        let page-counter = counter(page).display()
         if (calc.even(here().page())) {
           page-counter + h(1fr)
         } else {
@@ -102,12 +102,11 @@
           query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page()).len() != 0
         )
         let last-h1 = query(selector(heading.where(level: 1)).before(here())).last().body
-        let page-counter = counter(page).display()
 
         let chapter-info = if not (h1-current-page) {
           set text(weight: "bold")
           let heading-num = if (heading.numbering != none) {
-            counter(heading.where(level: 1)).display(header-number)
+            counter(heading.where(level: 1)).display(header-numbering)
           }
           text(
             fill: if (colored-headings) { bluepoli } else { black },
@@ -127,7 +126,7 @@
     },
     footer: none,
     background: context {
-      if _is-page-empty() or _document-state.get() == "FIRST_RAGGIERA" {
+      if _is-page-empty() or _document-state.get() == "FIRST_RAGGIERA" and not _is-page-in-toc() {
         v(1fr)
         place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
@@ -149,7 +148,7 @@
 
   if academic-year == "" {
     academic-year = _show-academic-year(
-      str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2),
+      year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2),
     ) // 20XX-XX)
   }
 
@@ -211,7 +210,7 @@
       )
     }
     text(
-      size: 1.5em,
+      size: 25.2pt,
       it.body,
     )
     v(10pt)
@@ -245,6 +244,15 @@
     // v(0.5em)
   }
 
+  // heading are always referred as chapters, except for the appendix
+  set heading(
+    supplement: context if _document-state.get() in "APPENDIX" {
+      _localization.at(text.lang).appendix
+    } else {
+      _localization.at(text.lang).chapter
+    },
+  )
+
   // ----------- [ TABLE OF CONTENTS ] -----------
 
   // chapter are bold and don't have "..."
@@ -276,10 +284,7 @@
   }
 
   // custom figure alignment
-  show figure
-    .or(figure.where(kind: "_blank-toc"))
-    .or(figure.where(kind: "theorem"))
-    .or(figure.where(kind: "proposition")): it => {
+  show figure.where(kind: "__lists").or(figure.where(kind: "theorem")).or(figure.where(kind: "proposition")): it => {
     align(start, it)
   }
 
@@ -594,7 +599,7 @@
 
         parbreak()
 
-        _show-academic-year() + smallcaps(academic-year)
+        _show-academic-year() + " " + smallcaps(academic-year)
 
         v(0.25cm)
 
@@ -683,7 +688,7 @@
   body
 }
 
-/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```typc"A.1"``` and resets their counter.
+/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```typc "A.1"``` and resets their counter.
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
@@ -704,14 +709,19 @@
   body
 }
 
-// Table of contents
+// Outlines
+
+#let _lists = figure.with(
+  kind: "__lists",
+  numbering: none,
+  supplement: none,
+  outlined: true,
+  caption: [],
+)
 
 #let target = (
   figure
-    .where(
-      kind: "lists",
-      outlined: true,
-    )
+    .where(kind: "__lists", outlined: true)
     .or(figure.where(kind: "_blank-toc", outlined: true))
     .or(heading.where(outlined: true))
 )
@@ -719,11 +729,13 @@
 /// Custom-built ```typc outline()```.
 /// -> content
 #let toc = context {
+  [#metadata(none) <__toc-start>]
   outline(
     title: _lists(_localization.at(text.lang).toc),
     indent: 1.2em,
     target: target,
   )
+  [#metadata(none) <__toc-end>]
 }
 
 /// Internal helper function to create the custom lists of figures and table.
@@ -732,7 +744,7 @@
   /// Outline entry to edit.
   /// -> outline-entry
   outline-entry,
-  /// The kind of the outline entry element (image or table)
+  /// The kind of the outline entry element (image or table).
   /// -> function
   kind,
 ) = {
@@ -760,11 +772,7 @@
     _lists-entries-style(it, image)
   }
   outline(
-    title: heading(
-      outlined: true,
-      bookmarked: true,
-      _localization.at(text.lang).list-of-figures,
-    ),
+    title: _lists(_localization.at(text.lang).list-of-figures),
     target: figure.where(kind: image),
   )
 }
@@ -776,11 +784,7 @@
     _lists-entries-style(it, table)
   }
   outline(
-    title: heading(
-      outlined: true,
-      bookmarked: true,
-      _localization.at(text.lang).list-of-tables,
-    ),
+    title: _lists(_localization.at(text.lang).list-of-tables),
     target: figure.where(kind: table),
   )
 }
@@ -805,8 +809,8 @@
   indented: true,
 ) = context {
   heading(
-    _lists(_localization.at(text.lang).nomenclature),
-    outlined: false,
+    _localization.at(text.lang).nomenclature,
+    // outlined: false,
   )
   if (indented) {
     show grid.cell: it => {
@@ -835,7 +839,7 @@
 // Theorems implementation
 
 #import "@preview/great-theorems:0.1.2": *
-#import "@preview/headcount:0.1.0": *
+#import "@preview/headcount:0.1.1": *
 
 #let thm-cnt = counter("thm")
 #let prop-cnt = counter("prop")

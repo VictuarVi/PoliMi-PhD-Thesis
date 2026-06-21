@@ -22,6 +22,8 @@ it:
   chair: Il Presidente del Dottorato
   abstract: Sommario
   keywords: Parole chiave
+  chapter: Capitolo
+  appendix: Appendice
 en:
   supervisor: Supervisor
   cosupervisor: Co-supervisor
@@ -46,3 +48,5 @@ en:
   chair: The Chair of the Doctoral Program
   abstract: Abstract
   keywords: Keywords
+  chapter: Chapter
+  appendix: Appendix

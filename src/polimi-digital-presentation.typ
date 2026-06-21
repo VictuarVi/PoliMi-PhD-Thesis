@@ -251,7 +251,7 @@
         text(
           size: 100pt,
           weight: 300,
-          str(_custom-numbering(e)),
+          str(_numbering-with-padding(e)),
         ),
       )),
       h1s-final.map(e => text(
@@ -545,7 +545,7 @@
       numbered: false,
     ),
     none,
-    context _custom-numbering(counter(heading.where(level: 1)).at(here()).at(0)),
+    context _numbering-with-padding(counter(heading.where(level: 1)).at(here()).at(0)),
     if self.store.divider-style == "dark" {
       white
     } else {
@@ -579,7 +579,7 @@
     text(
       fill: self.colors.primary,
       context {
-        _custom-numbering(counter(heading.where(level: 1)).at(here()).at(0))
+        _numbering-with-padding(counter(heading.where(level: 1)).at(here()).at(0))
         "."
         str(counter(heading.where(level: 2)).at(here()).at(1))
       },

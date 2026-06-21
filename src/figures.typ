@@ -38,7 +38,7 @@
   body,
 ) = context {
   show figure.caption: it => context {
-    if (it.kind != "lists" and it.kind != "_blank-toc") {
+    if (it.kind != "__lists" and it.kind != "_blank-toc") {
       text(
         fill: if (colored-caption) { bluepoli } else { black },
         {

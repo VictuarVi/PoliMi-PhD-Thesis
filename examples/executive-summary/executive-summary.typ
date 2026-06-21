@@ -69,7 +69,7 @@ All Figures, Tables and Algorithms have to be properly referred in the text. Equ
 
 In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
 
-$
+#let eq = $
   cases(
     Delta dot bold(D) & = rho\,,
     Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
@@ -78,19 +78,13 @@ $
   )
 $
 
+#eq
+
 By default, the equations are *not* numbered -- however if you need to:
 #math.equation(
   numbering: "(1.1)",
   block: true,
-  $
-    lr(
-      \{
-      #block[$                                            Delta dot bold(D) & = rho\, \
-      Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
-                                                 Delta dot bold(B) & = 0\, \
-      Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
-    )
-  $,
+  eq,
 )<maxwell-equation>
 
 And to reference it just type @maxwell-equation.

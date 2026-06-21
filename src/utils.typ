@@ -39,7 +39,7 @@
   ),
 )
 
-/// The current state (title page, front-,main-,backmatter...)
+/// The current state (title page, \*matter...)
 /// -> state
 #let _document-state = state("init", "TITLE_PAGE")
 
@@ -55,43 +55,33 @@
 /// -> color
 #let bluepoli = rgb("#5f859f")
 
-/// Check if a page is empty.
+/// Check if the current page is between the given labels.
 /// -> bool
-#let _is-page-empty() = {
+#let _is-page-between-labels(start-label, end-label) = {
   // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
   let current-page = here().page()
-  query(<chapter-end>)
-    .zip(query(<chapter-start>))
+  query(end-label)
+    .zip(query(start-label))
     .any(((start, end)) => {
       (start.location().page() < current-page and current-page < end.location().page())
     })
 }
 
+/// Check if a page is empty.
+/// -> bool
+#let _is-page-empty() = _is-page-between-labels(<__chapter-start>, <__chapter-end>)
+
+/// Check if a page is in the TOC.
+/// -> bool
+#let _is-page-in-toc() = _is-page-between-labels(<__toc-start>, <__toc-end>)
+
 /// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
 /// -> content
 #let _empty-page() = {
-  [#metadata(none) <chapter-end>]
+  [#metadata(none) <__chapter-end>]
   pagebreak(weak: true, to: "odd")
-  [#metadata(none) <chapter-start>]
+  [#metadata(none) <__chapter-start>]
 }
-
-/// It displays a reference using section name (instead of numbering). From Hallon 0.1.3
-/// -> content
-#let _nameref(label) = {
-  show ref: it => {
-    if it.element == none {
-      it
-    } else if it.element.func() != heading {
-      it
-    } else {
-      let l = it.target // label
-      let h = it.element // heading
-      link(l, h.body)
-    }
-  }
-  ref(label)
-}
-
 
 /// Inserts a raggiera, given a specified width.
 /// -> content
@@ -124,7 +114,7 @@
 
 // Numbering functions
 
-/// Alternative numbering: ```typc"1.1." + h-space```.
+/// Alternative numbering: ```typc "1.1." + h-space```.
 /// -> content
 #let tab-numbering(
   /// Horizontal space.
@@ -133,7 +123,7 @@
   /// Numbers.
   /// -> arguments
   ..n,
-) = n.pos().map(str).join(".") + "." + h(h-space)
+) = return n.pos().map(str).join(".") + "." + h(h-space)
 
 /// Chapter numbering.
 /// -> content
@@ -141,11 +131,11 @@
   /// Numbers.
   /// -> arguments
   ..n,
-) = text(weight: "bold", str(n.pos().first())) + "|" + h(2mm)
+) = return text(weight: "bold", str(n.pos().first())) + "|" + h(2mm)
 
 /// Numbering used in the theses header.
 /// -> content
-#let header-number(
+#let header-numbering(
   /// Numbers.
   /// -> arguments
   ..n,
@@ -241,8 +231,12 @@
 
 /// Helper function to show localized academic year.
 /// -> content
-#let _show-academic-year(year) = context {
-  return _localization.at(text.lang).academic-year + ": " + year
+#let _show-academic-year(year: none) = context {
+  if (year == none) {
+    return _localization.at(text.lang).academic-year
+  } else {
+    return _localization.at(text.lang).academic-year + ": " + year
+  }
 }
 
 /// Helper function to show the thesis cycle.
@@ -259,18 +253,18 @@
 // PRESENTATION
 // =====================
 
-#import "@preview/touying:0.7.3": *
+#import "@preview/touying:0.7.4": *
 
-/// The background panes used in some scenarios.
+/// The background panes used in some slides.
 /// -> dict
 #let _pane = (
   left: 15.86cm,
   right: 51.86cm,
 )
 
-/// (1..20) -> (01,02,03,...,20)
+/// (1..20) -> (01,02,03,..., 10, 11, 12,...,20)
 /// -> numbering
-#let _custom-numbering = (..args) => {
+#let _numbering-with-padding = (..args) => {
   let numbers = args.pos()
   let output = numbering(
     "1",
@@ -315,7 +309,7 @@
   grid(
     columns: (_pane.left, 1fr),
     {
-      _custom-numbering(counter(heading.where(level: 1)).at(here()).at(0))
+      _numbering-with-padding(counter(heading.where(level: 1)).at(here()).at(0))
       ". "
       utils.display-current-heading(level: 1, numbered: false)
     },
