@@ -105,13 +105,13 @@
 
         let chapter-info = if not (h1-current-page) {
           set text(weight: "bold")
-          let heading-num = if (heading.numbering != none) {
-            counter(heading.where(level: 1)).display(header-numbering)
+          if (heading.numbering != none) {
+            let heading-num = counter(heading.where(level: 1)).display(header-numbering)
+            text(
+              fill: if (colored-headings) { bluepoli } else { black },
+              heading-num,
+            )
           }
-          text(
-            fill: if (colored-headings) { bluepoli } else { black },
-            heading-num,
-          )
           last-h1
         }
 
@@ -126,7 +126,7 @@
     },
     footer: none,
     background: context {
-      if (_is-page-empty() or _document-state.get() == "FIRST_RAGGIERA") and not _is-page-in-toc() {
+      if (_is-page-empty() or _document-state.get() == "FIRST_RAGGIERA") and not _is-page-in-outline() {
         v(1fr)
         place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
@@ -728,10 +728,10 @@
 
 /// Custom-built ```typc outline()```.
 /// -> content
-#let toc = context {
+#let toc = {
   [#metadata(none) <__toc-start>]
   outline(
-    title: _lists(_localization.at(text.lang).toc),
+    title: context _lists(_localization.at(text.lang).toc),
     indent: 1.2em,
     target: target,
   )
@@ -767,13 +767,14 @@
 
 /// List of figures. Similar to LaTeX's ```tex \listoffigures```.
 /// -> content
-#let list-of-figures = context {
+#let list-of-figures = {
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
   [#metadata(none) <__toc-start>]
   outline(
-    title: _lists(_localization.at(text.lang).list-of-figures),
+    title: context _lists(_localization.at(text.lang).list-of-figures),
+    indent: 1.2em,
     target: figure.where(kind: image),
   )
   [#metadata(none) <__toc-end>]
@@ -781,13 +782,14 @@
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
 /// -> content
-#let list-of-tables = context {
+#let list-of-tables = {
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
   [#metadata(none) <__toc-start>]
   outline(
-    title: _lists(_localization.at(text.lang).list-of-tables),
+    title: context _lists(_localization.at(text.lang).list-of-tables),
+    indent: 1.2em,
     target: figure.where(kind: table),
   )
   [#metadata(none) <__toc-end>]

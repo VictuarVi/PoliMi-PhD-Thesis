@@ -55,6 +55,18 @@
 /// -> color
 #let bluepoli = rgb("#5f859f")
 
+// Raggiera related functions
+
+// https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
+
+/// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
+/// -> content
+#let _empty-page() = {
+  [#metadata(none) <__chapter-end>]
+  pagebreak(weak: true, to: "odd")
+  [#metadata(none) <__chapter-start>]
+}
+
 /// Check if the current page is between the given labels.
 /// -> bool
 #let _is-page-between-labels(
@@ -64,43 +76,36 @@
   /// The end label.
   /// -> label
   end-label,
-  /// Whether to inclusive check.
-  /// -> bool
-  inclusive: false,
-  /// The specific page. If none, defaults to ```typc here().page()```.
-  page: none,
-) = {
-  // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
-  if page == none { page = here().page() }
-  query(end-label)
-    .zip(query(start-label))
-    .any(((start, end)) => {
-      (
-        page > start.location().page() and page < end.location().page()
-          or (inclusive and (start.location().page() == page or end.location().page() == page))
-      )
-    })
-}
+  /// Function to apply to the array.
+  /// -> function
+  function,
+) = query(start-label).zip(query(end-label)).any(function)
 
 /// Check if a page is empty.
 /// -> bool
-#let _is-page-empty() = _is-page-between-labels(<__chapter-start>, <__chapter-end>)
+#let _is-page-empty() = _is-page-between-labels(
+  <__chapter-end>,
+  <__chapter-start>,
+  ((start, end)) => {
+    let page = here().page()
+    let first-page = start.location().page()
+    let last-page = end.location().page()
+    return page > first-page and page < last-page
+  },
+)
 
 /// Check if a page is in an outline.
 /// -> bool
-#let _is-page-in-toc() = _is-page-between-labels(
+#let _is-page-in-outline() = _is-page-between-labels(
   <__toc-start>,
   <__toc-end>,
-  inclusive: true,
+  ((start, end)) => {
+    let page = here().page()
+    let first-page = start.location().page()
+    let last-page = end.location().page()
+    return not _is-page-empty() and page > first-page and page < last-page or page == first-page or page == last-page
+  },
 )
-
-/// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
-/// -> content
-#let _empty-page() = {
-  [#metadata(none) <__chapter-end>]
-  pagebreak(weak: true, to: "odd")
-  [#metadata(none) <__chapter-start>]
-}
 
 /// Inserts a raggiera, given a specified width.
 /// -> content
