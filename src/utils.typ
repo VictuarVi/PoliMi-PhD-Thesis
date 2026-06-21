@@ -57,13 +57,28 @@
 
 /// Check if the current page is between the given labels.
 /// -> bool
-#let _is-page-between-labels(start-label, end-label) = {
+#let _is-page-between-labels(
+  /// The start label.
+  /// -> label
+  start-label,
+  /// The end label.
+  /// -> label
+  end-label,
+  /// Whether to inclusive check.
+  /// -> bool
+  inclusive: false,
+  /// The specific page. If none, defaults to ```typc here().page()```.
+  page: none,
+) = {
   // https://forum.typst.app/t/how-to-use-set-page-without-adding-an-unwanted-pagebreak/3129/2
-  let current-page = here().page()
+  if page == none { page = here().page() }
   query(end-label)
     .zip(query(start-label))
     .any(((start, end)) => {
-      (start.location().page() < current-page and current-page < end.location().page())
+      (
+        page > start.location().page() and page < end.location().page()
+          or (inclusive and (start.location().page() == page or end.location().page() == page))
+      )
     })
 }
 
@@ -71,9 +86,13 @@
 /// -> bool
 #let _is-page-empty() = _is-page-between-labels(<__chapter-start>, <__chapter-end>)
 
-/// Check if a page is in the TOC.
+/// Check if a page is in an outline.
 /// -> bool
-#let _is-page-in-toc() = _is-page-between-labels(<__toc-start>, <__toc-end>)
+#let _is-page-in-toc() = _is-page-between-labels(
+  <__toc-start>,
+  <__toc-end>,
+  inclusive: true,
+)
 
 /// Adds an empty page between an odd page and the next. Used to check when to remove the header and place a raggiera in the bottom left corner.
 /// -> content

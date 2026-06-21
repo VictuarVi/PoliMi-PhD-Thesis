@@ -126,7 +126,7 @@
     },
     footer: none,
     background: context {
-      if _is-page-empty() or _document-state.get() == "FIRST_RAGGIERA" and not _is-page-in-toc() {
+      if (_is-page-empty() or _document-state.get() == "FIRST_RAGGIERA") and not _is-page-in-toc() {
         v(1fr)
         place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
       }
@@ -771,10 +771,12 @@
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
+  [#metadata(none) <__toc-start>]
   outline(
     title: _lists(_localization.at(text.lang).list-of-figures),
     target: figure.where(kind: image),
   )
+  [#metadata(none) <__toc-end>]
 }
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
@@ -783,10 +785,12 @@
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
+  [#metadata(none) <__toc-start>]
   outline(
     title: _lists(_localization.at(text.lang).list-of-tables),
     target: figure.where(kind: table),
   )
+  [#metadata(none) <__toc-end>]
 }
 
 /// Displays a simple nomenclature with keys and values.
