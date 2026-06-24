@@ -110,13 +110,14 @@
 /// Inserts a raggiera, given a specified width.
 /// -> content
 #let _raggiera-image(
-  /// Width of the raggiera.
+  /// Side of the raggiera.
   /// -> length
-  width,
+  side,
 ) = (
   image(
+    width: side,
+    height: side,
     "img/raggiera.svg",
-    width: width,
   )
 )
 
@@ -155,7 +156,7 @@
   /// Numbers.
   /// -> arguments
   ..n,
-) = return text(weight: "bold", str(n.pos().first())) + "|" + h(2mm)
+) = return text(weight: "bold", str(n.pos().first())) + h(1.5mm) + "|" + h(7.5mm)
 
 /// Numbering used in the theses header.
 /// -> content

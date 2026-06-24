@@ -75,7 +75,7 @@
   set page(
     paper: "a4",
     margin: (
-      top: 2.5cm,
+      top: 4.2cm,
       bottom: 2.5cm,
       inside: 3cm,
       outside: 2cm,
@@ -127,8 +127,12 @@
     footer: none,
     background: context {
       if (_is-page-empty() or _document-state.get() == "FIRST_RAGGIERA") and not _is-page-in-outline() {
-        v(1fr)
-        place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
+        // measurements taken from PDF via Inkscape
+        place(
+          dx: -36.970mm,
+          dy: 129.629mm,
+          _raggiera-image(178.435mm),
+        )
       }
     },
   )
