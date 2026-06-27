@@ -1,14 +1,15 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #let data = yaml("../shared_data.yaml")
 
 #show: polimi-thesis.with(
   title: [`polimi-thesis` manual],
   author: data.author,
-  advisor: data.advisor,
-  coadvisor: data.coadvisor,
-  tutor: "Minto Zelante",
-  chair: data.chair,
+  student-id: data.student-id,
+  supervisor: data.supervisor,
+  cosupervisor: data.cosupervisor,
+  tutor: data.tutor,
+  course: data.course,
   academic-year: data.academic-year,
   frontispiece: "phd",
 )
@@ -21,7 +22,7 @@
 #list-of-figures
 #list-of-tables
 
-#let nomenclature_ = (
+#let _nomenclature = (
   "Polimi": "Politecnico di Milano",
   "CdL": "Corso di Laurea",
   "CCS": "Consigli di Corsi di Studio",
@@ -29,26 +30,13 @@
 )
 
 #nomenclature(
-  nomenclature_,
+  _nomenclature,
   indented: false,
 )
 
 #show: mainmatter
 
 = Chapter one
-
-#import "@preview/metalogo:1.2.0": LaTeX, TeX
-#show "LaTeX": LaTeX
-
-#let Typst = {
-  text(
-    fill: eastern,
-    font: "Libertinus Serif",
-    weight: "semibold",
-    "Typst",
-  )
-}
-#show "Typst": Typst
 
 In this section there will be useful information about how to style chapters, sections and so on. Be sure to read the Typst guide for LaTeX users @typst-latex.
 
@@ -71,7 +59,7 @@ If you need to turn off the numbering you will call the ```Typst heading``` func
 
 In LaTeX, there are many equation environments (```tex equation, equation*, aligned```) -- in Typst there is just one, invoked with dollars @typst-equation:
 
-$
+#let eq = $
   cases(
     Delta dot bold(D) & = rho\,,
     Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
@@ -80,19 +68,14 @@ $
   )
 $
 
+#eq
+
 By default, the equations are *not* numbered -- however if you need to:
+
 #math.equation(
   numbering: "(1.1)",
   block: true,
-  $
-    lr(
-      \{
-      #block[$                                            Delta dot bold(D) & = rho\, \
-      Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
-                                                 Delta dot bold(B) & = 0\, \
-      Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
-    )
-  $,
+  eq,
 )<maxwell-equation>
 
 And to reference it just type @maxwell-equation.

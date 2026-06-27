@@ -1,15 +1,13 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
   author: "Name Surname",
-  advisor: "Advisor",
-  coadvisor: "Coadvisor",
-  // coadvisor: ("Coadvisor1", "Coadvisor2"),
-  tutor: "Tutor",
+  supervisor: "Prof. Supervisor",
+  cosupervisor: "Prof. Cosupervisor",
+  // cosupervisor: ("Prof.  Cosupervisor1", "Prof. Cosupervisor2"),
+  tutor: "Prof. Tutor",
   academic-year: "2025-2026",
-  cycle: "XXV",
-  chair: none,
   frontispiece: "phd",
 )
 
@@ -29,14 +27,14 @@
 #list-of-figures
 #list-of-tables
 
-#let nomenclature_ = (
+#let _nomenclature = (
   "Polimi": "Politecnico di Milano",
   "CdL": "Corso di Laurea",
   "CCS": "Consigli di Corsi di Studio",
   "CFU": "Crediti Formativi Universitari",
 )
 #nomenclature(
-  nomenclature_,
+  _nomenclature,
   indented: false,
 )
 

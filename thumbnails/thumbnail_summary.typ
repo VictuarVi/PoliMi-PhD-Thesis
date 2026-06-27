@@ -1,10 +1,10 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-executive-summary.with(
   title: "Thesis Title",
   author: "Name Surname",
-  advisor: "Advisor",
-  coadvisor: "Coadvisor",
+  supervisor: "Prof. Supervisor",
+  cosupervisor: "Prof. Cosupervisor",
   academic-year: "2025-2026",
 )
 

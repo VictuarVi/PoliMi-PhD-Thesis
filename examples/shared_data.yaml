@@ -1,9 +1,10 @@
 author: Vittorio Robecchi
-advisor: Mario Rossi
-coadvisor:
-  - Giovanni Cerva
-  - Gugliemo Varchi
-tutor: Stefano Lavori
-chair: Filippo Sedia
+supervisor: Prof. Mario Rossi
+cosupervisor:
+  - Prof. Giovanni Cerva
+  - Prof. Luther Blissett
+tutor: Prof. Riccardo Tudor
 academic-year: ""
 bibliography: "../Thesis_bibliography.bib"
+student-id: "10851734"
+course: Ingegneria Informatica

@@ -1,28 +1,10 @@
 #import "utils.typ": *
 
-/// Helper function to detect whether a field is present and, if true, show it.
-/// -> content
-#let _show-field(
-  /// Prefix (e.g. "Prof: "),
-  /// -> str
-  prefix,
-  /// Exact field to check (e.g. title).
-  /// -> variable
-  field,
-  /// Separator between fields.
-  /// -> func | content
-  separator: linebreak(),
-) = {
-  if (field != none and field != "") {
-    return prefix + field + separator
-  }
-}
-
-#let frontispiece-phd(
+#let _frontispiece-phd(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   cycle,
@@ -65,25 +47,20 @@
 
   align(start, context {
     set text(size: _sizes.at("12pt").large)
-    _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-    if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
-    } else {
-      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
-      linebreak()
-    }
-    _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: none)
-    _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
-    _show-field(_localization.at(text.lang).chair + ": Prof. ", chair)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
+    _show-field(_localization.at(text.lang).tutor + ": ", tutor)
+    _show-field(none, academic-year, separator: "")
+    _show-cycle(cycle)
+    _show-field(_localization.at(text.lang).chair + ": ", chair)
   })
 }
 
-#let frontispiece-deib-phd(
+#let _frontispiece-deib-phd(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   cycle,
@@ -128,30 +105,30 @@
 
   align(start, context {
     set text(size: _sizes.at("12pt").large)
-    _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-    if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
-    } else {
-      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
-      linebreak()
-    }
-    _show-field(_localization.at(text.lang).tutor + ": Prof. ", tutor)
-    _show-field(_localization.at(text.lang).year + " ", academic-year, separator: none)
-    _show-field(" -- ", cycle + " " + _localization.at(text.lang).cycle)
-    _show-field(_localization.at(text.lang).chair + ": Prof. ", chair)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
+    _show-field(_localization.at(text.lang).tutor + ": ", tutor)
+    _show-field(none, academic-year, separator: "")
+    _show-cycle(cycle)
+    _show-field(_localization.at(text.lang).chair + ": ", chair)
   })
 }
 
-#let frontispiece-classical-master(
+#let _frontispiece-classical-master(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   course,
   student-id,
 ) = {
+  // assert(
+  //   course != none and couse != "",
+  //   message: "You need to specify a course for the Classical Master frontispiece.",
+  // )
+
   set page(
     margin: (top: 0cm),
     background: context {
@@ -182,11 +159,11 @@
     fill: bluepoli,
     size: _sizes.at("12pt").large,
     weight: "bold",
-    {
-      smallcaps("Tesi di Laurea Magistrale In")
-      linebreak()
-      course
-    },
+    smallcaps[
+      Tesi di Laurea Magistrale In
+      #linebreak()
+      #course
+    ],
   )
 
   v(0.6cm)
@@ -201,22 +178,21 @@
   align(bottom + start, context {
     set text(size: _sizes.at("12pt").normalsize)
     _show-field(_localization.at(text.lang).student-id + ": ", student-id)
-    _show-field(_localization.at(text.lang).advisor + ": Prof. ", advisor)
-    if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-      _show-field(_localization.at(text.lang).coadvisor + ": ", coadvisor)
-    } else {
-      _localization.at(text.lang).coadvisors + ": " + coadvisor.join(", ")
-      linebreak()
-    }
-    _show-field(_localization.at(text.lang).academic-year + ": ", academic-year, separator: none)
+    _show-starvisor(supervisor, "supervisor")
+    _show-starvisor(cosupervisor, "cosupervisor")
+    _show-field(
+      _localization.at(text.lang).academic-year + ": ",
+      academic-year,
+      separator: none,
+    )
   })
 }
 
-#let frontispiece-cs-eng-master(
+#let _frontispiece-cs-eng-master(
   title,
   author,
-  advisor,
-  coadvisor,
+  supervisor,
+  cosupervisor,
   academic-year,
   logo,
   student-id,
@@ -273,26 +249,21 @@
       size: _sizes.at("12pt").large,
       author,
     )
-
-    parbreak()
-
-    _localization.at(text.lang).student-id + ":\n"
-    text(
-      weight: "bold",
-      size: _sizes.at("12pt").large,
-      student-id,
-    )
+    if student-id != none {
+      parbreak()
+      _localization.at(text.lang).student-id + ":\n"
+      text(
+        weight: "bold",
+        size: _sizes.at("12pt").large,
+        student-id,
+      )
+    }
   }
 
   align(bottom + start, context {
     set text(size: _sizes.at("12pt").normalsize)
-    _show-field(_localization.at(text.lang).advisor + ":\n", strong("Prof. " + advisor))
-    if type(coadvisor) == str {
-      _show-field(_localization.at(text.lang).coadvisor + ":\n", strong(coadvisor))
-    } else if type(coadvisor) == array and coadvisor.len() > 1 {
-      _localization.at(text.lang).coadvisors + ":\n" + strong(coadvisor.join(", "))
-      linebreak()
-    }
-    _show-field(_localization.at(text.lang).academic-year + ":\n", strong(academic-year), separator: none)
+    _show-starvisor(supervisor, "supervisor", separator: ":\n", out: strong)
+    _show-starvisor(cosupervisor, "cosupervisor", separator: ":\n", out: strong)
+    _show-field(none, academic-year, separator: "")
   })
 }

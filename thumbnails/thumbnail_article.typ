@@ -1,10 +1,10 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-article-format-thesis.with(
   title: "Thesis Title",
   author: "Name Surname",
-  advisor: "Advisor",
-  coadvisor: "Coadvisor",
+  supervisor: "supervisor",
+  cosupervisor: "cosupervisor",
   academic-year: "2025-2026",
   abstract: lorem(100),
 )

@@ -1,6 +1,13 @@
 # elegant-polimi-thesis 🎓
 
+![Version](https://img.shields.io/badge/package-v0.2.1-239dad?logo=typst)
+[![Github Repo](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/VictuarVi/PoliMi-PhD-Thesis)
+![License](https://img.shields.io/badge/license-GPLv3-green)
+[![Manual](https://img.shields.io/badge/docs-docs.pdf-red?logo=readthedocs)](docs/docs.pdf?raw=true)
+
 [Typst](https://typst.app/) theses and summaries templates for the [Polytechnic University of Milan](https://www.polimi.it/). The package supports all the templates that can be found on [this page](https://www.overleaf.com/latex/templates/tagged/polimi).
+
+It also supports the presentation. It is loosely based on the templates that can be found [here](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR) while also taking into account the [Digital Brand Manual](https://www.polimi.it/en/the-politecnico/communication/brand-identity-manual).
 
 See the [examples](examples/) directory and [documentation](docs/docs.pdf) for more information.
 
@@ -43,6 +50,15 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
       <div align="center"><em>Article Format</em></div>
     </td>
   <tr>
+  <tr>
+    <td colspan=2>
+      <p align="center">
+        <img alt="Title page of presentation" src="thumbnails/presentation.png" height=400px>
+      </p>
+      <br>
+      <div align="center"><em>Title page of presentation</em></div>
+    </td>
+  <tr>
 </table>
 
 ## Usage 🖋
@@ -50,7 +66,7 @@ See the [examples](examples/) directory and [documentation](docs/docs.pdf) for m
 You can either use this template in the webapp by clicking on "Create project in webapp" or, from the CLI, run:
 
 ```shell
-typst init @preview/elegant-polimi-thesis:0.2.0
+typst init @preview/elegant-polimi-thesis:0.2.1
 ```
 
 I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https://typst.app/docs/reference/pdf/#pdf-standards)).
@@ -58,15 +74,16 @@ I'd also recommend to export with the `a-3u` PDF standard flag ([see more](https
 To get started:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 #show: polimi-thesis.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
-  tutor: "Marco Bramanti",
-  frontispiece: "phd"
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  tutor: "Prof. Marco Bramanti",
+  academic-year: [2026 --- 2027],
+  frontispiece: "phd",
 )
 
 #show: frontmatter
@@ -83,11 +100,11 @@ To get started:
 #list-of-figures
 #list-of-tables
 
-#let nomenclature_ = (
+#let _nomenclature = (
   "key" : "value"
 )
 #nomenclature(
-  nomenclature_,
+  _nomenclature,
   indented: true
 )
 
@@ -122,14 +139,15 @@ Depending on the **thesis template** you need change the `frontispiece` argument
 The template also offers the Executive Summary and the Article Format; in order to use them show the respective functions:
 
 ```typ
-#import "@preview/elegant-polimi-thesis:0.2.0": *
+#import "@preview/elegant-polimi-thesis:0.2.1": *
 
 // For the article format
 #show: polimi-article-format.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  academic-year: [2026 --- 2027],
   abstract: include "../sections/abstract.typ"
 )
 
@@ -137,8 +155,9 @@ The template also offers the Executive Summary and the Article Format; in order 
 #show: polimi-executive-summary.with(
   title: "Thesis Title",
   author: "Vittorio Robecchi",
-  advisor: "Donatella Sciuto",
-  coadvisor: "Antonio Capone",
+  supervisor: "Prof. Donatella Sciuto",
+  cosupervisor: "Prof. Antonio Capone",
+  academic-year: [2026 --- 2027],
 )
 ```
 
@@ -146,8 +165,8 @@ The templates are **three distinct documents**, however they share _most_ of the
 
 - `title`: title of the document
 - `author`: name and surname of the author
-- `advisor`: name and surname of the advisor
-- `coadvisor`: name and surname of the coadvisor(s) (can be empty)
+- `supervisor`: name and surname of the supervisor
+- `cosupervisor`: name and surname of the cosupervisor(s) (can be empty)
 - `course`: the course you are graduating in
 - `academic-year`: the corresponding academic year
 - `custom-logo`: logo of the thesis (the logos provided by the template are distributed with NC-BY 4.0 license)
@@ -169,6 +188,70 @@ The following are exclusive to `polimi-article-format-thesis`:
 - `abstract`: the abstract
 - `keywords`: keywords (that will also appear in the document metadata)
 
+### Presentation
+
+In regards to the presentation, **you'll have to download on your own** the [Manrope](https://fonts.google.com/specimen/Manrope) font.
+
+Built on [Touying](https://typst.app/universe/package/touying/), the structure is quite standard:
+
+```typ
+#import "@preview/elegant-polimi-thesis:0.2.1": *
+
+#show: polimi-digital-presentation.with(
+  config-info(
+    title: "Title of the Presentation",
+    author: "Name Surname",
+    subtitle: "Subtitle",
+    theme: "Theme",
+    date: datetime.today(),
+  ),
+  ..args
+)
+
+#title-slide()
+
+#make-outline()
+
+= First Section
+
+== Slide in first section
+
+#lorem(50)
+
+#lorem(40)
+
+== Split slide
+
+#split-slide(
+  left: [
+    #lorem(30)
+
+    #lorem(30)
+  ],
+  right: [
+    === Paragraph title
+    #lorem(120)
+
+    === Paragraph title
+    #lorem(120)
+  ],
+)
+
+= Second Section
+
+== Slide in second section
+
+#lorem(20)
+
+#lorem(20)
+
+#lorem(20)
+
+#focus-slide[Thanks for listening]
+```
+
+Do note `..args` are all valid Touying arguments, as can be seen in all Touying-based presentation templates.
+
 ## Recommended packages
 
 Useful packages for a thesis include:
@@ -178,7 +261,6 @@ Useful packages for a thesis include:
 - [cetz](https://typst.app/universe/package/cetz), [fletcher](https://typst.app/universe/package/fletcher) for drawing diagrams, [lilaq](https://typst.app/universe/package/lilaq) to plot data
 - [zebraw](https://typst.app/universe/package/zebraw), [codly](https://typst.app/universe/package/codly) for syntax highlighting in code blocks
 - [frame-it](https://typst.app/universe/package/frame-it), [showybox](https://typst.app/universe/package/showybox) to display formatted blocks
-- [alexandria](https://typst.app/universe/package/alexandria) for multiple bibliographies ([currently unsupported](https://github.com/typst/typst/issues/1097))
 - [meander](https://typst.app/universe/package/meander/) to wrap text around images and such
 
 The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https://typst.app/universe/package/hallon) packages have been integrated to provide subfigures ([currently unsupported](https://github.com/typst/typst/issues/246)), while [great-theorems](https://typst.app/universe/package/great-theorems) and [headcount](https://typst.app/universe/package/headcount) to handle theorems implementations.
@@ -202,10 +284,6 @@ The [smartaref](https://typst.app/universe/package/smartaref) and [hallon](https
 
 The complete list of packages can be found on the [Typst Universe](https://typst.app/universe/search/?kind=packages).
 
-# Roadmap 📝
-
-- Support the [Digital presentation templates](https://drive.google.com/drive/folders/1PJUOglX63IjCMPYhZXAoPIVuH_-DmsPR?usp=drive_link)
-
-# Contributing 🚀
+## Contributing 🚀
 
 If you happen to have suggestions, ideas or anything else feel free to open issues and pull requests or contact me.

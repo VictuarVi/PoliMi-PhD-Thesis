@@ -1,4 +1,4 @@
-#import "@preview/elegant-polimi-thesis:0.2.0": (
+#import "@preview/elegant-polimi-thesis:0.2.1": (
   acknowledgements, appendix, banner, polimi-article-format-thesis, proof, proposition, subfigure, theorem,
   theorems-init,
 )
@@ -8,9 +8,11 @@
 #show: polimi-article-format-thesis.with(
   title: [`article-format` manual],
   author: data.author,
-  advisor: data.advisor,
-  coadvisor: data.coadvisor,
+  supervisor: data.supervisor,
+  cosupervisor: data.cosupervisor,
   academic-year: data.academic-year,
+  student-id: data.student-id,
+  course: data.course,
   abstract: [
     Here goes the Abstract in English of your thesis (in article format)
     followed by a list of keywords. The Abstract is a concise summary of the content
@@ -87,7 +89,7 @@ as follows: ```typ @section-name```.
 
 In LaTeX, there are many environments (```tex equation, equation*, aligned```) -- in Typst there is just the equation environment called with dollars @typst-equation:
 
-$
+#let eq = $
   cases(
     Delta dot bold(D) & = rho\,,
     Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\,,
@@ -96,19 +98,13 @@ $
   )
 $
 
+#eq
+
 By default, the equations are *not* numbered -- however if you need to:
 #math.equation(
   numbering: "(1.1)",
   block: true,
-  $
-    lr(
-      \{
-      #block[$                                            Delta dot bold(D) & = rho\, \
-      Delta times bold(E) + display((partial bold(B))/(partial t)) & = 0\, \
-                                                 Delta dot bold(B) & = 0\, \
-      Delta times bold(H) - display((partial bold(D))/(partial t)) & = bold(J). $]
-    )
-  $,
+  eq
 )<maxwell-equation>
 
 And to reference it just type @maxwell-equation.

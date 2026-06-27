@@ -14,31 +14,31 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
-  /// Advisor of the thesis.
-  /// -> str
-  advisor: "Advisor",
-  /// Coadvisor(s) of the thesis.
-  /// -> str | arr
-  coadvisor: "Coadvisor",
+  author: none,
+  /// Supervisor(s) of the thesis.
+  /// -> str | array
+  supervisor: none,
+  /// Cosupervisor(s) of the thesis.
+  /// -> str | array
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Tutor of the thesis.
   /// -> str
-  tutor: "Tutor",
+  tutor: none,
   /// Cycle of the thesis.
   /// -> str
-  cycle: "XXV",
+  cycle: none,
   /// Chair of the thesis.
   /// -> str
-  chair: "Chair",
+  chair: none,
   /// Student ID.
   /// -> str
-  student-id: "00000000",
+  student-id: none,
   /// Student course.
   /// -> str
-  course: "Course Engineering",
+  course: none,
   /// Frontispiece of the thesis. Can be either: `phd`, `deib-phd`, `cs-eng-master` or `classical-master`.
   /// -> "phd" | "deib-phd" | "cs-eng-master" | "classical-master"
   frontispiece: "phd",
@@ -48,7 +48,7 @@
   body,
 ) = {
   let colored-headings = false
-  if frontispiece == "deib-phd" {
+  if frontispiece in ("deib-phd", "classical-master", "cs-eng-master") {
     colored-headings = true
   }
   _document-type.update(frontispiece)
@@ -75,44 +75,43 @@
   set page(
     paper: "a4",
     margin: (
-      top: 2.5cm,
+      top: 4.2cm,
       bottom: 2.5cm,
       inside: 3cm,
       outside: 2cm,
     ),
     numbering: "i",
     header: context {
+      let page-counter = counter(page).display()
       if (
         _is-page-empty() or _document-state.get() == "TITLE_PAGE"
       ) {
         return
       } else if (
-        ("FRONTMATTER", "BACKMATTER").contains(_document-state.get())
+        _document-state.get() in ("FRONTMATTER", "BACKMATTER")
       ) {
-        let page-counter = counter(page).display()
         if (calc.even(here().page())) {
           page-counter + h(1fr)
         } else {
           h(1fr) + page-counter
         }
       } else if (
-        ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS").contains(_document-state.get())
+        _document-state.get() in ("MAINMATTER", "APPENDIX", "ACKNOWLEDGEMENTS")
       ) {
         let h1-current-page = (
           query(heading.where(level: 1)).filter(h1 => h1.location().page() == here().page()).len() != 0
         )
         let last-h1 = query(selector(heading.where(level: 1)).before(here())).last().body
-        let page-counter = counter(page).display()
 
         let chapter-info = if not (h1-current-page) {
           set text(weight: "bold")
-          let heading-num = if (heading.numbering != none) {
-            counter(heading.where(level: 1)).display(header-number)
+          if (heading.numbering != none) {
+            let heading-num = counter(heading.where(level: 1)).display(header-numbering)
+            text(
+              fill: if (colored-headings) { bluepoli } else { black },
+              heading-num,
+            )
           }
-          text(
-            fill: if (colored-headings) { bluepoli } else { black },
-            heading-num,
-          )
           last-h1
         }
 
@@ -121,13 +120,19 @@
         } else {
           chapter-info + h(1fr) + page-counter
         }
+      } else {
+        _document-state.update("FIRST_RAGGIERA")
       }
     },
     footer: none,
     background: context {
-      if _is-page-empty() {
-        v(1fr)
-        place(dx: -7cm, dy: -16.25cm, _raggiera-image(0.85 * 24cm))
+      if (_is-page-empty() or _document-state.get() == "FIRST_RAGGIERA") and not _is-page-in-outline() {
+        // measurements taken from PDF via Inkscape
+        place(
+          dx: -36.970mm,
+          dy: 129.629mm,
+          _raggiera-image(178.435mm),
+        )
       }
     },
   )
@@ -146,10 +151,12 @@
   import "frontispiece.typ": *
 
   if academic-year == "" {
-    academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2) // 20XX-XX
+    academic-year = _show-academic-year(
+      year: str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year()).slice(2),
+    ) // 20XX-XX)
   }
 
-  let shared-attributes = (title, author, advisor, coadvisor, academic-year)
+  let shared-attributes = (title, author, supervisor, cosupervisor, academic-year)
 
   let logos = ()
   if custom-logo == none {
@@ -164,10 +171,10 @@
   }
 
   let frontispieces = (
-    "phd": frontispiece-phd(..shared-attributes, logos.at(0), cycle, chair, tutor),
-    "deib-phd": frontispiece-deib-phd(..shared-attributes, logos.at(1), cycle, chair, tutor),
-    "classical-master": frontispiece-classical-master(..shared-attributes, logos.at(2), course, student-id),
-    "cs-eng-master": frontispiece-cs-eng-master(..shared-attributes, logos.at(3), student-id),
+    "phd": _frontispiece-phd(..shared-attributes, logos.at(0), cycle, chair, tutor),
+    "deib-phd": _frontispiece-deib-phd(..shared-attributes, logos.at(1), cycle, chair, tutor),
+    "classical-master": _frontispiece-classical-master(..shared-attributes, logos.at(2), course, student-id),
+    "cs-eng-master": _frontispiece-cs-eng-master(..shared-attributes, logos.at(3), student-id),
   )
 
   if frontispieces.keys().contains(frontispiece) {
@@ -207,7 +214,7 @@
       )
     }
     text(
-      size: 1.5em,
+      size: 25.2pt,
       it.body,
     )
     v(10pt)
@@ -221,21 +228,34 @@
   }
 
   show heading: it => context {
+    let section-fill = if (colored-headings) { bluepoli } else { black }
     if (it.level == 1) {
       it
     } else if (it.level == 2) {
       text(
         size: _sizes.at("12pt").Large,
-        counter(heading).display(tab-numbering) + it.body,
+        fill: section-fill,
+        if it.numbering != none { counter(heading).display(tab-numbering) } + it.body,
       )
     } else if (it.level >= 3) {
       text(
         size: _sizes.at("12pt").large,
-        counter(heading).display(tab-numbering) + it.body,
+        fill: section-fill,
+        if it.numbering != none { counter(heading).display(tab-numbering) } + it.body,
       )
     }
+    parbreak()
     // v(0.5em)
   }
+
+  // heading are always referred as chapters, except for the appendix
+  set heading(
+    supplement: context if _document-state.get() in "APPENDIX" {
+      _localization.at(text.lang).appendix
+    } else {
+      _localization.at(text.lang).chapter
+    },
+  )
 
   // ----------- [ TABLE OF CONTENTS ] -----------
 
@@ -268,11 +288,7 @@
   }
 
   // custom figure alignment
-  show figure
-    .where(kind: "lists")
-    .or(figure.where(kind: "_blank-toc"))
-    .or(figure.where(kind: "theorem"))
-    .or(figure.where(kind: "proposition")): it => {
+  show figure.where(kind: "__lists").or(figure.where(kind: "theorem")).or(figure.where(kind: "proposition")): it => {
     align(start, it)
   }
 
@@ -287,6 +303,8 @@
 
   set enum(indent: 1.2em)
 
+  _empty-page()
+
   body
 }
 
@@ -298,28 +316,28 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
-  /// Advisor of the thesis.
+  author: none,
+  /// supervisor of the thesis.
   /// -> str
-  advisor: "Prof. Name Surname",
-  /// Coadvisor(s) of the thesis.
+  supervisor: none,
+  /// cosupervisor(s) of the thesis.
   /// -> str | array
-  coadvisor: "Prof. Name Surname",
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Student ID.
   /// -> str
-  student-id: "00000000",
+  student-id: none,
   /// Student course.
   /// -> str
-  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
+  course: none,
   /// Abstract.
   /// -> content
   abstract: [],
   /// Keywords, that appear below the abstract (and in the PDF metadata).
   /// -> str
-  keywords: "word, word, word",
+  keywords: none,
   /// Logo of the thesis.
   /// -> path
   logo: image("img/logo_ingegneria.svg", width: 83mm),
@@ -328,8 +346,12 @@
   set document(
     title: title,
     author: author,
-    keywords: keywords,
   )
+  if keywords != none {
+    set document(
+      keywords: keywords,
+    )
+  }
   _document-type.update("article-format")
 
   set text(
@@ -408,7 +430,7 @@
 
       v(0.15cm)
 
-      (author, student-id).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
+      (author, student-id).filter(e => e != none).map(e => text(size: _sizes.at("11pt").large, e)).join(", ")
     }
 
     v(0.25cm)
@@ -417,39 +439,40 @@
 
     v(0.25cm)
 
+    if academic-year == "" {
+      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+    }
+
     grid(
       columns: (22%, 1fr),
       align: (horizon + left, left),
       grid.cell(
         inset: 5%,
-        [
-          #set text(size: _sizes.at("11pt").scriptsize)
-          #set par(justify: false, spacing: 1.7em)
+        context {
+          set text(size: _sizes.at("11pt").scriptsize)
+          set par(justify: false, spacing: 1.7em)
 
-          #text(weight: "bold", "Advisor:") \
-          Prof. #advisor
+          _show-starvisor(supervisor, "supervisor", separator: ":\n", key: strong)
 
-          #if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            text(weight: "bold", "Co-advisor:") + linebreak()
-            coadvisor
-          } else {
-            text(weight: "bold", "Co-advisors:") + linebreak()
-            coadvisor.join("\n")
-          }
+          parbreak()
 
-          #text(weight: "bold", "Academic year:") \
-          #if academic-year == "" {
-            academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
-          }
-          #academic-year
-        ],
+          _show-starvisor(cosupervisor, "cosupervisor", separator: ":\n", key: strong)
+
+          parbreak()
+
+          strong(_show-academic-year())
+          linebreak()
+          academic-year
+        },
       ),
-      text(fill: bluepoli, "Abstract: ") + abstract,
+      context text(fill: bluepoli, _localization.at(text.lang).abstract + ": ") + abstract,
     )
 
     v(1em)
 
-    banner(strong("Keywords: ") + keywords)
+    if keywords != none {
+      banner[#strong(_localization.at(text.lang).keywords + ": ") #keywords]
+    }
   }
 
   // this must be an error from the original template...
@@ -468,19 +491,19 @@
   title: "Thesis Title",
   /// Author of the thesis.
   /// -> str
-  author: "Name Surname",
-  /// Advisor of the thesis.
+  author: none,
+  /// supervisor of the thesis.
   /// -> str
-  advisor: "Prof. Name Surname",
-  /// Coadvisor(s) of the thesis.
+  supervisor: none,
+  /// cosupervisor(s) of the thesis.
   /// -> str | array
-  coadvisor: "Prof. Name Surname",
+  cosupervisor: none,
   /// Academic year of the thesis. If empty, defaults to "#{str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())}".
   /// -> str
   academic-year: "",
   /// Student course.
   /// -> str
-  course: "Xxxxxxxxxxxx Engineering - Ingegneria Xxxxxxxxxxxx",
+  course: none,
   /// Logo of the thesis.
   /// -> path
   logo: image("img/logo_ingegneria.svg", width: 83mm),
@@ -532,11 +555,15 @@
 
   // Title
   {
+    if academic-year == "" {
+      academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
+    }
+
     place(
       top + left,
       float: true,
       scope: "parent",
-      {
+      context {
         set text(weight: "bold", size: 0.3cm)
         set par(spacing: 0.5cm)
 
@@ -566,20 +593,17 @@
 
         v(0.1cm)
 
-        "Author: " + smallcaps(author) + v(-0.3em)
-        "Advisor: Prof. " + smallcaps(advisor) + v(-0.3em)
-        (
-          if type(coadvisor) == str or (type(coadvisor) == array and coadvisor.len() == 1) {
-            "Co-advisor: " + smallcaps(coadvisor)
-          } else {
-            "Co-advisors: " + coadvisor.map(smallcaps).join(", ")
-          }
-            + v(-0.3em)
-        )
-        if academic-year == "" {
-          academic-year = str(std.datetime.today().year() - 1) + "-" + str(std.datetime.today().year())
-        }
-        "Academic year: " + smallcaps(academic-year)
+        _show-author() + smallcaps(author) + v(-0.3em)
+
+        _show-starvisor(supervisor, "supervisor", separator: ": ", out: smallcaps)
+
+        parbreak()
+
+        _show-starvisor(cosupervisor, "cosupervisor", separator: ": ", out: smallcaps)
+
+        parbreak()
+
+        _show-academic-year() + " " + smallcaps(academic-year)
 
         v(0.25cm)
 
@@ -638,7 +662,7 @@
 #let frontmatter(body) = {
   _document-state.update("FRONTMATTER")
   // counter(page).update(0)
-  _empty-page()
+  // _empty-page()
   set page(numbering: "i")
   set heading(numbering: none)
 
@@ -668,7 +692,7 @@
   body
 }
 
-/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```typc"A.1"``` and resets their counter.
+/// Appendix section. Similar to LaTeX's ```tex \appendix```. It sets heading numbering to ```typc "A.1"``` and resets their counter.
 /// -> content
 #let appendix(body) = context {
   _blank-toc()
@@ -689,31 +713,33 @@
   body
 }
 
-// Table of contents
+// Outlines
+
+#let _lists = figure.with(
+  kind: "__lists",
+  numbering: none,
+  supplement: none,
+  outlined: true,
+  caption: [],
+)
 
 #let target = (
   figure
-    .where(
-      kind: "lists",
-      outlined: true,
-    )
+    .where(kind: "__lists", outlined: true)
     .or(figure.where(kind: "_blank-toc", outlined: true))
     .or(heading.where(outlined: true))
 )
 
-/// Lists figure to make the list of tables, list of figures to appear in the table of
-/// contents.
-/// -> content
-#let _lists = figure.with(kind: "lists", numbering: none, supplement: none, outlined: true, caption: [])
-
 /// Custom-built ```typc outline()```.
 /// -> content
-#let toc = context {
+#let toc = {
+  [#metadata(none) <__toc-start>]
   outline(
-    title: _lists(_localization.at(text.lang).toc),
+    title: context _lists(_localization.at(text.lang).toc),
     indent: 1.2em,
     target: target,
   )
+  [#metadata(none) <__toc-end>]
 }
 
 /// Internal helper function to create the custom lists of figures and table.
@@ -722,10 +748,12 @@
   /// Outline entry to edit.
   /// -> outline-entry
   outline-entry,
-  /// The kind of the outline entry element (image or table)
+  /// The kind of the outline entry element (image or table).
   /// -> function
   kind,
 ) = {
+  // don't print figures without caption
+  if outline-entry.element.at("caption") == none { return }
   let count = (
     str(counter(heading.where(level: 1)).at(outline-entry.element.location()).at(0))
       + "."
@@ -743,20 +771,32 @@
 
 /// List of figures. Similar to LaTeX's ```tex \listoffigures```.
 /// -> content
-#let list-of-figures = context {
+#let list-of-figures = {
   show outline.entry: it => {
     _lists-entries-style(it, image)
   }
-  outline(title: _lists(_localization.at(text.lang).list-of-figures), target: figure.where(kind: image))
+  [#metadata(none) <__toc-start>]
+  outline(
+    title: context _lists(_localization.at(text.lang).list-of-figures),
+    indent: 1.2em,
+    target: figure.where(kind: image),
+  )
+  [#metadata(none) <__toc-end>]
 }
 
 /// List of tables. Similar to LaTeX's ```tex \listoftables```.
 /// -> content
-#let list-of-tables = context {
+#let list-of-tables = {
   show outline.entry: it => {
     _lists-entries-style(it, table)
   }
-  outline(title: _lists(_localization.at(text.lang).list-of-tables), target: figure.where(kind: table))
+  [#metadata(none) <__toc-start>]
+  outline(
+    title: context _lists(_localization.at(text.lang).list-of-tables),
+    indent: 1.2em,
+    target: figure.where(kind: table),
+  )
+  [#metadata(none) <__toc-end>]
 }
 
 /// Displays a simple nomenclature with keys and values.
@@ -779,8 +819,8 @@
   indented: true,
 ) = context {
   heading(
-    _lists(_localization.at(text.lang).nomenclature),
-    outlined: false,
+    _localization.at(text.lang).nomenclature,
+    // outlined: false,
   )
   if (indented) {
     show grid.cell: it => {
@@ -809,7 +849,7 @@
 // Theorems implementation
 
 #import "@preview/great-theorems:0.1.2": *
-#import "@preview/headcount:0.1.0": *
+#import "@preview/headcount:0.1.1": *
 
 #let thm-cnt = counter("thm")
 #let prop-cnt = counter("prop")
