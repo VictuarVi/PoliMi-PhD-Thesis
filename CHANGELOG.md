@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.1 - TBA
+## 0.2.1 - 2026-06-27
 
 - Added presentation template
 - Changed *advisor to *supervisor

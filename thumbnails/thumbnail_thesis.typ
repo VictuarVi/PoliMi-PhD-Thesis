@@ -6,6 +6,5 @@
   supervisor: "Prof. Supervisor",
   cosupervisor: "Prof. Cosupervisor",
   tutor: "Prof. Tutor",
-  academic-year: "2025-2026",
   frontispiece: sys.inputs.at("frontispiece"),
 )

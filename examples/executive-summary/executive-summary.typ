@@ -1,8 +1,11 @@
 #import "@preview/elegant-polimi-thesis:0.2.1": (
   acknowledgements, appendix, polimi-executive-summary, proof, proposition, subfigure, theorem, theorems-init,
 )
+#import "../shared-imports.typ": *
+#show "LaTeX": LaTeX
+#show "Typst": Typst
 
-#let data = yaml("../shared_data.yaml")
+#let data = yaml("../shared-data.yaml")
 
 #show: polimi-executive-summary.with(
   title: [`executive-summary` manual],
@@ -100,33 +103,6 @@ Via the ```Typst figure``` environment @typst-figure, as you would do in LaTeX:
 
 == Tables
 
-#let frame(color) = (
-  (x, y) => (
-    left: if x > 0 {
-      0pt
-    } else {
-      color
-    },
-    right: color,
-    top: if y < 2 {
-      color
-    } else {
-      0pt
-    },
-    bottom: color,
-  )
-)
-
-#let shading(color) = (
-  (x, y) => {
-    if y == 0 {
-      color
-    } else {
-      none
-    }
-  }
-)
-
 #show table.cell: it => {
   if (it.x == 0 or it.y == 0) {
     text(weight: "bold", it)
@@ -157,7 +133,6 @@ As you can see, it could be useful to implement a default style for every table 
 For algorithms, there are a lot of packages on Typst universe @typst-universe. The following are my recommendations.
 
 - `lovelace` @typst-lovelace
-#import "@preview/lovelace:0.3.0": *
 
 #figure(
   kind: "algorithm",
@@ -183,7 +158,6 @@ See @first-algorithm.
 // #pagebreak()
 
 - `algo` @typst-algo
-#import "@preview/algo:0.3.6": *
 
 #algo(header: [Name of Algorithm])[
   Initial instructions \
